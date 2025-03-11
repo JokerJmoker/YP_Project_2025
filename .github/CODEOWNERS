@@ -1,4 +1,4 @@
-main @admin
-test_branch @admin @Olegendary
-Olegendary_branch @Olegendary  
-JokerJmoker_branch @admin
+main @JokerJmoker
+test_branch @JokerJmoker @OLEGENDARY
+Olegendary_branch @OLEGENDARY  
+JokerJmoker_branch @JokerJmoker
