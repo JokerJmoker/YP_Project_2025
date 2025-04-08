@@ -1,107 +1,171 @@
 /* =============================
    Импорт шрифтов
    ============================= */
-   @import url('fonts.css');
+@import url('fonts.css');
 
 
-   /* =============================
-      Базовые стили страницы
-      ============================= */
-   body {
-       background: #212121;
-       color: #fff;
-   }
-   
-   .page {
-       overflow-x: hidden;
-       display: flex;
-       flex-direction: column;
-       min-height: 100vh;
-   }
+/* =============================
+    Базовые стили страницы
+    ============================= */
+body {
+    background: #212121;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
 
-   .no-scroll {
-    height: 100vh;               /* Высота экрана */
-    overflow-y: hidden;          /* Убираем вертикальный скролл */
-    }
-      
-   /* =============================
-      Стили для шапки (header)
-      ============================= */
-   .header {
-       position: sticky;
-       top: 0;
-       padding: 0px;
-   }
-   
-   /* Темная шапка поверх Bootstrap */
-   header.text-bg-dark {
-       background-color: #212529 !important;
-       color: white !important;
-   }
-   
-   /* Контейнер в шапке: на всю ширину без отступов */
-   .header .container {
-       max-width: 100%;
-       padding-left: 0;
-       padding-right: 0;
-       margin: 0 auto;
-   }
-   
-   /* Аватарка/иконка в шапке */
-   .header__img {
-       display: block;
-       width: 48px;
-       height: 48px;
-       border-radius: 50%;     
-       object-fit: cover;      
-   }
-   
-   
-   /* =============================
-      Стили для основного контента
-      ============================= */
-   .content {
-       max-width: 800px;
-       margin: 0 auto;
-       padding: 40px 20px;
-       flex: 1 1 auto;
-   }
-   
-   
-   /* =============================
-      Заголовки и приветствие
-      ============================= */
-   h1 {
-       font-family: Montserrat, sans-serif;
-       font-weight: 600;
-   }
-   
-   /* Стиль заголовка на главной */
-   .welcome-heading {
-       color: #f8f8f8;
-       font-weight: 600;
-       text-align: center;
-       margin-bottom: 20px;
-   }
-   
-   /* Картинка под заголовком "Добро пожаловать в SCPC" */
-   .welcome-img {
-    width: 100%;            /* Растянуть по ширине родителя */
-    height: 200px;          /* Жёстко ограниченная высота */
-    object-fit: cover;      /* Масштабирует и обрезает по нужной области */
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }   
-   
-   /* =============================
-      Стили для футера и ссылок
-      ============================= */
-   .nav-link,
-   .text-center {
-       color: #ffc107;
-   }
-   
-   .nav-link:hover {
-       color: #e0a800;
-   }
-   
+.page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Отключение скролла */
+body.no-scroll {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+    
+/* =============================
+    Стили для шапки (header)
+    ============================= */
+.header {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    position: sticky;
+    top: 0;
+    padding: 0;
+    background: transparent !important; /* Убираем фон */
+    backdrop-filter: blur(8px); /* Добавляем легкое размытие для читаемости */
+}
+
+/* Убираем темный фон шапки */
+header.text-bg-dark {
+    background-color: transparent !important;
+    color: inherit !important;
+}
+
+/* Делаем ссылки в шапке белыми с полупрозрачностью */
+.header .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    transition: color 0.2s ease;
+}
+
+.header .nav-link:hover {
+    color: #fff !important;
+    text-decoration: none;
+}
+
+/* Контейнер в шапке: на всю ширину без отступов */
+.header .container {
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+    margin: 0 auto;
+}
+
+/* Аватарка/иконка в шапке */
+.header__img {
+    display: block;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;     
+    object-fit: cover;      
+}
+
+.header::after {
+content: "";
+display: block;
+height: 1px;
+background: rgba(255, 255, 255, 0.1);
+width: 100%;
+}
+
+/* =============================
+    Стили для основного контента
+    ============================= */
+.content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    flex: 1 1 auto;
+}
+
+
+/* =============================
+    Заголовки и приветствие
+    ============================= */
+h1 {
+    font-family: Montserrat, sans-serif;
+    font-weight: 600;
+}
+
+/* Стиль заголовка на главной */
+.welcome-heading {
+    color: #f8f8f8;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Картинка под заголовком "Добро пожаловать в SCPC" */
+.welcome-img {
+width: 100%;            /* Растянуть по ширине родителя */
+height: 200px;          /* Жёстко ограниченная высота */
+object-fit: cover;      /* Масштабирует и обрезает по нужной области */
+border-radius: 12px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}   
+
+/* =============================
+    Стили для футера и ссылок
+    ============================= */
+.nav-link,
+.text-center {
+    color: #ffc107;
+}
+
+.nav-link:hover {
+    color: #e0a800;
+}
+
+footer {
+    background: transparent !important;
+    color: white;
+    margin-top: auto;
+    width: 100%;
+    padding: 0.25rem 0 !important; /* Еще меньше вертикальных отступов */
+}
+
+footer .container {
+    padding-top: 0.25rem;    /* Уменьшаем внутренние отступы */
+    padding-bottom: 0.25rem;
+}
+
+footer .nav {
+    padding-bottom: 0.25rem; /* Минимальный отступ под меню */
+    margin-bottom: 0.25rem;  /* Минимальный отступ перед текстом */
+}
+
+footer .border-bottom {
+    border-width: 1px !important;
+    margin-bottom: 0.25rem !important; /* Уменьшаем отступ под линией */
+}
+
+footer p.text-center {
+    margin-bottom: 0.1rem;   /* Очень маленький отступ снизу */
+    font-size: 0.8rem;       /* Чуть уменьшаем размер текста */
+    padding-top: 0.1rem;     /* Минимальный отступ сверху */
+}
+
+/* Делаем ссылки более компактными */
+footer .nav-item {
+    margin: 0 0.1rem;        /* Минимальные горизонтальные отступы */
+}
+
+footer .nav-link {
+    padding: 0.1rem 0.5rem !important; /* Компактные отступы у ссылок */
+}
