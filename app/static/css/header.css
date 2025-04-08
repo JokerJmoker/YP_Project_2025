@@ -1,0 +1,54 @@
+/* ============================= 
+    Стили для шапки (header) 
+   ============================= */
+
+   .header {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    position: sticky;
+    top: 0;
+    padding: 0;
+    background: transparent !important; /* Убираем фон */
+    backdrop-filter: blur(8px); /* Добавляем легкое размытие для читаемости */
+}
+
+/* Убираем темный фон шапки */
+header.text-bg-dark {
+    background-color: transparent !important;
+    color: inherit !important;
+}
+
+/* Делаем ссылки в шапке белыми с полупрозрачностью */
+.header .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    transition: color 0.2s ease;
+}
+
+.header .nav-link:hover {
+    color: #fff !important;
+    text-decoration: none;
+}
+
+/* Контейнер в шапке: на всю ширину без отступов */
+.header .container {
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+    margin: 0 auto;
+}
+
+/* Аватарка/иконка в шапке */
+.header__img {
+    display: block;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;     
+    object-fit: cover;      
+}
+
+.header::after {
+    content: "";
+    display: block;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    width: 100%;
+}
