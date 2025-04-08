@@ -16,8 +16,20 @@ body {
     position: sticky;
     top: 0;
     padding: 0px;
-
 }
+
+header.text-bg-dark {
+    background-color: #212529 !important; /* Темнее стандартного Bootstrap */
+    color: white !important;
+}
+
+.header .container {
+    max-width: 100%;    /* Растягиваем на всю ширину */
+    padding-left: 0;    /* Убираем отступ слева */
+    padding-right: 0;   /* Убираем отступ справа */
+    margin: 0 auto;     /* Центрирование (если нужно) */
+}
+
 .content {
     max-width: 800px;
     margin: 0 auto;
@@ -35,4 +47,17 @@ h1 {
     display: block;
     width: 48px;
     height: 48px;
+    border-radius: 50%; /* Делает элемент круглым */
+    object-fit: cover; /* Опционально: чтобы изображение не искажалось */
+}
+
+/* футерй */
+
+.nav-link,
+.text-center {
+    color: #ffc107;
+}
+
+.nav-link:hover {
+    color: #e0a800;
 }
