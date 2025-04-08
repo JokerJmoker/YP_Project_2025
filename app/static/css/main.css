@@ -1,63 +1,107 @@
-@import url('fonts.css');
-
-body {
-    background: #212121;
-    color: #fff;
-}
-
-.page {
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-.header {
-    position: sticky;
-    top: 0;
-    padding: 0px;
-}
-
-header.text-bg-dark {
-    background-color: #212529 !important; /* Темнее стандартного Bootstrap */
-    color: white !important;
-}
-
-.header .container {
-    max-width: 100%;    /* Растягиваем на всю ширину */
-    padding-left: 0;    /* Убираем отступ слева */
-    padding-right: 0;   /* Убираем отступ справа */
-    margin: 0 auto;     /* Центрирование (если нужно) */
-}
-
-.content {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 40px 20px;
-    flex: 1 1 auto;
-}
+/* =============================
+   Импорт шрифтов
+   ============================= */
+   @import url('fonts.css');
 
 
-h1 {
-    font-family: Montserrat, sans-serif;
-    font-weight: 600;
-}
+   /* =============================
+      Базовые стили страницы
+      ============================= */
+   body {
+       background: #212121;
+       color: #fff;
+   }
+   
+   .page {
+       overflow-x: hidden;
+       display: flex;
+       flex-direction: column;
+       min-height: 100vh;
+   }
 
-.header__img {
-    display: block;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%; /* Делает элемент круглым */
-    object-fit: cover; /* Опционально: чтобы изображение не искажалось */
-}
-
-/* футерй */
-
-.nav-link,
-.text-center {
-    color: #ffc107;
-}
-
-.nav-link:hover {
-    color: #e0a800;
-}
+   .no-scroll {
+    height: 100vh;               /* Высота экрана */
+    overflow-y: hidden;          /* Убираем вертикальный скролл */
+    }
+      
+   /* =============================
+      Стили для шапки (header)
+      ============================= */
+   .header {
+       position: sticky;
+       top: 0;
+       padding: 0px;
+   }
+   
+   /* Темная шапка поверх Bootstrap */
+   header.text-bg-dark {
+       background-color: #212529 !important;
+       color: white !important;
+   }
+   
+   /* Контейнер в шапке: на всю ширину без отступов */
+   .header .container {
+       max-width: 100%;
+       padding-left: 0;
+       padding-right: 0;
+       margin: 0 auto;
+   }
+   
+   /* Аватарка/иконка в шапке */
+   .header__img {
+       display: block;
+       width: 48px;
+       height: 48px;
+       border-radius: 50%;     
+       object-fit: cover;      
+   }
+   
+   
+   /* =============================
+      Стили для основного контента
+      ============================= */
+   .content {
+       max-width: 800px;
+       margin: 0 auto;
+       padding: 40px 20px;
+       flex: 1 1 auto;
+   }
+   
+   
+   /* =============================
+      Заголовки и приветствие
+      ============================= */
+   h1 {
+       font-family: Montserrat, sans-serif;
+       font-weight: 600;
+   }
+   
+   /* Стиль заголовка на главной */
+   .welcome-heading {
+       color: #f8f8f8;
+       font-weight: 600;
+       text-align: center;
+       margin-bottom: 20px;
+   }
+   
+   /* Картинка под заголовком "Добро пожаловать в SCPC" */
+   .welcome-img {
+    width: 100%;            /* Растянуть по ширине родителя */
+    height: 200px;          /* Жёстко ограниченная высота */
+    object-fit: cover;      /* Масштабирует и обрезает по нужной области */
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }   
+   
+   /* =============================
+      Стили для футера и ссылок
+      ============================= */
+   .nav-link,
+   .text-center {
+       color: #ffc107;
+   }
+   
+   .nav-link:hover {
+       color: #e0a800;
+   }
+   
