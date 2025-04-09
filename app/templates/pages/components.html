@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рекомендуемые компоненты | SCPC</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">SCPC</div>
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link">Главная</a>
+            <a href="configurator.html" class="nav-link">Конфигуратор</a>
+            <a href="components.html" class="nav-link active">Компоненты</a>
+        </nav>
+        <div class="auth-buttons">
+            <button class="btn btn-login">Войти</button>
+            <button class="btn btn-register">Зарегистрироваться</button>
+        </div>
+    </header>
+    
+    <div class="table-container">
+        <h2 class="section-title">ВАША РЕКОМЕНДОВАННАЯ СБОРКА</h2>
+        
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Компонент</th>
+                    <th>Модель</th>
+                    <th>Характеристики</th>
+                    <th>Цена</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Процессор</strong></td>
+                    <td>AMD Ryzen 7 7800X3D</td>
+                    <td>8 ядер, 4.2-5.0 ГГц, 96MB L3</td>
+                    <td>32,990 ₽</td>
+                </tr>
+                <tr class="spacer"><td colspan="4"></td></tr>
+                <tr>
+                    <td><strong>Видеокарта</strong></td>
+                    <td>NVIDIA RTX 4080</td>
+                    <td>16GB GDDR6X, 9728 ядер</td>
+                    <td>89,990 ₽</td>
+                </tr>
+                <tr class="spacer"><td colspan="4"></td></tr>
+                <tr>
+                    <td><strong>Материнская плата</strong></td>
+                    <td>ASUS ROG Strix B650-E</td>
+                    <td>AM5, DDR5, PCIe 5.0</td>
+                    <td>28,490 ₽</td>
+                </tr>
+                <tr class="spacer"><td colspan="4"></td></tr>
+                <tr>
+                    <td><strong>Оперативная память</strong></td>
+                    <td>Corsair Vengeance 32GB</td>
+                    <td>DDR5 6000MHz CL36</td>
+                    <td>12,990 ₽</td>
+                </tr>
+                <tr class="spacer"><td colspan="4"></td></tr>
+                <tr>
+                    <td><strong>Накопитель</strong></td>
+                    <td>Samsung 980 Pro 1TB</td>
+                    <td>NVMe PCIe 4.0, 7000/5000 MB/s</td>
+                    <td>9,990 ₽</td>
+                </tr>
+                <tr class="spacer"><td colspan="4"></td></tr>
+                <tr>
+                    <td><strong>Блок питания</strong></td>
+                    <td>Seasonic Prime GX-850</td>
+                    <td>850W, 80+ Gold</td>
+                    <td>14,990 ₽</td>
+                </tr>
+                <tr class="spacer"><td colspan="4"></td></tr>
+                <tr class="total-row">
+                    <td colspan="3"><strong>Итого:</strong></td>
+                    <td><strong>189,440 ₽</strong></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div style="display: flex; justify-content: center; gap: 20px; margin-top: 40px;">
+            <button class="primary-btn">Сохранить конфигурацию</button>
+            <button class="secondary-btn">Начать заново</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = location.pathname.split('/').pop();
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Кнопка "Начать заново" ведет в конфигуратор
+            document.querySelector('.secondary-btn').addEventListener('click', function() {
+                window.location.href = 'configurator.html';
+            });
+        });
+    </script>
+</body>
+</html>

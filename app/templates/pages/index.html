@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная | SCPC</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">SCPC</div>
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link active">Главная</a>
+            <a href="configurator.html" class="nav-link">Конфигуратор</a>
+            <a href="components.html" class="nav-link">Компоненты</a>
+        </nav>
+        <div class="auth-buttons">
+            <button class="btn btn-login">Войти</button>
+            <button class="btn btn-register">Зарегистрироваться</button>
+        </div>
+    </header>
+    
+    <main class="main-content">
+        <h1 class="welcome-title">Select Components for Pesonal Computer</h1>
+        <p class="welcome-subtitle">
+            Подберите идеальную конфигурацию ПК для любых задач
+        </p>
+        
+        <div style="text-align: center; margin-top: 50px;">
+            <a href="configurator.html" class="primary-btn" style="display: inline-flex; align-items: center; padding: 16px 40px; text-decoration: none; font-size: 18px;">
+                ПЕРЕЙТИ В КОНФИГУРАТОР
+                <svg style="margin-left: 10px;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+            <p style="color: var(--text-muted); margin-top: 15px; font-size: 14px;">
+                Всего 3 шага до вашей идеальной сборки
+            </p>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = location.pathname.split('/').pop();
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
