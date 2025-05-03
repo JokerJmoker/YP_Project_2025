@@ -6,6 +6,8 @@ from .bundles import bundles, register_bundles
 
 from .routes.user import user
 from .routes.post import post
+from .routes.configurator import configurator
+from .routes.components import components
 
 
 def create_app(config_class=Config):
@@ -14,7 +16,8 @@ def create_app(config_class=Config):
     
     app.register_blueprint(user)
     app.register_blueprint(post)
-    
+    app.register_blueprint(configurator)
+    app.register_blueprint(components)
 
     
     db.init_app(app)
