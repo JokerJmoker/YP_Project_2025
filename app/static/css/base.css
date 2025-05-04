@@ -1,0 +1,26 @@
+/* ============================= 
+    Базовые стили страницы 
+   ============================= */
+
+   body {
+    background: #212121;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Отключение скролла */
+body.no-scroll {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
