@@ -1,0 +1,572 @@
+/* ============================= 
+    Базовые стили страницы 
+   ============================= */
+
+   body {
+    background: #121212;
+    color: #ff6b00;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Отключение скролла */
+body.no-scroll {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+/**/
+/* Основные стили */
+:root {
+    --primary-color: #ff6b00;
+    --primary-dark: #e05e00;
+    --dark-bg: #121212;
+    --dark-card: #1e1e1e;
+    --darker-card: #1a1a1a;
+    --dark-border: #333;
+    --text-primary: #ff6b00;
+    --text-secondary: #e05e00;
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+}
+
+.configurator-container {
+    max-width: 1400px; /* Увеличили максимальную ширину */
+    margin: 0 auto;
+    padding: 5px 5px; /* Увеличили отступы */
+    width: 95%; /* Добавили относительную ширину */
+}
+
+/* Делаем все шаги одинаковой ширины */
+.config-step {
+    width: 100%;
+    max-width: 1200px; /* Фиксированная ширина для контента */
+    margin: 0 auto 40px;
+    padding: 2px;
+    box-sizing: border-box; /* Чтобы padding не влиял на ширину */
+}
+
+/* Для шага с играми */
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    width: 100%;
+}
+
+/* Для шага с FPS */
+#step-fps .fps-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    max-width: 100%;
+}
+
+
+/* Навигация по шагам */
+.steps-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--dark-border);
+    padding-bottom: 15px;
+}
+
+.step-tab {
+    flex: 1;
+    text-align: center;
+    padding: 15px 10px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.step-tab:not(:last-child):after {
+    content: '';
+    position: absolute;
+    right: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    background-color: var(--dark-border);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.step-tab.active {
+    background-color: rgba(255, 107, 0, 0.1);
+    border-radius: 6px;
+}
+
+.step-tab.active .step-number {
+    background-color: var(--primary-color);
+    color: #121212;
+}
+
+.step-tab.active .step-title {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.step-number {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    background-color: var(--dark-border);
+    color: var(--text-secondary);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 25px;
+    margin-right: 8px;
+    font-size: 0.9rem;
+}
+
+.step-title {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+/* Стили карточек шагов */
+.step-card {
+    background-color: var(--darker-card);
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border-left: 4px solid var(--primary-color);
+}
+
+.step-header {
+    margin-bottom: 25px;
+}
+
+.step-header h2 {
+    font-size: 1.5rem;
+    margin: 0 0 5px 0;
+    display: flex;
+    align-items: center;
+}
+
+.step-header h2 .step-number {
+    margin-right: 15px;
+}
+
+.step-header p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* Стили для выбора игры */
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.game-card {
+    background-color: var(--dark-card);
+    border: 1px solid var(--dark-border);
+    border-radius: 8px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.game-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(255, 107, 0, 0.1);
+}
+
+.game-card.active {
+    border-color: var(--primary-color);
+    background-color: rgba(255, 107, 0, 0.1);
+}
+
+.game-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 15px;
+    background-color: #333;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.game-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.game-card h3 {
+    color: var(--primary-color);
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+}
+
+.game-card p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.85rem;
+}
+
+.configurator-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.btn-prev, .btn-next {
+    display: flex;
+    align-items: center;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-prev {
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--dark-border);
+}
+
+.btn-prev:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-prev svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    margin-right: 8px;
+}
+
+.btn-next {
+    background-color: var(--primary-color);
+    color: #121212;
+}
+
+.btn-next:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-next svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    margin-left: 8px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .steps-nav {
+        flex-wrap: wrap;
+    }
+    
+    .step-tab {
+        flex: 1 1 100%;
+        margin-bottom: 10px;
+    }
+    
+    .step-tab:not(:last-child):after {
+        display: none;
+    }
+    
+    .games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+    
+    .step-card {
+        padding: 15px;
+    }
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+}
+
+@media (max-width: 900px) {
+    .games-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 500px) {
+    .games-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(8, 1fr);
+    }
+}
+
+
+
+/* Шаг 2: Желаемый FPS */
+/* Контейнер для шага 2 */
+#step-fps .step-card {
+    padding: 30px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Контейнер кнопок FPS */
+#step-fps .fps-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin: 0 auto 30px;
+    max-width: 100%;
+}
+
+/* Стили кнопок FPS */
+#step-fps .fps-option {
+    flex: 1 1 calc(25% - 20px); /* 4 кнопки в ряд с отступами */
+    min-width: 120px;
+    max-width: 160px;
+    padding: 12px 8px;
+    background-color: #121212;
+    border-radius: 8px;
+    border: 2px solid #ff6b00;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Активная кнопка */
+#step-fps .fps-option.active {
+    background-color: #ff6b00;
+    color: white;
+    border-color: #ff6b00;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);
+}
+
+/* Ползунок и его контейнер */
+#step-fps .range-container {
+    padding: 0 15px;
+    margin: 30px auto;
+    max-width: 600px;
+}
+
+#step-fps .range-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+/* Обновленные стили для ползунка с оранжевым цветом */
+#step-fps input[type="range"] {
+    width: 100%;
+    height: 8px;
+    -webkit-appearance: none;
+    background: #121212;
+    border-radius: 5px;
+    outline: none;
+    margin: 20px 0;
+}
+
+/* Заполненная часть ползунка */
+#step-fps input[type="range"]::-webkit-slider-runnable-track {
+    height: 8px;
+    background: linear-gradient(to right, #ff6b00 0%, #ff6b00 var(--fill-percent), #121212 var(--fill-percent), #121212 100%);
+    border-radius: 5px;
+}
+
+/* Бегунок ползунка */
+#step-fps input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    background: #ff6b00;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid #121212;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    margin-top: -8px;
+    transition: all 0.2s;
+    position: relative;
+    z-index: 1;
+}
+
+#step-fps input[type="range"]::-moz-range-progress {
+    background: #ff6b00;
+    height: 8px;
+    border-radius: 5px;
+}
+
+#step-fps input[type="range"]::-ms-fill-lower {
+    background: #ff6b00;
+    border-radius: 5px;
+}
+/**/
+
+/* Основной стиль для формы */
+form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Стили для полей ввода */
+.form-control {
+    background-color: #121212;
+    color: #ff6b00;
+    border: 1px solid #ff6b00;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+/* Плейсхолдер оранжевый полупрозрачный */
+.form-control::placeholder {
+    color: rgba(255, 107, 0, 0.6);
+}
+
+/* Стиль для активного/фокусированного поля */
+.form-control:focus {
+    background-color: #1a1a1a;
+    color: #ff6b00;
+    border-color: #ff8b33;
+    box-shadow: 0 0 0 0.25rem rgba(255, 107, 0, 0.25);
+}
+
+/* Стиль для кнопки */
+.btn-success {
+    background-color: #ff6b00;
+    color: #121212;
+    border: none;
+    padding: 10px 15px;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+/* Кнопка при наведении */
+.btn-success:hover {
+    background-color: #e05d00;
+    transform: translateY(-1px);
+}
+
+/* Стиль для чекбокса */
+.form-check-input {
+    background-color: #121212;
+    border-color: #ff6b00;
+}
+
+.form-check-input:checked {
+    background-color: #ff6b00;
+    border-color: #ff6b00;
+}
+
+/* Текст метки чекбокса */
+.form-check-label {
+    color: #ff6b00;
+    margin-left: 5px;
+}
+
+/* Контейнер чекбокса */
+.d-flex.flex-row.justify-content-center.gap-2 {
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* Общие стили для формы (как в авторизации) */
+form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.form-control {
+    background-color: #121212;
+    color: #ff6b00;
+    border: 1px solid #ff6b00;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 107, 0, 0.6);
+}
+
+.form-control:focus {
+    background-color: #1a1a1a;
+    color: #ff6b00;
+    border-color: #ff8b33;
+    box-shadow: 0 0 0 0.25rem rgba(255, 107, 0, 0.25);
+}
+
+/* Стили для кнопки отправки формы */
+.btn-success {
+    background-color: #ff6b00;
+    color: #121212;
+    border: none;
+    padding: 10px 15px;
+    font-weight: bold;
+    transition: all 0.3s;
+    border-radius: 4px;
+}
+
+.btn-success:hover {
+    background-color: #e05d00;
+    transform: translateY(-1px);
+}
+
+/* Специальные стили для кнопки выбора файла */
+.form-control[type="file"] {
+    padding: 8px;
+    cursor: pointer;
+    border:#121212;
+}
+
+.form-control[type="file"]::-webkit-file-upload-button {
+    background-color: #ff6b00;
+    color: #121212;
+    padding: 8px 12px;
+    border-radius: 2px;
+    margin-right: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.form-control[type="file"]::-webkit-file-upload-button:hover {
+    background-color: #e05d00;
+}
+
+/* Стили для сообщений об ошибках */
+.invalid-feedback {
+    color: #ff6b00;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+}
+

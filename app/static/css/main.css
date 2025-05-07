@@ -1,0 +1,9 @@
+/* ============================= 
+    Импортируем другие стили 
+   ============================= */
+   @import url('fonts.css');
+   @import url('base.css');
+   @import url('header.css');
+   @import url('content.css');
+   @import url('footer.css');
+   
