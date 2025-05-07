@@ -1,0 +1,51 @@
+/* ============================= 
+    Стили для футера и ссылок 
+   ============================= */
+
+   .nav-link,
+   .text-center {
+       color: #ffc107;
+   }
+   
+   .nav-link:hover {
+       color: #e0a800;
+   }
+   
+   footer {
+       background: transparent !important;
+       color: white;
+       margin-top: auto;
+       width: 100%;
+       padding: 0.25rem 0 !important; /* Еще меньше вертикальных отступов */
+   }
+   
+   footer .container {
+       padding-top: 0.25rem;    /* Уменьшаем внутренние отступы */
+       padding-bottom: 0.25rem;
+   }
+   
+   footer .nav {
+       padding-bottom: 0.25rem; /* Минимальный отступ под меню */
+       margin-bottom: 0.25rem;  /* Минимальный отступ перед текстом */
+   }
+   
+   footer .border-bottom {
+       border-width: 1px !important;
+       margin-bottom: 0.25rem !important; /* Уменьшаем отступ под линией */
+   }
+   
+   footer p.text-center {
+       margin-bottom: 0.1rem;   /* Очень маленький отступ снизу */
+       font-size: 0.8rem;       /* Чуть уменьшаем размер текста */
+       padding-top: 0.1rem;     /* Минимальный отступ сверху */
+   }
+   
+   /* Делаем ссылки более компактными */
+   footer .nav-item {
+       margin: 0 0.1rem;        /* Минимальные горизонтальные отступы */
+   }
+   
+   footer .nav-link {
+       padding: 0.1rem 0.5rem !important; /* Компактные отступы у ссылок */
+   }
+   

@@ -1,0 +1,240 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="configurator.css">
+
+<div class="configurator-container">
+
+    <main class="configurator-steps">
+        <h1>КОНФИГУРАТОР ИГРОВОГО ПК</h1>
+        <!-- Шаг 1: Выбор игры -->
+        <section class="config-step active" id="step-game">
+            <div class="step-card">
+                <div class="step-header">
+                    <h2><span class="step-number">1</span> Выберите игру</h2>
+                    <p>Укажите игру, для которой собираете конфигурацию</p>
+                </div>
+                
+                <div class="games-grid">
+                    <!-- Первая строка -->
+                    <div class="game-card" data-game-id="1">
+                        <div class="game-icon">
+                            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg" alt="CS:GO">
+                        </div>
+                        <h3>Counter-Strike 2</h3>
+                        <p>Competitive FPS</p>
+                    </div>
+                    
+                    <div class="game-card" data-game-id="2">
+                        <div class="game-icon">
+                            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/570/header.jpg" alt="Dota 2">
+                        </div>
+                        <h3>Dota 2</h3>
+                        <p>MOBA</p>
+                    </div>
+                    
+                    <div class="game-card" data-game-id="3">
+                        <div class="game-icon">
+                            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/578080/header.jpg" alt="PUBG">
+                        </div>
+                        <h3>PUBG: Battlegrounds</h3>
+                        <p>Battle Royale</p>
+                    </div>
+                    
+                    <div class="game-card" data-game-id="4">
+                        <div class="game-icon">
+                            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1172470/header.jpg" alt="Apex Legends">
+                        </div>
+                        <h3>Apex Legends</h3>
+                        <p>Tactical Shooter</p>
+                    </div>
+                    
+                    <!-- Вторая строка -->
+                    <div class="game-card" data-game-id="5">
+                        <div class="game-icon">
+                            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg" alt="Witcher 3">
+                        </div>
+                        <h3>The Witcher 3</h3>
+                        <p>RPG</p>
+                    </div>
+                    
+                    <div class="game-card" data-game-id="6">
+                        <div class="game-icon">
+                            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/header.jpg" alt="Elden Ring">
+                        </div>
+                        <h3>Elden Ring</h3>
+                        <p>Action RPG</p>
+                    </div>
+                    
+                    <div class="game-card" data-game-id="7">
+                        <div class="game-icon">
+                            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1811260/header.jpg" alt="Forza Horizon 5">
+                        </div>
+                        <h3>Forza Horizon 5</h3>
+                        <p>Racing</p>
+                    </div>
+                    
+                    <div class="game-card" data-game-id="8">
+                        <div class="game-icon">
+                            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1086940/header.jpg" alt="Baldur's Gate 3">
+                        </div>
+                        <h3>Baldur's Gate 3</h3>
+                        <p>CRPG</p>
+                    </div>
+                </div>
+                
+                <div class="games-grid">
+                    {% for game in games %}
+                    <div class="game-card" data-game-id="{{ game.id }}">
+                        <div class="game-icon">
+                            <img src="{{ game.image_url }}" alt="{{ game.name }}">
+                        </div>
+                        <h3>{{ game.name }}</h3>
+                        <p>{{ game.settings }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Шаг 2: Желаемый FPS -->
+        <section class="config-step" id="step-fps">
+            <div class="step-card">
+                <div class="step-header">
+                    <h2><span class="step-number">2</span> Желаемый FPS</h2>
+                    <p>Выберите целевой показатель кадров в секунду</p>
+                </div>
+                
+                <!-- Варианты FPS в ряд над ползунком -->
+                <div class="fps-options">
+                    <div class="fps-option" data-fps="60">60 FPS<br><small>Минимальный</small></div>
+                    <div class="fps-option active" data-fps="144">144 FPS<br><small>Оптимальный</small></div>
+                    <div class="fps-option" data-fps="240">240 FPS<br><small>Профессиональный</small></div>
+                    <div class="fps-option" data-fps="360">360 FPS<br><small>Экстремальный</small></div>
+                </div>
+                
+                <!-- Ползунок с подписями -->
+                <div class="range-container">
+                    <input type="range" min="60" max="360" value="144" class="fps-range" id="fpsRange">
+                    <div class="range-labels">
+                        <span>60</span>
+                        <span>144</span>
+                        <span>240</span>
+                        <span>360</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Шаг 3: Настройки графики -->
+        <section class="config-step" id="step-graphics">
+            <div class="step-card">
+                <div class="step-header">
+                    <h2><span class="step-number">3</span> Настройки графики</h2>
+                    <p>Укажите желаемые графические параметры</p>
+                </div>
+                
+                <div class="graphics-options">
+                    <div class="graphics-presets">
+                        <div class="preset" data-preset="low">Low</div>
+                        <div class="preset" data-preset="medium">Medium</div>
+                        <div class="preset active" data-preset="high">High</div>
+                        <div class="preset" data-preset="ultra">Ultra</div>
+                    </div>
+                    
+                    <div class="advanced-settings">
+                        <div class="setting">
+                            <label>Ray Tracing</label>
+                            <select class="setting-select">
+                                <option value="off">Off</option>
+                                <option value="medium">Medium</option>
+                                <option value="high" selected>High</option>
+                                <option value="ultra">Ultra</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting">
+                            <label>DLSS/FSR</label>
+                            <select class="setting-select">
+                                <option value="off">Off</option>
+                                <option value="quality">Quality</option>
+                                <option value="balanced" selected>Balanced</option>
+                                <option value="performance">Performance</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Шаг 4: Бюджет -->
+        <section class="config-step" id="step-budget">
+            <div class="step-card">
+                <div class="step-header">
+                    <h2><span class="step-number">4</span> Ваш бюджет</h2>
+                    <p>Укажите планируемый бюджет на систему</p>
+                </div>
+                
+                <div class="budget-display">
+                    <span id="budgetValue">150,000</span> ₽
+                </div>
+                
+                <div class="range-container">
+                    <input type="range" min="50000" max="300000" step="5000" value="150000" class="budget-range" id="budgetRange">
+                </div>
+                
+                <div class="budget-markers">
+                    <span>50,000 ₽</span>
+                    <span>150,000 ₽</span>
+                    <span>300,000 ₽</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Шаг 5: Комплектующие -->
+        <section class="config-step" id="step-components">
+            <div class="step-card">
+                <div class="step-header">
+                    <h2><span class="step-number">5</span> Комплектующие</h2>
+                    <p>Выберите желаемые компоненты системы</p>
+                </div>
+                
+                <div class="components-selector">
+                    <div class="component">
+                        <label>Видеокарта</label>
+                        <div class="component-search">
+                            <input type="text" placeholder="Начните вводить модель..." id="gpuSearch">
+                            <div class="search-results" id="gpuResults"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="component">
+                        <label>Процессор</label>
+                        <div class="component-search">
+                            <input type="text" placeholder="Начните вводить модель..." id="cpuSearch">
+                            <div class="search-results" id="cpuResults"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="configurator-footer">
+        <button class="btn-prev" id="btnPrev">
+            <svg viewBox="0 0 24 24">
+                <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/>
+            </svg>
+            Назад
+        </button>
+        <button class="btn-next" id="btnNext">
+            Далее
+            <svg viewBox="0 0 24 24">
+                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+            </svg>
+        </button>
+    </footer>
+</div>
+
+<script src="configurator.js"></script>
+{% endblock %}
