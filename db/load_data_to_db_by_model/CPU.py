@@ -5,7 +5,7 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from app import create_app
-from app.models.cpu import Cpu
+from app.models.CPU import Cpu
 from app.extensions import db
 
 from basedataloader import BaseDataLoader  # файл с вашим классом BaseDataLoader
@@ -16,7 +16,7 @@ class CpuDataLoader(BaseDataLoader):
 
         cpu = self.model_class()
 
-        self.populate_common_fields(cpu, item)
+        self.common_fields(cpu, item)
 
         cpu.warranty = self.extract_spec_value(specs, 'Заводские данные', 'Гарантия продавца')
         cpu.country = self.extract_spec_value(specs, 'Заводские данные', 'Страна-производитель')

@@ -5,7 +5,7 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from app import create_app
-from app.models.casefan import CaseFan
+from app.models.CASE_FAN import CaseFan
 from app.extensions import db
 
 from basedataloader import BaseDataLoader  
@@ -16,7 +16,7 @@ class CaseFanDataLoader(BaseDataLoader):
 
         fan = self.model_class()
 
-        self.populate_common_fields(fan, item)
+        self.common_fields(fan, item)
 
         # Заводские данные
         fan.warranty = self.extract_spec_value(specs, 'Заводские данные', 'Гарантия продавца / производителя')

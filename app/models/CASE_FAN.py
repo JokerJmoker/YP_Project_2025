@@ -2,7 +2,6 @@ from datetime import datetime
 from app.extensions import db
 
 class CaseFan(db.Model):
-    
     __tablename__ = 'CASE_FAN' 
     
     id = db.Column(db.Integer, primary_key=True)
