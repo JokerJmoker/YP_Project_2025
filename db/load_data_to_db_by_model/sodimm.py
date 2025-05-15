@@ -1,5 +1,4 @@
 import sys
-import json
 from pathlib import Path
 
 project_root = Path(__file__).parent.parent.parent
@@ -9,115 +8,55 @@ from app import create_app
 from app.models.sodimm import SoDimm
 from app.extensions import db
 
-import easygui
+from basedataloader import BaseDataLoader  # Общий базовый загрузчик
 
-DEBUG = True
 
-def extract_spec_value(specs, section, key, default=''):
-    return specs.get(section, {}).get(key, default)
+class SoDimmDataLoader(BaseDataLoader):
+    def create_instance(self, item):
+        specs = item.get('specs', {})
 
-def str_to_bool(value):
-    return value.strip().lower() in ['есть', 'да', 'true']
+        sodimm = self.model_class()
 
-def load_sodimm_data(filepath=None):
-    if filepath is None:
-        filepath = easygui.fileopenbox(
-            msg="Выберите JSON или JSONL файл с данными SO-DIMM",
-            title="Выбор файла",
-            default=str(project_root / "app/load_data_to_db_by_model/*.*"),
-            filetypes=["*.json", "*.jsonl"]
-        )
-        if not filepath:
-            print("[ERROR] Файл не выбран. Загрузка отменена.")
-            return False
+        self.populate_common_fields(sodimm, item)
 
-    print(f"[INFO] Читаем файл: {filepath}")
+        # Заводские данные
+        sodimm.warranty = self.extract_spec_value(specs, 'Заводские данные', 'Гарантия продавца / производителя')
+        sodimm.country = self.extract_spec_value(specs, 'Заводские данные', 'Страна-производитель')
 
-    try:
-        if filepath.endswith('.jsonl'):
-            with open(filepath, 'r', encoding='utf-8') as f:
-                data_list = [json.loads(line) for line in f if line.strip()]
-        else:
-            with open(filepath, 'r', encoding='utf-8') as f:
-                data_list = json.load(f)
-        print(f"[INFO] Прочитано {len(data_list)} записей из файла")
-    except Exception as e:
-        print(f"[ERROR] Ошибка чтения файла: {str(e)}")
-        return False
+        # Общие параметры
+        sodimm.type_ = self.extract_spec_value(specs, 'Общие параметры', 'Тип')
+        sodimm.model = self.extract_spec_value(specs, 'Общие параметры', 'Модель')
+        sodimm.manufacturer_code = self.extract_spec_value(specs, 'Общие параметры', 'Код производителя')
+        sodimm.color = self.extract_spec_value(specs, 'Общие параметры', 'Цвет')
 
-    existing_count = db.session.query(SoDimm).count()
-    if existing_count > 0:
-        print(f"[WARNING] В БД уже есть {existing_count} записей SO-DIMM. Загрузка будет ПРОПУЩЕНА.")
-        return False
+        # Объем и состав комплекта
+        sodimm.memory_type = self.extract_spec_value(specs, 'Объем и состав комплекта', 'Тип памяти')
+        sodimm.total_memory = self.extract_spec_value(specs, 'Объем и состав комплекта', 'Суммарный объем памяти всего комплекта')
+        sodimm.module_memory = self.extract_spec_value(specs, 'Объем и состав комплекта', 'Объем одного модуля памяти')
+        sodimm.module_count = self.extract_spec_value(specs, 'Объем и состав комплекта', 'Количество модулей в комплекте')
 
-    loaded_count = 0
+        # Быстродействие
+        sodimm.frequency = self.extract_spec_value(specs, 'Быстродействие', 'Частота')
 
-    for index, item in enumerate(data_list, 1):
-        try:
-            specs = item.get('specs', {})
+        # Тайминги
+        sodimm.cas_latency = self.extract_spec_value(specs, 'Тайминги', 'CAS Latency (CL)')
+        sodimm.ras_to_cas_delay = self.extract_spec_value(specs, 'Тайминги', 'RAS to CAS Delay (tRCD)')
+        sodimm.row_precharge_delay = self.extract_spec_value(specs, 'Тайминги', 'Row Precharge Delay (tRP)')
+        sodimm.activate_to_precharge_delay = self.extract_spec_value(specs, 'Тайминги', 'Activate to Precharge Delay (tRAS)')
 
-            sodimm = SoDimm()
-            sodimm.name = item.get('name', '')
-            sodimm.price = item.get('price', '')
-            sodimm.image_url = item.get('image_url', '')
-            sodimm.image_path = item.get('image_path', '')
-            sodimm.warranty = extract_spec_value(specs, 'Заводские данные', 'Гарантия продавца / производителя')
-            sodimm.country = extract_spec_value(specs, 'Заводские данные', 'Страна-производитель')
-            sodimm.type = extract_spec_value(specs, 'Общие параметры', 'Тип')
-            sodimm.model = extract_spec_value(specs, 'Общие параметры', 'Модель')
-            sodimm.manufacturer_code = extract_spec_value(specs, 'Общие параметры', 'Код производителя')
-            sodimm.memory_type = extract_spec_value(specs, 'Объем и состав комплекта', 'Тип памяти')
-            sodimm.total_memory = extract_spec_value(specs, 'Объем и состав комплекта', 'Суммарный объем памяти всего комплекта')
-            sodimm.module_memory = extract_spec_value(specs, 'Объем и состав комплекта', 'Объем одного модуля памяти')
-            sodimm.module_count = extract_spec_value(specs, 'Объем и состав комплекта', 'Количество модулей в комплекте')
-            sodimm.frequency = extract_spec_value(specs, 'Быстродействие', 'Частота')
-            sodimm.cas_latency = extract_spec_value(specs, 'Тайминги', 'CAS Latency (CL)')
-            sodimm.ras_to_cas_delay = extract_spec_value(specs, 'Тайминги', 'RAS to CAS Delay (tRCD)')
-            sodimm.row_precharge_delay = extract_spec_value(specs, 'Тайминги', 'Row Precharge Delay (tRP)')
-            sodimm.activate_to_precharge_delay = extract_spec_value(specs, 'Тайминги', 'Activate to Precharge Delay')
-            sodimm.double_sided = str_to_bool(extract_spec_value(specs, 'Конструктивные особенности', 'Двухсторонняя установка чипов', 'нет'))
-            sodimm.heatsink = str_to_bool(extract_spec_value(specs, 'Конструктивные особенности', 'Радиатор охлаждения', 'нет'))
-            sodimm.voltage = extract_spec_value(specs, 'Дополнительная информация', 'Напряжение питания')
+        # Конструктивные особенности
+        sodimm.chip_count = self.extract_spec_value(specs, 'Конструктивные особенности', 'Количество чипов модуля')
+        sodimm.double_sided = self.str_to_bool(self.extract_spec_value(specs, 'Конструктивные особенности', 'Двухсторонняя установка чипов', 'нет'))
+        sodimm.heatsink = self.str_to_bool(self.extract_spec_value(specs, 'Конструктивные особенности', 'Радиатор', 'нет'))
 
-            db.session.add(sodimm)
-            loaded_count += 1
+        # Дополнительная информация
+        sodimm.voltage = self.extract_spec_value(specs, 'Дополнительная информация', 'Напряжение питания')
 
-            if DEBUG:
-                print(f"[DEBUG] Добавляем запись: {sodimm.name}")
+        return sodimm
 
-        except Exception as e:
-            print(f"[ERROR] Ошибка обработки записи {index}: {str(e)}")
-            db.session.rollback()
-            continue
-
-    try:
-        db.session.commit()
-        print(f"[INFO] Загружено {loaded_count}/{len(data_list)} записей SO-DIMM")
-        return True
-    except Exception as e:
-        db.session.rollback()
-        print(f"[ERROR] Ошибка коммита в БД: {str(e)}")
-        return False
 
 if __name__ == '__main__':
     app = create_app()
     with app.app_context():
-        print("=== Начало загрузки данных SO-DIMM ===")
-
-        confirm = easygui.ynbox(
-            msg="Добавить новые данные в базу ? "
-                "\n\n Если в БД уже есть данные, загрузка будет пропущена.",
-            title="Загрузка SO-DIMM",
-            choices=["Да", "Нет"]
-        )
-
-        if not confirm:
-            print("Операция отменена пользователем.")
-            sys.exit(0)
-
-        success = load_sodimm_data()
-        if success:
-            print("Загрузка завершена успешно.")
-        else:
-            print("Загрузка не выполнена (либо данные уже есть, либо возникли ошибки)")
-        print("=====================================")
+        loader = SoDimmDataLoader(SoDimm, app, db)
+        loader.run_interactive()

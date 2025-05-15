@@ -2,6 +2,9 @@ from datetime import datetime
 from app.extensions import db
 
 class Cpu(db.Model):
+    
+    __tablename__ = 'CPU' 
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False)
     price = db.Column(db.String(50), nullable=False)
