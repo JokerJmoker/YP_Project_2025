@@ -1,0 +1,6 @@
+1 - su postgres
+2 - psql 
+3 - /c mydb
+4 - DROP TABLE name;
+5 - \q выйти 
+6 - su jokerjmoker 
