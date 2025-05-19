@@ -2,7 +2,8 @@ from datetime import datetime
 from app.extensions import db
 
 class CaseFan(db.Model):
-    __tablename__ = 'CASE_FAN' 
+    __table_args__ = {'schema': 'pc_components'}
+    __tablename__ = 'case_fan' 
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False)

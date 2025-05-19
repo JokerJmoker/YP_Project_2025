@@ -5,7 +5,7 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from app import create_app
-from app.models.SO_DIMM import SoDimm
+from app.models.so_dimm import SoDimm
 from app.extensions import db
 
 from basedataloader import BaseDataLoader  # Общий базовый загрузчик

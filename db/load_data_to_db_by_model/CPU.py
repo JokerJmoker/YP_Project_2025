@@ -5,7 +5,7 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from app import create_app
-from app.models.CPU import Cpu
+from app.models.cpu import Cpu
 from app.extensions import db
 
 from basedataloader import BaseDataLoader  # файл с вашим классом BaseDataLoader

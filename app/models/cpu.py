@@ -2,7 +2,8 @@ from datetime import datetime
 from app.extensions import db
 
 class Cpu(db.Model):
-    __tablename__ = 'CPU' 
+    __table_args__ = {'schema': 'pc_components'}
+    __tablename__ = 'cpu' 
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False)
