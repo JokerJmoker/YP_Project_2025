@@ -7,15 +7,14 @@ def main():
         return
 
     try:
-        # Переход в пользователя postgres и выполнение SQL-команд через psql
+        # Формируем SQL для удаления таблицы из схемы pc_components
         sql_commands = f"""
         \\c mydb
-        DROP TABLE IF EXISTS "{table_name}";
+        DROP TABLE IF EXISTS "pc_components"."{table_name}";
         \\q
         """
 
-        # Запуск sudo -u postgres psql с передачей SQL через stdin
-        print(f"[INFO] Удаление таблицы {table_name} из базы данных mydb...")
+        print(f"[INFO] Удаление таблицы pc_components.{table_name} из базы данных mydb...")
         subprocess.run(
             ['sudo', '-u', 'postgres', 'psql'],
             input=sql_commands,
@@ -23,7 +22,7 @@ def main():
             check=True
         )
 
-        print(f"[SUCCESS] Таблица {table_name} успешно удалена (если существовала).")
+        print(f"[SUCCESS] Таблица pc_components.{table_name} успешно удалена (если существовала).")
 
     except subprocess.CalledProcessError as e:
         print(f"[ERROR] Ошибка при выполнении команды: {e}")

@@ -33,7 +33,9 @@ def create_app(config_class=Config):
     #Assets
     register_bundles(assets, bundles)
     
-    from .models import CaseFan, CpuCooler, Cpu, Post, SoDimm, User
+    from .models import (CaseFan, CpuCooler, Cpu, Post, SoDimm, User, Dimm, Gpu, Hdd_2_5, hdd_3_5
+                    
+    )
     
     with app.app_context():
         db.create_all()
