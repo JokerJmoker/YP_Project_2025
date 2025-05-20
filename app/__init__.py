@@ -35,8 +35,7 @@ def create_app(config_class=Config):
     
     from .models import (CaseFan, CpuCooler, Cpu, Post, SoDimm, User, 
                          Dimm, Gpu, Hdd_2_5, hdd_3_5, Motherboard, PcCase,
-                         PowerSupply
-                         
+                         PowerSupply, SsdM2, Ssd, WaterCooling
     )
     
     with app.app_context():
