@@ -8,6 +8,13 @@ from .dimm import Dimm
 from .gpu import Gpu
 from .hdd_2_5 import Hdd_2_5
 from .hdd_3_5 import Hdd_3_5
+from .motherboard import Motherboard
+from .pc_case import PcCase
+from .power_supply import PowerSupply
 
 
-__all__ = ['CaseFan', 'CpuCooler', 'Cpu', 'Post', 'SoDimm', 'User', 'Dimm', 'Gpu', 'Hdd_2_5', 'Hdd_3_5']
+__all__ = ['CaseFan', 'CpuCooler', 'Cpu', 'Post', 'SoDimm', 'User', 
+           'Dimm', 'Gpu', 'Hdd_2_5', 'Hdd_3_5', 'Motherboard', 'PcCase',
+           'PowerSupply'
+           
+           ]

@@ -33,8 +33,10 @@ def create_app(config_class=Config):
     #Assets
     register_bundles(assets, bundles)
     
-    from .models import (CaseFan, CpuCooler, Cpu, Post, SoDimm, User, Dimm, Gpu, Hdd_2_5, hdd_3_5
-                    
+    from .models import (CaseFan, CpuCooler, Cpu, Post, SoDimm, User, 
+                         Dimm, Gpu, Hdd_2_5, hdd_3_5, Motherboard, PcCase,
+                         PowerSupply
+                         
     )
     
     with app.app_context():
