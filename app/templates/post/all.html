@@ -1,29 +1,160 @@
 {% extends 'main/base.html' %}
 
-{% block style %}{% assets 'post_all_css' %}<link rel="stylesheet" href="{{ ASSET_URL}}">{% endassets %}{% endblock %}
+{% block style %}
+{% assets 'post_all_css' %}
+<link rel="stylesheet" href="{{ ASSET_URL}}">
+{% endassets %}
+<style>
+    .search-container {
+        min-width: 800px;
+        max-width: 1200px;
+        margin: 20px auto;
+    }
+    .search-input {
+        width: 100%;
+        padding: 12px 20px;
+        border: 2px solid #ff00;
+        border-radius: 3px;
+        font-size: 16px;
+        background-color: #1e1e1e;
+        color: #ff6b00;
+        outline: none;
+    }
+    .search-input:focus {
+        box-shadow: 0 0 10px #aa6b00;
+    }
+    .welcome-heading {
+        color: #ff6b00;
+        margin-bottom: 20px;
+        font-size: 2.5rem;
+    }
+    .text-muted {
+        color: #ffb600 !important;
+    }
+    
+    .custom-table-responsive {
+        margin: 30px 0;
+        overflow-x: auto;
+        border-radius: 10px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .custom-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .custom-table th {
+        background-color: #121212;
+        color: #ff6b00;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.9em;
+        letter-spacing: 1px;
+        padding: 16px;
+        border-bottom: 2px solid #ff6b00;
+    }
+
+    .custom-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #333;
+        vertical-align: middle;
+    }
+
+    .custom-table tr:hover {
+        background-color: #252525;
+    }
+
+    .custom-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .custom-table img {
+        border-radius: 4px;
+        margin-right: 12px;
+        object-fit: cover;
+    }
+
+    .btn {
+        padding: 6px 12px;
+        margin: 0 4px;
+        border-radius: 4px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary {
+        background-color: #333;
+        color: #e0e0e0;
+        border: none;
+    }
+
+    .btn-secondary:hover {
+        background-color: #444;
+    }
+
+    .btn-danger {
+        background-color: #d9534f;
+        color: white;
+        border: none;
+    }
+
+    .btn-danger:hover {
+        background-color: #c9302c;
+    }
+
+    .btn-warning {
+        background-color: #ff6b00;
+        color: #121212;
+        font-weight: 600;
+        border: none;
+    }
+
+    .btn-warning:hover {
+        background-color: #ffc840;
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
 
 {% block content %}
+<!-- Заголовок сайта (отображается всегда) -->
+<div class="text-center py-3">
+    <h1 class="welcome-heading">SELECT COMPONENTS FOR PERSONAL COMPUTER</h1>
+    <p class="text-muted">Подберите идеальную конфигурацию ПК для любых задач</p>
+</div>
+
 {% if not current_user.is_authenticated %}
+    <!-- Блок для неавторизованных пользователей -->
     <div class="text-center py-5">
-        <h1 class="welcome-heading">SELECT COMPONENTS FOR PERSONAL COMPUTER</h1>
-        <p>Подберите идеальную конфигурацию ПК для любых задач</p>
         <img class="welcome-img" src="{{ url_for('static', filename='img/welcome_image(1).jpg') }}" alt="Добро пожаловать">
     </div>
 {% else %}
-    <!-- Весь существующий контент остается без изменений -->
-    <form method="post" class="form-control d-flex flex-row gap-2" id="teacherForm">
-        {{ form.csrf_token }}
-        {{ form.teacher }}
-        <input type="submit" class="btn btn-success" value="Показать">
-    </form>
+    <!-- Блок для авторизованных пользователей -->
+    <div class="search-container">
+        <form method="post" class="form-control d-flex flex-row gap-2" id="searchForm">
+            {{ form.csrf_token }}
+            <input type="text" 
+                   class="search-input" 
+                   name="search_query" 
+                   placeholder="Введите название компонента..." 
+                   value="{{ request.form.search_query if request.form.search_query }}">
+            <button type="submit" class="btn btn-warning">Поиск</button>
+        </form>
+    </div>
 
     <div class="table-responsive custom-table-responsive">
         <table class="table custom-table">
             <thead>
                 <tr>
-                    <th scope="col">Преподаватель</th>
-                    <th scope="col">Тема</th>
-                    <th scope="col">Студент</th>
+                    <th scope="col">Компонент</th>
+                    <th scope="col">Название</th>
+                    <th scope="col">Характеристики</th>
                     <th scope="col">Действия</th>
                 </tr>
             </thead>
@@ -31,20 +162,24 @@
                 {% for post in posts %}
                 <tr scope="row">
                     <td>
-                        <img width="96px" height="96px" src="{{ url_for('static', filename='upload/'+post.author.avatar) }}" alt="Преподаватель">
+                        <img width="64px" height="64px" src="{{ url_for('static', filename='upload/'+post.author.avatar) }}" alt="Компонент">
                         {{ post.author.name }}
                     </td>
                     <td>{{ post.subject }}</td>
                     <td>
                         {% with student = user.query.get(post.student) %}
-                            <img width="96px" height="96px" src="{{ url_for('static', filename='upload/'+student.avatar) }}" alt="Студент">
+                            <img width="64px" height="64px" src="{{ url_for('static', filename='upload/'+student.avatar) }}" alt="Характеристики">
                             {{ student.name }}
                         {% endwith %}
                     </td>
                     <td>
                         {% if post.author.id == current_user.id %}
-                            <a href="{{url_for('post.update', id=post.id)}}" class="btn btn-sm btn-secondary"><span class="fa fa-edit"></span></a>
-                            <a href="{{url_for('post.delete', id=post.id)}}" class="btn btn-sm btn-danger"><span class="fa fa-trash"></span></a>
+                            <a href="{{url_for('post.update', id=post.id)}}" class="btn btn-secondary">
+                                <i class="fa fa-edit"></i> Изменить
+                            </a>
+                            <a href="{{url_for('post.delete', id=post.id)}}" class="btn btn-danger">
+                                <i class="fa fa-trash"></i> Удалить
+                            </a>
                         {% endif %}
                     </td>
                 </tr>
@@ -55,4 +190,15 @@
 {% endif %}
 {% endblock %}
 
-{% block script %}{% assets 'post_all_js' %}<script type="text/javascript" src="{{ ASSET_URL}}"></script>{% endassets %}{% endblock %}
+{% block script %}
+{% assets 'post_all_js' %}
+<script type="text/javascript" src="{{ ASSET_URL}}"></script>
+{% endassets %}
+<script>
+    // Обработка ввода в поисковой строке
+    document.querySelector('.search-input').addEventListener('input', function(e) {
+        // Можно добавить live-search при необходимости
+        console.log('Поисковый запрос:', e.target.value);
+    });
+</script>
+{% endblock %}
