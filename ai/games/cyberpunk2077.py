@@ -11,31 +11,31 @@ DB_PORT = "5532"
 # Данные для таблицы (один вариант CPU/GPU для каждой категории)
 PC_CONFIGS = [
     {
-        "preset": "Low",
+        "preset": "low",
         "cpu": "Процессор AMD Ryzen 5 5600 BOX",
         "gpu": "ASUS GeForce GT 1030 LP [GT1030-2G-BRK]",
-        "ram": "Оперативная память Kingston FURY Beast Black [KF432C16BBK2/16-SP] 16 ГБ",
+        "dimm": "Оперативная память Kingston FURY Beast Black [KF432C16BBK2/16-SP] 16 ГБ",
         "ssd": "500 ГБ M.2 NVMe накопитель Kingston NV2 [SNV2S/500G]",
     },
     {
-        "preset": "Medium",
+        "preset": "medium",
         "cpu": "Процессор Intel Core i5-12400F OEM",
         "gpu": "Видеокарта Palit GeForce RTX 3060 Dual (LHR) [NE63060019K9-190AD]",
-        "ram": "Оперативная память Kingston FURY Beast Black RGB [KF436C17BB2AK2/16] 16 ГБ",
+        "dimm": "Оперативная память Kingston FURY Beast Black RGB [KF436C17BB2AK2/16] 16 ГБ",
         "ssd": "1000 ГБ M.2 NVMe накопитель WD Blue SN580 [WDS100T3B0E]",
     },
     {
-        "preset": "High",
+        "preset": "high",
         "cpu": "Процессор AMD Ryzen 7 5800X3D OEM",
         "gpu": "Видеокарта MSI GeForce RTX 4070 SUPER VENTUS 2X OC [GeForce RTX 4070 SUPER 12G VENTUS 2X OC]",
-        "ram": "Оперативная память Kingston FURY Renegade RGB [KF436C16RB12AK2/32] 32 ГБ",
+        "dimm": "Оперативная память Kingston FURY Renegade RGB [KF436C16RB12AK2/32] 32 ГБ",
         "ssd": "1000 ГБ M.2 NVMe накопитель Samsung 980 PRO [MZ-V8P1T0BW]",
     },
     {
-        "preset": "Ultra",
+        "preset": "ultra",
         "cpu": "Процессор Intel Core i7-14700K OEM",
         "gpu": "Видеокарта GIGABYTE GeForce RTX 4080 SUPER GAMING OC [GV-N408SGAMING OC-16GD]",
-        "ram": "Оперативная память G.Skill Trident Z5 RGB [F5-7800J3646H16GX2-TZ5RK] 32 ГБ",
+        "dimm": "Оперативная память G.Skill Trident Z5 RGB [F5-7800J3646H16GX2-TZ5RK] 32 ГБ",
         "ssd": "2000 ГБ M.2 NVMe накопитель WD Black SN770 [WDS200T3X0E]",
     }
 ]
@@ -62,7 +62,7 @@ def create_game_table():
                 cpu VARCHAR(100) NOT NULL,
                 gpu VARCHAR(100) NOT NULL,
                 ssd VARCHAR(100) NOT NULL,
-                ram VARCHAR(100) NOT NULL
+                dimm VARCHAR(100) NOT NULL
             )
         """)
 
@@ -70,11 +70,11 @@ def create_game_table():
         for config in PC_CONFIGS:
             cursor.execute(
                 sql.SQL("""
-                    INSERT INTO games.cyberpunk_2077 (preset, cpu, gpu, ssd, ram)
+                    INSERT INTO games.cyberpunk_2077 (preset, cpu, gpu, ssd, dimm)
                     VALUES (%s, %s, %s, %s, %s)
                     ON CONFLICT (preset) DO NOTHING
                 """),
-                (config["preset"], config["cpu"], config["gpu"], config["ssd"], config["ram"])
+                (config["preset"], config["cpu"], config["gpu"], config["ssd"], config["dimm"])
             )
 
         # Сохраняем изменения

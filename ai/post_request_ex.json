@@ -1,0 +1,47 @@
+{
+  "user_selections": {
+    "game": {
+      "title": "custom_value - string (passed)",
+      "graphics_settings": {
+        "quality": "Low/Medium/High/Ultra - string (passed)",
+        "target_fps": "30/60/120/144/240 - int (not passed)",
+        "resolution": "720/1080/1440/2160 - int (not passed)",
+        "ray_tracing": "Enabled/Disabled (True/False) - bool (not passed)",
+        "dlss": "Disabled/Quality/Balanced/Performance/Ultra Performance - string (not passed)",
+        "fsr": "Disabled/Quality/Balanced/Performance/Ultra Performance - string (not passed)"
+      }
+    },
+    "budget": {
+      "amount": "150000 - int (passed)",
+      "currency": "RUB - string (passed)"
+    },
+    "components": {
+      "mandatory": {
+        "cpu": "any/custom_value - string (passed)",
+        "gpu": "any/custom_value - string (passed)",
+        "dimm": "any/custom_value - string (passed)",
+        "ssd": "any/custom_value - string (passed)",
+        "motherboard": "any/custom_value - string (passed)",
+        "power_supply": "any/custom_value - string (passed)"
+      },
+      "mandatory_priorities": {
+        "cpu_priority": "High/Medium/Low - string (passed)",
+        "gpu_priority": "High/Medium/Low - string (passed)",
+        "dimm_priority": "High/Medium/Low - string (passed)",
+        "ssd_priority": "High/Medium/Low - string (passed)",
+        "motherboard_priority": "High/Medium/Low - string (passed)",
+        "power_supply_priority": "High/Medium/Low - string (passed)"
+      },
+      "optional": {
+        "cooling": "any/WATER_COOLING(refer to water_cooling table)/AIR_COOLING(refer to case_fan table)/custom_value - string (passed)",
+        "pc_case": "any/small_size/normal_size/custom_value - string (passed)",
+        "cpu_cooler": "any/included_with_cpu/custom_value (related to cpu - if cpu has BOX suffix this field is ignored, if OEM - we consider this) - string (passed)"
+      },
+      "optional_priorities": {
+        "cooling_priority": "High/Medium/Low - string (passed)",
+        "pc_case_priority": "High/Medium/Low - string (passed)",
+        "cpu_cooler_priority": "High/Medium/Low - string (passed)"
+      }
+    }
+  }
+}
