@@ -18,6 +18,13 @@ class CpuDataLoader(BaseDataLoader):
 
         self.common_fields(cpu, item)
 
+        if 'benchmark_rate' in item:  # Проверяем корневой уровень item
+            cpu.benchmark_rate = float(item['benchmark_rate']) if item['benchmark_rate'] is not None else None
+        elif 'benchmark_rate' in specs:  # Проверяем внутри specs
+            cpu.benchmark_rate = float(specs['benchmark_rate']) if specs['benchmark_rate'] is not None else None
+        else:
+            cpu.benchmark_rate = None  # Явно устанавливаем None, если поле отсутствует
+
         cpu.warranty = self.extract_spec_value(specs, 'Заводские данные', 'Гарантия продавца')
         cpu.country = self.extract_spec_value(specs, 'Заводские данные', 'Страна-производитель')
         cpu.model = self.extract_spec_value(specs, 'Общие параметры', 'Модель')

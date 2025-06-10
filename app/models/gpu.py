@@ -87,3 +87,6 @@ class Gpu(db.Model):
 
     # Дата добавления
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Оценка бенчмарка    
+    benchmark_rate = db.Column(db.Float, nullable=True)

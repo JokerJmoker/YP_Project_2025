@@ -39,6 +39,9 @@ class CpuModel(BaseModel):
     pci_express: Optional[str] = None        # Версия PCIe
     pci_lanes: Optional[int] = None          # Количество линий PCIe
     
+    # Оценка бенчмарка
+    benchmark_rate: Optional[float] = None 
+    
     @classmethod
     def from_orm(cls, cpu_orm):
         return cls(
@@ -63,5 +66,6 @@ class CpuModel(BaseModel):
             integrated_graphics=parse_bool(cpu_orm.integrated_graphics),
             gpu_model=cpu_orm.gpu_model,
             pci_express=cpu_orm.pci_express,
-            pci_lanes=parse_int(cpu_orm.pci_lanes)
+            pci_lanes=parse_int(cpu_orm.pci_lanes),
+            benchmark_rate=parse_float(cpu_orm.benchmark_rate)
         )

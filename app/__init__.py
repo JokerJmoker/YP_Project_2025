@@ -39,6 +39,14 @@ def create_app(config_class=Config):
     )
     
     with app.app_context():
-        db.create_all()
-        
-    return app 
+        if app.config.get('USE_MIGRATIONS', False):
+            # Режим с миграциями - ничего не создаём
+            pass
+        else:
+            # Режим разработки - создаём таблицы, если их нет
+            try:
+                db.create_all()
+            except Exception as e:
+                app.logger.warning(f"Could not create tables: {e}")
+    
+    return app

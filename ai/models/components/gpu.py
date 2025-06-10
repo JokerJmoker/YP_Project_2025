@@ -32,6 +32,9 @@ class GpuModel(BaseModel):
     # Output capabilities
     video_outputs: Optional[str] = None # Available ports
     max_resolution: Optional[str] = None # Max supported resolution
+    
+    # Оценка бенчмарка
+    benchmark_rate: Optional[float] = None 
 
     @classmethod
     def from_orm(cls, gpu_orm):
@@ -60,5 +63,6 @@ class GpuModel(BaseModel):
             ray_tracing=parse_bool(gpu_orm.ray_tracing),
             tensor_cores=parse_int(gpu_orm.tensor_cores),
             video_outputs=gpu_orm.video_outputs,
-            max_resolution=gpu_orm.max_resolution
+            max_resolution=gpu_orm.max_resolution,
+            benchmark_rate=parse_float(gpu_orm.benchmark_rate)
         )
