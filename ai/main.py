@@ -17,7 +17,7 @@ def main():
         result_1st_stage = get_game_recommendation(conn, data)
         print(json.dumps(result_1st_stage, indent=2, ensure_ascii=False))
         result_2nd_stage = get_propriate_components(conn, data)
+        print(json.dumps(result_2nd_stage, indent=2, ensure_ascii=False))
         
-
 if __name__ == "__main__":
     main()
