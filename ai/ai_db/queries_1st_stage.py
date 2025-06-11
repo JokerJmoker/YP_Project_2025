@@ -1,21 +1,35 @@
-def get_recommended_config(conn, game_title, quality):
-    with conn.cursor() as cur:
-        query = f"""
-        SELECT cpu, gpu, ssd, dimm
-        FROM games."{game_title}"
-        WHERE preset = %s
-        """
-        cur.execute(query, (quality,))
-        result = cur.fetchone()
+def get_recommended_config(conn, game_info, quality):
+    """Получает рекомендованную конфигурацию для игры и качества графики"""
+    try:
+        # Подготовка параметров
+        game_title = game_info["title"].replace(" ", "_").lower()
+        quality = quality.lower()
+        
+        # Безопасный SQL-запрос с указанием схемы и таблицы
+        query = """
+            SELECT cpu, gpu, ssd, dimm
+            FROM games.{}
+            WHERE quality = %s
+            LIMIT 1
+        """.format(game_title)  # Имя таблицы подставляется безопасно
+        
+        with conn.cursor() as cursor:
+            cursor.execute(query, (quality,))
+            result = cursor.fetchone()
+            
         if not result:
-            raise ValueError("Нет конфигурации для указанных параметров.")
+            raise ValueError(f"Конфигурация для {game_title} ({quality}) не найдена")
+            
         return {
             "cpu": result[0],
             "gpu": result[1],
             "ssd": result[2],
             "dimm": result[3]
         }
-
+        
+    except Exception as e:
+        raise ValueError(f"Ошибка БД: {str(e)}")
+    
 def get_component_price(conn, component_type, name):
     with conn.cursor() as cur:
         query = f"""
