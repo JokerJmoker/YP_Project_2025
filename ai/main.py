@@ -1,6 +1,6 @@
 import json
 from ai_db.database import Database
-from services.file_handler_1st_stage import select_json_file, load_json_data
+from services.file_handler_request import select_json_file, load_json_data
 from services.request_processor_1st_stage import get_game_recommendation
 from services.request_processor_2nd_stage import get_propriate_components
 

@@ -1,37 +1,41 @@
-from .parse_request_1st_stage import parse_game_settings
+from .parse_request import parse_user_request
 from ai_db.queries_1st_stage import get_recommended_config
 
-def get_game_recommendation(conn, game_data, quality=None):
+def get_game_recommendation(conn, user_data, quality=None):
     """
-    Получает рекомендованную конфигурацию для игры, объединяя парсинг настроек и запрос к БД.
-    
+    Получает рекомендованную конфигурацию для игры, используя полную структуру user_data,
+    парсит ее через parse_user_request, и обращается к БД.
+
     Args:
         conn: соединение с базой данных
-        game_data: сырые данные о игре (словарь)
-        quality: (опционально) приоритет качества графики, если не указан - берется из game_data
+        user_data: словарь с данными пользователя (включая user_selections)
+        quality: (опционально) приоритет качества графики
     
     Returns:
         Словарь с рекомендованной конфигурацией
     
     Raises:
-        ValueError: если возникла ошибка при обработке
+        ValueError: при ошибках обработки
     """
     try:
-        # Парсим настройки игры
-        game_info = parse_game_settings(game_data)
-        
-        # Проверяем наличие необходимых данных
-        if not game_info.get("graphics", {}).get("quality") and not quality:
+        # Парсим всю структуру запроса
+        parsed_data = parse_user_request(user_data)
+
+        # Извлекаем настройки игры
+        game_info = parsed_data.get("game", {})
+
+        # Получаем качество графики из параметров игры или используем переданное
+        quality_in_game = game_info.get("graphics", {}).get("quality")
+        if not quality_in_game and not quality:
             raise ValueError("Качество графики не указано ни в данных игры, ни в параметрах")
-        
-        # Определяем качество графики (приоритет у явно указанного параметра)
-        target_quality = quality.lower() if quality else game_info["graphics"]["quality"].lower()
-        
-        # Получаем рекомендованную конфигурацию из БД
+
+        target_quality = quality.lower() if quality else quality_in_game.lower()
+
+        # Запрашиваем рекомендованную конфигурацию, передаем всю распарсенную игру и качество
         config = get_recommended_config(conn, game_info, target_quality)
-        
+
         return config
-        
+
     except ValueError as e:
         raise ValueError(f"Ошибка при получении рекомендации: {str(e)}")
     except KeyError as e:

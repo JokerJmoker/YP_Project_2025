@@ -1,4 +1,4 @@
-from .parse_request_2nd_stage import parse_user_request
+from .parse_request import parse_user_request
 from ai_db.queries_1st_stage import get_recommended_config
 
 def get_propriate_components(conn, data):
