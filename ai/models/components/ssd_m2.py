@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from utils.parsers import parse_bool
+from parsers import parse_bool
 
 
 class SsdM2Model(BaseModel):

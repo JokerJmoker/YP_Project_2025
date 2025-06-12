@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
-from utils.parsers import parse_bool
+from parsers import parse_bool
 
 
 class SoDimmModel(BaseModel):

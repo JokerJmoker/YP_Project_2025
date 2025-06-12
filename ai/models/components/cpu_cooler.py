@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from utils.parsers import parse_float, parse_int
+from parsers import parse_float, parse_int
 
 
 class CpuCoolerModel(BaseModel):
