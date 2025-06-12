@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from .parsers import parse_float, parse_int, parse_bool
+from .parsers import parse_float, parse_int, parse_bool, parse_memory_frequency
 
 
 class CpuModel(BaseModel):
@@ -62,7 +62,7 @@ class CpuModel(BaseModel):
             memory_type=cpu_orm['memory_type'],
             max_memory=parse_int(cpu_orm['max_memory']),
             memory_channels=parse_int(cpu_orm['memory_channels']),
-            memory_frequency=parse_int(cpu_orm['memory_frequency']),
+            memory_frequency=parse_memory_frequency(cpu_orm['memory_frequency']),
             integrated_graphics=parse_bool(cpu_orm['integrated_graphics']),
             gpu_model=cpu_orm['gpu_model'],
             pci_express=cpu_orm['pci_express'],

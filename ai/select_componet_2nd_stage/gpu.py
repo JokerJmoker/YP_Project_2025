@@ -8,73 +8,69 @@ import json
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from ai.ai_db.database import Database
-from ai.models.components.cpu import CpuModel
+from ai.models.components.gpu import GpuModel
 
 
-def get_cpu_model_by_name(cpu_name: str) -> CpuModel:
+def get_gpu_model_by_name(gpu_name: str) -> GpuModel:
     query = """
-        SELECT * FROM pc_components.cpu 
+        SELECT * FROM pc_components.gpu 
         WHERE name = %s
         LIMIT 1
     """
     with Database() as conn:
         with conn.cursor(cursor_factory=DictCursor) as cursor:
-            cursor.execute(query, (cpu_name,))
+            cursor.execute(query, (gpu_name,))
             result = cursor.fetchone()
             if not result:
-                raise ValueError(f"CPU '{cpu_name}' not found in database")
-            return CpuModel.from_orm(result)
+                raise ValueError(f"GPU '{gpu_name}' not found in database")
+            return GpuModel.from_orm(result)
 
 
-def find_similar_cpu(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> Dict[str, Any]:
+def find_similar_gpu(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> Dict[str, Any]:
     user_request = input_data_2nd_stage["user_request"]
     method = user_request["allocations"]["mandatory"]["method"]
 
     if method == "fixed_price_based":
-        max_price = user_request["allocations"]["mandatory"][method]["cpu_max_price"]
+        max_price = user_request["allocations"]["mandatory"][method]["gpu_max_price"]
     elif method == "percentage_based":
         total_budget = user_request["budget"]["amount"]
-        cpu_percentage = user_request["allocations"]["mandatory"][method]["cpu_percentage"]
-        max_price = round((cpu_percentage / 100) * total_budget)
+        gpu_percentage = user_request["allocations"]["mandatory"][method]["gpu_percentage"]
+        max_price = round((gpu_percentage / 100) * total_budget)
     else:
         raise ValueError(f"Unsupported allocation method: {method}")
 
-    included_with_cpu = user_request["components"]["optional"].get("cpu_cooler") == "included_with_cpu"
-
-    cpu_name_from_2nd = user_request["components"]["mandatory"]["cpu"]
-    if cpu_name_from_2nd == "any":
-        cpu_name = input_data_1st_stage.get("cpu")
-        if not cpu_name:
-            raise ValueError("CPU name not specified in input_data_1st_stage")
+    gpu_name_from_2nd = user_request["components"]["mandatory"]["gpu"]
+    if gpu_name_from_2nd == "any":
+        gpu_name = input_data_1st_stage.get("gpu")
+        if not gpu_name:
+            raise ValueError("GPU name not specified in input_data_1st_stage")
     else:
-        cpu_name = cpu_name_from_2nd
+        gpu_name = gpu_name_from_2nd
 
-    original_cpu = get_cpu_model_by_name(cpu_name)
-    target_benchmark = original_cpu.benchmark_rate
-
-    suffix = "BOX" if included_with_cpu else "OEM"
+    original_gpu = get_gpu_model_by_name(gpu_name)
+    target_benchmark = original_gpu.benchmark_rate
 
     query = """
-        SELECT * FROM pc_components.cpu 
-        WHERE price <= %s AND name ILIKE %s
+        SELECT * FROM pc_components.gpu 
+        WHERE price <= %s
         ORDER BY ABS(benchmark_rate - %s), price ASC
         LIMIT 1
     """
 
     with Database() as conn:
         with conn.cursor(cursor_factory=DictCursor) as cursor:
-            cursor.execute(query, (max_price, f"%{suffix}%", target_benchmark))
+            cursor.execute(query, (max_price, target_benchmark))
             result = cursor.fetchone()
             if not result:
-                raise ValueError("No similar CPU found within budget and criteria")
-            similar_cpu = CpuModel.from_orm(result)
-            return similar_cpu.model_dump()
+                raise ValueError("No similar GPU found within budget and criteria")
+            similar_gpu = GpuModel.from_orm(result)
+            return similar_gpu.model_dump()
 
 
-def run_cpu_selection_test(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> None:
+def run_gpu_selection_test(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> None:
     try:
-        cpu_info = find_similar_cpu(input_data_1st_stage, input_data_2nd_stage)
-        print(json.dumps(cpu_info, indent=4, ensure_ascii=False))
+        gpu_info = find_similar_gpu(input_data_1st_stage, input_data_2nd_stage)
+        print(json.dumps(gpu_info, indent=4, ensure_ascii=False))
     except ValueError as e:
         print(f"Error: {e}")
 
@@ -148,4 +144,4 @@ if __name__ == "__main__":
         "dimm": "Оперативная память G.Skill Trident Z5 RGB [F5-7800J3646H16GX2-TZ5RK] 32 ГБ"
     }
 
-    run_cpu_selection_test(input_data_1st_stage, input_data_2nd_stage)
+    run_gpu_selection_test(input_data_1st_stage, input_data_2nd_stage)

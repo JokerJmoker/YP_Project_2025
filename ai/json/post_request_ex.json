@@ -13,32 +13,24 @@
     },
     "budget": {
       "amount": "150000 - int (passed)",
-      "budget_allocation_method": "priority_based/percentage_based/fixed_price_based - string (passed)"
+      "budget_allocation_method": "percentage_based/fixed_price_based - string (passed)"
     },
     "components": {
       "mandatory": {
         "cpu": "any/custom_value - string (passed)",
         "gpu": "any/custom_value - string (passed)",
         "dimm": "any/custom_value - string (passed)",
-        "ssd": "any/custom_value - string (passed)",
+        "ssd_m2": "any/custom_value - string (passed)",
         "motherboard": "any/custom_value - string (passed)",
         "power_supply": "any/custom_value - string (passed)"
       },
       "mandatory_allocation": {
-        "method": "priority_based/percentage_based/fixed_price_based - string (passed)",
-        "priority_based": {
-          "cpu_priority": "High/Medium/Low - string (passed)",
-          "gpu_priority": "High/Medium/Low - string (passed)",
-          "dimm_priority": "High/Medium/Low - string (passed)",
-          "ssd_priority": "High/Medium/Low - string (passed)",
-          "motherboard_priority": "High/Medium/Low - string (passed)",
-          "power_supply_priority": "High/Medium/Low - string (passed)"
-        },
+        "method": "percentage_based/fixed_price_based - string (passed)",
         "percentage_based": {
           "cpu_percentage": "10-50% - int (passed)",
           "gpu_percentage": "20-60% - int (passed)",
           "dimm_percentage": "5-15% - int (passed)",
-          "ssd_percentage": "5-15% - int (passed)",
+          "ssd_m2_percentage": "5-15% - int (passed)",
           "motherboard_percentage": "5-15% - int (passed)",
           "power_supply_percentage": "5-10% - int (passed)"
         },
@@ -46,7 +38,7 @@
           "cpu_max_price": "10000-75000 - int (passed)",
           "gpu_max_price": "20000-100000 - int (passed)",
           "dimm_max_price": "3000-20000 - int (passed)",
-          "ssd_max_price": "3000-20000 - int (passed)",
+          "ssd_m2_max_price": "3000-20000 - int (passed)",
           "motherboard_max_price": "5000-30000 - int (passed)",
           "power_supply_max_price": "5000-15000 - int (passed)"
         }
@@ -57,12 +49,7 @@
         "cpu_cooler": "any/included_with_cpu/custom_value - string (passed)"
       },
       "optional_allocation": {
-        "method": "priority_based/percentage_based/fixed_price_based - string (passed)",
-        "priority_based": {
-          "cooling_priority": "High/Medium/Low - string (passed)",
-          "pc_case_priority": "High/Medium/Low - string (passed)",
-          "cpu_cooler_priority": "High/Medium/Low - string (passed)"
-        },
+        "method": "percentage_based/fixed_price_based - string (passed)",
         "percentage_based": {
           "cooling_percentage": "3-10% - int (passed)",
           "pc_case_percentage": "3-10% - int (passed)",

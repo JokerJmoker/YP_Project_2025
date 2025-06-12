@@ -4,19 +4,15 @@ import sys
 import os
 import json
 
-# Добавляем корневой путь проекта в sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from ai.ai_db.database import Database
 from ai.models.components.cpu import CpuModel
+from ai.models.components.dimm import DimmModel
 
 
 def get_cpu_model_by_name(cpu_name: str) -> CpuModel:
-    query = """
-        SELECT * FROM pc_components.cpu 
-        WHERE name = %s
-        LIMIT 1
-    """
+    query = "SELECT * FROM pc_components.cpu WHERE name = %s LIMIT 1"
     with Database() as conn:
         with conn.cursor(cursor_factory=DictCursor) as cursor:
             cursor.execute(query, (cpu_name,))
@@ -26,55 +22,88 @@ def get_cpu_model_by_name(cpu_name: str) -> CpuModel:
             return CpuModel.from_orm(result)
 
 
-def find_similar_cpu(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> Dict[str, Any]:
+def get_dimm_model_by_name(dimm_name: str) -> DimmModel:
+    query = "SELECT * FROM pc_components.dimm WHERE name = %s LIMIT 1"
+    with Database() as conn:
+        with conn.cursor(cursor_factory=DictCursor) as cursor:
+            cursor.execute(query, (dimm_name,))
+            result = cursor.fetchone()
+            if not result:
+                raise ValueError(f"DIMM '{dimm_name}' not found in database")
+            return DimmModel.from_orm(result)
+
+
+def find_similar_dimm(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> Dict[str, Any]:
     user_request = input_data_2nd_stage["user_request"]
     method = user_request["allocations"]["mandatory"]["method"]
 
     if method == "fixed_price_based":
-        max_price = user_request["allocations"]["mandatory"][method]["cpu_max_price"]
+        max_price = user_request["allocations"]["mandatory"][method]["dimm_max_price"]
     elif method == "percentage_based":
         total_budget = user_request["budget"]["amount"]
-        cpu_percentage = user_request["allocations"]["mandatory"][method]["cpu_percentage"]
-        max_price = round((cpu_percentage / 100) * total_budget)
+        dimm_percentage = user_request["allocations"]["mandatory"][method]["dimm_percentage"]
+        max_price = round((dimm_percentage / 100) * total_budget)
     else:
         raise ValueError(f"Unsupported allocation method: {method}")
 
-    included_with_cpu = user_request["components"]["optional"].get("cpu_cooler") == "included_with_cpu"
-
-    cpu_name_from_2nd = user_request["components"]["mandatory"]["cpu"]
-    if cpu_name_from_2nd == "any":
-        cpu_name = input_data_1st_stage.get("cpu")
-        if not cpu_name:
-            raise ValueError("CPU name not specified in input_data_1st_stage")
+    dimm_name_from_2nd = user_request["components"]["mandatory"]["dimm"]
+    if dimm_name_from_2nd == "any":
+        dimm_name = input_data_1st_stage.get("dimm")
+        if not dimm_name:
+            raise ValueError("DIMM name not specified in input_data_1st_stage")
     else:
-        cpu_name = cpu_name_from_2nd
+        dimm_name = dimm_name_from_2nd
 
-    original_cpu = get_cpu_model_by_name(cpu_name)
-    target_benchmark = original_cpu.benchmark_rate
+    cpu_name = input_data_1st_stage.get("cpu") or user_request["components"]["mandatory"]["cpu"]
+    if not cpu_name or cpu_name == "any":
+        raise ValueError("CPU name must be specified to determine DIMM compatibility")
 
-    suffix = "BOX" if included_with_cpu else "OEM"
+    cpu = get_cpu_model_by_name(cpu_name)
+    original_dimm = get_dimm_model_by_name(dimm_name)
 
+    # Совместимые параметры
+    target_memory_type = cpu.memory_type
+    target_memory_frequency = cpu.memory_frequency
+    target_channels = cpu.memory_channels
+    target_ecc = original_dimm.ecc if hasattr(original_dimm, "ecc") else False
+    target_registered = original_dimm.registered if hasattr(original_dimm, "registered") else False
+
+    # Основные параметры выбора: совместимость + параметры оригинала
     query = """
-        SELECT * FROM pc_components.cpu 
-        WHERE price <= %s AND name ILIKE %s
-        ORDER BY ABS(benchmark_rate - %s), price ASC
+        SELECT * FROM pc_components.dimm
+        WHERE price <= %s
+          AND memory_type = %s
+          AND frequency BETWEEN %s AND %s
+          AND modules_count = %s
+          AND ecc = %s
+          AND registered = %s
+        ORDER BY ABS(frequency - %s), price ASC
         LIMIT 1
     """
 
     with Database() as conn:
         with conn.cursor(cursor_factory=DictCursor) as cursor:
-            cursor.execute(query, (max_price, f"%{suffix}%", target_benchmark))
+            cursor.execute(query, (
+                max_price,
+                target_memory_type,
+                original_dimm.frequency * 0.9,
+                original_dimm.frequency * 1.1,
+                target_channels,
+                target_ecc,
+                target_registered,
+                original_dimm.frequency
+            ))
             result = cursor.fetchone()
             if not result:
-                raise ValueError("No similar CPU found within budget and criteria")
-            similar_cpu = CpuModel.from_orm(result)
-            return similar_cpu.model_dump()
+                raise ValueError("No similar DIMM found within budget and compatibility criteria")
+            similar_dimm = DimmModel.from_orm(result)
+            return similar_dimm.model_dump()
 
 
-def run_cpu_selection_test(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> None:
+def run_dimm_selection_test(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> None:
     try:
-        cpu_info = find_similar_cpu(input_data_1st_stage, input_data_2nd_stage)
-        print(json.dumps(cpu_info, indent=4, ensure_ascii=False))
+        dimm_info = find_similar_dimm(input_data_1st_stage, input_data_2nd_stage)
+        print(json.dumps(dimm_info, indent=4, ensure_ascii=False))
     except ValueError as e:
         print(f"Error: {e}")
 
@@ -102,9 +131,9 @@ if __name__ == "__main__":
             },
             "components": {
                 "mandatory": {
-                    "cpu": "any",
+                    "cpu": "Процессор Intel Core i7-14700K OEM",
                     "gpu": "any",
-                    "dimm": "any",
+                    "dimm": "Оперативная память G.Skill Trident Z5 RGB [F5-7800J3646H16GX2-TZ5RK] 32 ГБ",
                     "ssd": "any",
                     "motherboard": "any",
                     "power_supply": "any"
@@ -148,4 +177,4 @@ if __name__ == "__main__":
         "dimm": "Оперативная память G.Skill Trident Z5 RGB [F5-7800J3646H16GX2-TZ5RK] 32 ГБ"
     }
 
-    run_cpu_selection_test(input_data_1st_stage, input_data_2nd_stage)
+    run_dimm_selection_test(input_data_1st_stage, input_data_2nd_stage)

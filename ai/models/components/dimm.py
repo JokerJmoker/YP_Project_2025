@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from parsers import parse_float, parse_int, parse_bool
+from .parsers import parse_float, parse_int, parse_bool
 
 
 class DimmModel(BaseModel):
@@ -11,9 +11,9 @@ class DimmModel(BaseModel):
     # Critical compatibility parameters
     memory_type: str                   # DDR4, DDR5, etc.
     module_type: str                   # DIMM, SODIMM
-    total_memory: int                  # Total capacity in GB
-    modules_count: int                 # Number of modules in kit
-    frequency: int                     # Speed in MHz
+    total_memory: Optional[int] = None
+    modules_count: Optional[int] = None
+    frequency: Optional[int] = None
     ecc_memory: bool                   # ECC support
     registered_memory: bool            # Registered/buffered memory
 
@@ -35,23 +35,23 @@ class DimmModel(BaseModel):
     @classmethod
     def from_orm(cls, dimm_orm):
         return cls(
-            id=dimm_orm.id,
-            name=dimm_orm.name,
-            price=int(dimm_orm.price.replace(' ', '').replace('₽', '')) if dimm_orm.price else 0,
-            memory_type=dimm_orm.memory_type,
-            module_type=dimm_orm.module_type,
-            total_memory=parse_int(dimm_orm.total_memory.replace('GB', '').strip()) if dimm_orm.total_memory else 0,
-            modules_count=parse_int(dimm_orm.modules_count),
-            frequency=parse_int(dimm_orm.frequency.replace('MHz', '').strip()) if dimm_orm.frequency else 0,
-            ecc_memory=parse_bool(dimm_orm.ecc_memory),
-            registered_memory=parse_bool(dimm_orm.registered_memory),
-            cas_latency=parse_int(dimm_orm.cas_latency),
-            ras_to_cas_delay=parse_int(dimm_orm.ras_to_cas_delay),
-            row_precharge_delay=parse_int(dimm_orm.row_precharge_delay),
-            activate_to_precharge_delay=parse_int(dimm_orm.activate_to_precharge_delay),
-            voltage=parse_float(dimm_orm.voltage.replace('V', '').strip()) if dimm_orm.voltage else None,
-            intel_xmp=dimm_orm.intel_xmp,
-            amd_expo=dimm_orm.amd_expo,
-            height=parse_int(dimm_orm.height.replace('mm', '').strip()) if dimm_orm.height else None,
-            low_profile=parse_bool(dimm_orm.low_profile)
+            id=dimm_orm['id'],
+            name=dimm_orm['name'],
+            price=int(dimm_orm['price']),
+            memory_type=dimm_orm['memory_type'],
+            module_type=dimm_orm['module_type'],
+            total_memory=parse_int(dimm_orm.get('total_memory', '').replace('ГБ', '').strip()) or None,
+            modules_count=parse_int(dimm_orm.get('modules_count', '').replace('шт', '').strip()) or None,
+            frequency=parse_int(dimm_orm.get('frequency', '').replace('МГц', '').strip()) or None,
+            ecc_memory=parse_bool(dimm_orm.get('ecc_memory')),
+            registered_memory=parse_bool(dimm_orm.get('registered_memory')),
+            cas_latency=parse_int(dimm_orm.get('cas_latency')),
+            ras_to_cas_delay=parse_int(dimm_orm.get('ras_to_cas_delay')),
+            row_precharge_delay=parse_int(dimm_orm.get('row_precharge_delay')),
+            activate_to_precharge_delay=parse_int(dimm_orm.get('activate_to_precharge_delay')),
+            voltage=parse_float(dimm_orm.get('voltage', '').replace('В', '').strip()) if dimm_orm.get('voltage') else None,
+            intel_xmp=dimm_orm.get('intel_xmp'),
+            amd_expo=dimm_orm.get('amd_expo'),
+            height=parse_int(dimm_orm.get('height', '').replace('мм', '').strip()) or None,
+            low_profile=parse_bool(dimm_orm.get('low_profile'))
         )
