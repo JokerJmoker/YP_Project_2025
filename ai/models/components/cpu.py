@@ -47,7 +47,7 @@ class CpuModel(BaseModel):
         return cls(
             id=cpu_orm['id'],
             name=cpu_orm['name'],
-            price=int(cpu_orm['price'].replace(' ', '').replace('₽', '')) if cpu_orm['price'] else 0,
+            price=int(cpu_orm['price']),
             socket=cpu_orm['socket'],
             tdp=parse_int(cpu_orm['tdp']),
             base_tdp=parse_int(cpu_orm['base_tdp']),

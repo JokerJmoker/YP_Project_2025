@@ -13,7 +13,6 @@
     },
     "budget": {
       "amount": "150000 - int (passed)",
-      "currency": "RUB - string (passed)",
       "budget_allocation_method": "priority_based/percentage_based/fixed_price_based - string (passed)"
     },
     "components": {

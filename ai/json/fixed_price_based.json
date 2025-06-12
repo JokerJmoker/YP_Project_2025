@@ -13,7 +13,6 @@
     },
     "budget": {
       "amount": 200000,
-      "currency": "RUB",
       "budget_allocation_method": "fixed_price_based"
     },
     "components": {

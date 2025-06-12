@@ -36,7 +36,6 @@ def parse_budget_settings(budget_data):
     """Парсим бюджет и метод распределения"""
     result = {
         "amount": int(budget_data.get("amount", 0)),
-        "currency": budget_data.get("currency", "RUB").upper(),
         "allocation_method": budget_data.get("budget_allocation_method", "priority_based").lower()
     }
     return result

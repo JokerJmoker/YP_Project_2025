@@ -13,7 +13,6 @@
     },
     "budget": {
       "amount": 150000,
-      "currency": "RUB",
       "budget_allocation_method": "priority_based"
     },
     "components": {
