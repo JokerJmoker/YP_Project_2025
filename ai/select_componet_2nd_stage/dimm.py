@@ -33,7 +33,13 @@ def get_dimm_model_by_name(dimm_name: str) -> DimmModel:
             return DimmModel.from_orm(result)
 
 
-def find_similar_dimm(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> Dict[str, Any]:
+from ai.models.components.cpu import CpuModel
+
+def find_similar_dimm(
+    input_data_1st_stage: Dict[str, Any],
+    input_data_2nd_stage: Dict[str, Any],
+    chosen_cpu: Dict[str, Any]  # ранее подобранный CPU, на основе которого выбираем DIMM
+) -> Dict[str, Any]:
     user_request = input_data_2nd_stage["user_request"]
     method = user_request["allocations"]["mandatory"]["method"]
 
@@ -53,12 +59,10 @@ def find_similar_dimm(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage
     if not dimm_name:
         raise ValueError("DIMM name not specified")
 
-    cpu_name = input_data_1st_stage.get("cpu") or user_request["components"]["mandatory"]["cpu"]
-    if not cpu_name or cpu_name == "any":
-        raise ValueError("CPU name must be specified")
-
-    cpu = get_cpu_model_by_name(cpu_name)
     original_dimm = get_dimm_model_by_name(dimm_name)
+
+    # Используем параметры из выбранного CPU
+    cpu = CpuModel(**chosen_cpu)
 
     memory_types = [mt.strip() for mt in cpu.memory_type.split(",")]
     memory_types.reverse()  # предпочтение DDR5
@@ -121,13 +125,16 @@ def find_similar_dimm(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage
     raise ValueError(f"No similar DIMM found for memory types: {memory_types} within budget and compatibility criteria")
 
         
-def run_dimm_selection_test(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> None:
+def run_dimm_selection_test(
+    input_data_1st_stage: Dict[str, Any],
+    input_data_2nd_stage: Dict[str, Any],
+    chosen_cpu: Dict[str, Any]
+) -> None:
     try:
-        dimm_info = find_similar_dimm(input_data_1st_stage, input_data_2nd_stage)
+        dimm_info = find_similar_dimm(input_data_1st_stage, input_data_2nd_stage, chosen_cpu)
         print(json.dumps(dimm_info, indent=4, ensure_ascii=False))
     except ValueError as e:
         print(f"Error: {e}")
-
 
 # Пример вызова
 if __name__ == "__main__":
@@ -198,4 +205,30 @@ if __name__ == "__main__":
         "dimm": "Оперативная память G.Skill Trident Z5 RGB [F5-7800J3646H16GX2-TZ5RK] 32 ГБ"
     }
 
-    run_dimm_selection_test(input_data_1st_stage, input_data_2nd_stage)
+    chosen_cpu = {
+    "id": 176,
+    "name": "Процессор Intel Core i7-14700KF BOX",
+    "price": 34999,
+    "socket": "LGA 1700",
+    "tdp": 253,
+    "base_tdp": 125,
+    "cooler_included": True,
+    "total_cores": 20,
+    "performance_cores": 8,
+    "efficiency_cores": 12,
+    "max_threads": 28,
+    "base_frequency": 3.4,
+    "turbo_frequency": 5.6,
+    "unlocked_multiplier": True,
+    "memory_type": "DDR4, DDR5",
+    "max_memory": 192,
+    "memory_channels": 2,
+    "memory_frequency": 5600,
+    "integrated_graphics": False,
+    "gpu_model": "",
+    "pci_express": "PCIe 5.0",
+    "pci_lanes": 20,
+    "benchmark_rate": 33.02
+    }
+
+#run_dimm_selection_test(input_data_1st_stage, input_data_2nd_stage, chosen_cpu)

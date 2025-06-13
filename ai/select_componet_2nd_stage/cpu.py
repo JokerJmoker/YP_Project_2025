@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from psycopg2.extras import DictCursor
 import sys
 import os
@@ -71,13 +71,14 @@ def find_similar_cpu(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage:
             return similar_cpu.model_dump()
 
 
-def run_cpu_selection_test(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> None:
+def run_cpu_selection_test(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     try:
         cpu_info = find_similar_cpu(input_data_1st_stage, input_data_2nd_stage)
         print(json.dumps(cpu_info, indent=4, ensure_ascii=False))
+        return cpu_info  
     except ValueError as e:
         print(f"Error: {e}")
-
+        return None  
 
 # Пример вызова
 if __name__ == "__main__":
