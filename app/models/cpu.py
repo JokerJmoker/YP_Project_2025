@@ -7,9 +7,8 @@ class Cpu(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False)
-    price = db.Column(db.String(50), nullable=False)
+    price = db.Column(db.Integer, nullable=False)
     image_url = db.Column(db.String(500), nullable=False)
-    image_path = db.Column(db.String(500), nullable=False)
     
     # Заводские данные
     warranty = db.Column(db.String(50))
@@ -69,3 +68,6 @@ class Cpu(db.Model):
     
     # Дата добавления
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Оценка бенчмарка    
+    benchmark_rate = db.Column(db.Float)

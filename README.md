@@ -31,4 +31,12 @@ ALTER USER jokerjmoker CREATEDB;
 
 GRANT ALL ON schema public TO jokerjmoker; ! важнейшая строка
 
+mydb=# CREATE SCHEMA IF NOT EXISTS pc_components;
+
 ------------------------------------------
+
+бд теперь project_db
+
+project_db=# GRANT USAGE ON SCHEMA pc_components TO jokerjmoker;
+
+project_db=# GRANT SELECT ON ALL TABLES IN SCHEMA pc_components TO jokerjmoker;

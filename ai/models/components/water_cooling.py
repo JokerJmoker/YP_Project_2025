@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from utils.parsers import parse_bool, parse_int, parse_float
+from parsers import parse_bool, parse_int, parse_float
 
 
 class WaterCoolingModel(BaseModel):

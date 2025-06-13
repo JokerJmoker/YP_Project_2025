@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from utils.parsers import parse_bool  # для булевых, если нужно
+from .parsers import parse_bool  # для булевых, если нужно
 
 class SsdModel(BaseModel):
     id: int

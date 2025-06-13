@@ -16,3 +16,8 @@ class Config(object):
     SECRET_KEY = 'hihihihihahahahah'
     SQLALCHEMY_TRACK_MODIFICATIONS = 'True'
     
+class DevelopmentConfig(Config):
+    USE_MIGRATIONS = False  # Использует create_all()
+
+class ProductionConfig(Config):
+    USE_MIGRATIONS = True   # Полагается на миграции
