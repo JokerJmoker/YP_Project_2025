@@ -23,7 +23,7 @@ def get_recommended_config(conn, game_info, quality):
         
             # Безопасный SQL-запрос с указанием схемы и таблицы
             query = """
-                SELECT cpu, gpu, ssd, dimm
+                SELECT cpu, gpu, _m2, dimm
                 FROM games.{}
                 WHERE quality = %s
                 LIMIT 1
@@ -40,7 +40,7 @@ def get_recommended_config(conn, game_info, quality):
             "quality": quality,
             "cpu": result[0],
             "gpu": result[1],
-            "ssd": result[2],
+            "ssd_m2": result[2],
             "dimm": result[3]
         }
         

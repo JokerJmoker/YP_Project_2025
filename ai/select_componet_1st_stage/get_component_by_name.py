@@ -81,6 +81,6 @@ if __name__ == "__main__":
 
     # Можно поочерёдно вызвать для любого ключа:
     process_component_lookup(input_data_1st_stage, "cpu")
-    process_component_lookup(input_data_1st_stage, "gpu")
-    process_component_lookup(input_data_1st_stage, "ssd_m2")
+    #process_component_lookup(input_data_1st_stage, "gpu")
+    #process_component_lookup(input_data_1st_stage, "ssd_m2")
     process_component_lookup(input_data_1st_stage, "dimm")

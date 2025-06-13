@@ -101,7 +101,7 @@ if __name__ == "__main__":
                     "cpu": "any",
                     "gpu": "any",
                     "dimm": "any",
-                    "ssd": "any",
+                    "ssd_m2": "any",
                     "motherboard": "any",
                     "power_supply": "any"
                 },
@@ -140,7 +140,7 @@ if __name__ == "__main__":
         "quality": "ultra",
         "cpu": "Процессор Intel Core i7-14700K OEM",
         "gpu": "Видеокарта GIGABYTE GeForce RTX 4080 SUPER GAMING OC [GV-N408SGAMING OC-16GD]",
-        "ssd": "2000 ГБ M.2 NVMe накопитель WD Black SN770 [WDS200T3X0E]",
+        "ssd_m2": "2000 ГБ M.2 NVMe накопитель WD Black SN770 [WDS200T3X0E]",
         "dimm": "Оперативная память G.Skill Trident Z5 RGB [F5-7800J3646H16GX2-TZ5RK] 32 ГБ"
     }
 

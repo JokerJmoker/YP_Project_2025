@@ -78,7 +78,7 @@ def find_similar_dimm(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage
 
     query = """
         WITH parsed_dimm AS (
-            SELECT *,
+            SELECT * ,
                 NULLIF(REGEXP_REPLACE(frequency, '[^0-9]', '', 'g'), '')::INTEGER AS parsed_frequency,
                 NULLIF(REGEXP_REPLACE(modules_count, '[^0-9]', '', 'g'), '')::INTEGER AS parsed_modules_count,
                 NULLIF(REGEXP_REPLACE(total_memory, '[^0-9]', '', 'g'), '')::INTEGER AS parsed_total_memory
@@ -92,8 +92,6 @@ def find_similar_dimm(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage
         AND parsed_total_memory = %s
         AND ecc_memory = %s
         AND registered_memory = %s
-        ORDER BY price DESC
-        LIMIT 1
     """
 
     query_params_template = (
@@ -109,16 +107,48 @@ def find_similar_dimm(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage
 
     with Database() as conn:
         with conn.cursor(cursor_factory=DictCursor) as cursor:
+            candidates = []
             for mem_type in memory_types:
                 params = list(query_params_template)
                 params[1] = mem_type
                 cursor.execute(query, params)
-                result = cursor.fetchone()
-                if result:
-                    similar_dimm = DimmModel.from_orm(result)
-                    return similar_dimm.model_dump()
+                rows = cursor.fetchall()
+                for row in rows:
+                    candidates.append(DimmModel.from_orm(row))
 
-    raise ValueError(f"No similar DIMM found for memory types: {memory_types} within budget and compatibility criteria")
+    if not candidates:
+        raise ValueError(f"No similar DIMM found for memory types: {memory_types} within budget and compatibility criteria")
+
+    # Функция оценки "близости" DIMM к оригинальному с усиленным весом для частоты
+    def dimm_score(dimm: DimmModel):
+        score = 0
+        # Разница частот с весом 20 (чем меньше разница, тем лучше — меньше score)
+        freq_diff = abs((dimm.frequency or 0) - (original_dimm.frequency or 0))
+        score += freq_diff * 20
+
+        # Разница по общему объему памяти (умножаем на 10, чтобы чуть больше значило)
+        try:
+            candidate_mem = int("".join(filter(str.isdigit, str(dimm.total_memory)))) if dimm.total_memory else 0
+            original_mem = int("".join(filter(str.isdigit, str(original_dimm.total_memory)))) if original_dimm.total_memory else 0
+            score += abs(candidate_mem - original_mem) * 10
+        except Exception:
+            pass
+
+        # Штрафы за несовпадения
+        if dimm.ecc_memory != original_dimm.ecc_memory:
+            score += 100000
+        if dimm.registered_memory != original_dimm.registered_memory:
+            score += 100000
+        if dimm.modules_count != original_dimm.modules_count:
+            score += 50000
+
+        # Цена — чем дешевле, тем лучше (вычитаем, чтобы уменьшить score)
+        score -= dimm.price / 1000
+
+        return score
+
+    best_dimm = min(candidates, key=dimm_score)
+    return best_dimm.model_dump()
 
         
 def run_dimm_selection_test(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> None:
@@ -155,7 +185,7 @@ if __name__ == "__main__":
                     "cpu": "Процессор Intel Core i7-14700K OEM",
                     "gpu": "any",
                     "dimm": "Оперативная память G.Skill Trident Z5 RGB [F5-7800J3646H16GX2-TZ5RK] 32 ГБ",
-                    "ssd_m2": "any",
+                    "ssd": "any",
                     "motherboard": "any",
                     "power_supply": "any"
                 },
@@ -194,7 +224,7 @@ if __name__ == "__main__":
         "quality": "ultra",
         "cpu": "Процессор Intel Core i7-14700K OEM",
         "gpu": "Видеокарта GIGABYTE GeForce RTX 4080 SUPER GAMING OC [GV-N408SGAMING OC-16GD]",
-        "ssd_m2": "2000 ГБ M.2 NVMe накопитель WD Black SN770 [WDS200T3X0E]",
+        "ssd": "2000 ГБ M.2 NVMe накопитель WD Black SN770 [WDS200T3X0E]",
         "dimm": "Оперативная память G.Skill Trident Z5 RGB [F5-7800J3646H16GX2-TZ5RK] 32 ГБ"
     }
 
