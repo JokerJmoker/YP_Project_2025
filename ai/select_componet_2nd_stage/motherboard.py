@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from psycopg2.extras import DictCursor
 import sys
 import os
@@ -99,11 +99,55 @@ def check_m2_slot(slots_info: str, form_factor: str, ssd_interface: str) -> bool
     return False
 
 def find_compatible_motherboard(
-    cpu_data: Dict[str, Any], 
+    input_data_2nd_stage: Dict[str, Any],
+    cpu_data: Dict[str, Any],
     gpu_data: Dict[str, Any],
     dimm_data: Dict[str, Any],
     ssd_m2_data: Dict[str, Any]
 ) -> Dict[str, Any]:
+    """
+    Find compatible motherboard based on components and budget allocation.
+    
+    Args:
+        input_data_1st_stage: First stage input data containing component info
+        input_data_2nd_stage: Second stage input data with user preferences
+        cpu_data: Selected CPU data
+        gpu_data: Selected GPU data
+        dimm_data: Selected RAM data
+        ssd_m2_data: Selected SSD data
+        
+    Returns:
+        Dictionary with compatible motherboard info
+    """
+    user_request = input_data_2nd_stage["user_request"]
+    method = user_request["allocations"]["mandatory"]["method"]
+
+    # Calculate max price based on allocation method
+    if method == "fixed_price_based":
+        max_price = user_request["allocations"]["mandatory"][method]["motherboard_max_price"]
+    elif method == "percentage_based":
+        total_budget = user_request["budget"]["amount"]
+        mb_percentage = user_request["allocations"]["mandatory"][method]["motherboard_percentage"]
+        max_price = round((mb_percentage / 100) * total_budget)
+    else:
+        raise ValueError(f"Unsupported allocation method: {method}")
+
+    # Get motherboard preference (if specified)
+    mb_preference = user_request["components"]["mandatory"]["motherboard"]
+    if mb_preference != "any":
+        # If specific motherboard is requested, try to find exact match
+        with Database() as conn:
+            with conn.cursor(cursor_factory=DictCursor) as cursor:
+                cursor.execute(
+                    "SELECT * FROM pc_components.motherboard WHERE name ILIKE %s AND price <= %s",
+                    (f"%{mb_preference}%", max_price)
+                )
+                result = cursor.fetchone()
+                if result:
+                    return MotherboardModel.from_orm(result).model_dump()
+                # If exact match not found, continue with compatibility check
+
+    # Proceed with compatibility-based selection
     socket = cpu_data.get("socket", "").strip()
     cpu_pcie_str = cpu_data.get("pci_express", "")
     required_cpu_pcie_version = extract_pcie_version(cpu_pcie_str)
@@ -118,11 +162,18 @@ def find_compatible_motherboard(
     dimm_freq = dimm_data["frequency"]
 
     query = """
-        SELECT * FROM pc_components.motherboard
+        SELECT *, 
+               pcie_version as pcie_version,
+               nvme_pcie_version as nvme_pcie_version,
+               m2_cpu_slots as m2_cpu_slots,
+               m2_chipset_slots as m2_chipset_slots,
+               pcie_x16_slots as pcie_x16_slots
+        FROM pc_components.motherboard
         WHERE socket = %(socket)s
         AND memory_type = %(memory_type)s
         AND COALESCE(CAST(NULLIF(REGEXP_REPLACE(memory_slots, '[^0-9]', '', 'g'), '') AS INTEGER), 0) >= %(modules_count)s
         AND COALESCE(CAST(NULLIF(REGEXP_REPLACE(max_memory, '[^0-9]', '', 'g'), '') AS INTEGER), 0) >= %(total_memory)s
+        AND price <= %(max_price)s
     """
 
     with Database() as conn:
@@ -131,12 +182,13 @@ def find_compatible_motherboard(
                 "socket": socket,
                 "memory_type": dimm_memory_type,
                 "modules_count": dimm_modules_count,
-                "total_memory": dimm_total_memory
+                "total_memory": dimm_total_memory,
+                "max_price": max_price
             })
             results = cursor.fetchall()
             
             if not results:
-                raise ValueError(f"Не найдено плат с сокетом '{socket}' и поддержкой RAM")
+                raise ValueError(f"No motherboards found with socket '{socket}', RAM support, and within budget")
 
             compatible = []
             for row in results:
@@ -160,8 +212,12 @@ def find_compatible_motherboard(
                     compatible.append(row)
 
             if not compatible:
-                raise ValueError("Нет полностью совместимых плат с заданными компонентами")
+                raise ValueError("No fully compatible motherboards found with the given components and budget")
 
+            # Select best match considering:
+            # 1. Highest PCIe version
+            # 2. Most power phases
+            # 3. Lowest price (within same feature tier)
             best_match = max(
                 compatible,
                 key=lambda x: (
@@ -172,19 +228,79 @@ def find_compatible_motherboard(
             )
             
             return MotherboardModel.from_orm(best_match).model_dump()
-            
+    
 def run_motherboard_selection_test(
+    input_data_2nd_stage: Dict[str, Any],
     cpu_data: Dict[str, Any], 
     gpu_data: Dict[str, Any],
     dimm_data: Dict[str, Any],
     ssd_m2_data: Dict[str, Any]
-) -> None:
+)  -> Optional[Dict[str, Any]]:
     try:
-        motherboard_info = find_compatible_motherboard(cpu_data, gpu_data, dimm_data, ssd_m2_data)
+        motherboard_info = find_compatible_motherboard(input_data_2nd_stage, cpu_data, gpu_data, dimm_data, ssd_m2_data)
         print("Найдена совместимая материнская плата:")
         print(json.dumps(motherboard_info, indent=4, ensure_ascii=False))
+        return motherboard_info
     except ValueError as e:
         print(f"Ошибка: {e}")
+
+input_data_2nd_stage = {
+        "status": "success",
+        "message": "Данные пользователя успешно разобраны.",
+        "user_request": {
+            "game": {
+                "title": "cyberpunk_2077",
+                "graphics": {
+                    "quality": "high",
+                    "target_fps": 240,
+                    "resolution": "1080",
+                    "ray_tracing": False,
+                    "dlss": "disabled",
+                    "fsr": "disabled"
+                }
+            },
+            "budget": {
+                "amount": 120000,
+                "allocation_method": "percentage_based"
+            },
+            "components": {
+                "mandatory": {
+                    "cpu": "any",
+                    "gpu": "any",
+                    "dimm": "any",
+                    "ssd_m2": "any",
+                    "motherboard": "any",
+                    "power_supply": "any"
+                },
+                "optional": {
+                    "cooling": "water_cooling",
+                    "pc_case": "small_size",
+                    "cpu_cooler": "any"
+                }
+            },
+            "allocations": {
+                "mandatory": {
+                    "method": "percentage_based",
+                    "percentage_based": {
+                        "cpu_percentage": 25,
+                        "gpu_percentage": 40,
+                        "dimm_percentage": 10,
+                        "ssd_percentage": 8,
+                        "motherboard_percentage": 50,
+                        "power_supply_percentage": 5
+                    }
+                },
+                "optional": {
+                    "method": "percentage_based",
+                    "percentage_based": {
+                        "cooling_percentage": 3,
+                        "pc_case_percentage": 1,
+                        "cpu_cooler_percentage": 1
+                    }
+                }
+            }
+        }
+    }
 
 chosen_cpu = {
     "id": 176,
@@ -287,4 +403,4 @@ chosen_dimm = {
 
 
 # Пример запуска:
-run_motherboard_selection_test(cpu_data=chosen_cpu, gpu_data=chosen_gpu, dimm_data=chosen_dimm, ssd_m2_data=chosen_ssd_m2)
+run_motherboard_selection_test(input_data_2nd_stage,cpu_data=chosen_cpu, gpu_data=chosen_gpu, dimm_data=chosen_dimm, ssd_m2_data=chosen_ssd_m2)

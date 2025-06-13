@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from psycopg2.extras import DictCursor
 import sys
 import os
@@ -129,10 +129,11 @@ def run_dimm_selection_test(
     input_data_1st_stage: Dict[str, Any],
     input_data_2nd_stage: Dict[str, Any],
     chosen_cpu: Dict[str, Any]
-) -> None:
+)  -> Optional[Dict[str, Any]]:
     try:
         dimm_info = find_similar_dimm(input_data_1st_stage, input_data_2nd_stage, chosen_cpu)
         print(json.dumps(dimm_info, indent=4, ensure_ascii=False))
+        return dimm_info
     except ValueError as e:
         print(f"Error: {e}")
 

@@ -8,6 +8,7 @@ from select_componet_2nd_stage.cpu import run_cpu_selection_test
 from select_componet_2nd_stage.gpu import run_gpu_selection_test
 from select_componet_2nd_stage.ssd_m2 import run_ssd_m2_selection_test
 from select_componet_2nd_stage.dimm import run_dimm_selection_test 
+from select_componet_2nd_stage.motherboard import run_motherboard_selection_test
 def main():
     file_path = select_json_file()
     if not file_path:
@@ -38,11 +39,13 @@ def main():
 
         chosen_cpu = run_cpu_selection_test(result_1st_stage,result_2nd_stage,chosen_gpu)
 
-        run_ssd_m2_selection_test(result_1st_stage,result_2nd_stage)
+        chosen_ssd_m2 = run_ssd_m2_selection_test(result_1st_stage,result_2nd_stage)
         
         # dimm зависит от cpu
-        run_dimm_selection_test(result_1st_stage, result_2nd_stage, chosen_cpu)
+        chosen_dimm = run_dimm_selection_test(result_1st_stage, result_2nd_stage, chosen_cpu)
         
+        # материнская плата зависит от всех предыдущих компонентов 
         
+        chosen_motherboard = run_motherboard_selection_test(result_2nd_stage,chosen_cpu,chosen_gpu,chosen_dimm,chosen_ssd_m2)
 if __name__ == "__main__":
     main()
