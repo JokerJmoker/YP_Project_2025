@@ -32,9 +32,12 @@ def main():
         result_2nd_stage = get_propriate_components(conn, data)
         print(json.dumps(result_2nd_stage, indent=2, ensure_ascii=False))
         
-        # поиск совместимого компонента 2nd_stage (cpu gpu и ssd_m2 не зависят друг от друга) --> запрос на основе эталонной сборки
-        chosen_cpu = run_cpu_selection_test(result_1st_stage,result_2nd_stage)
-        run_gpu_selection_test(result_1st_stage,result_2nd_stage)
+        # поиск совместимого компонента 2nd_stage (cpu зависит от gpu , ssd_m2 сам по себе) --> запрос на основе эталонной сборки
+
+        chosen_gpu = run_gpu_selection_test(result_1st_stage,result_2nd_stage)
+
+        chosen_cpu = run_cpu_selection_test(result_1st_stage,result_2nd_stage,chosen_gpu)
+
         run_ssd_m2_selection_test(result_1st_stage,result_2nd_stage)
         
         # dimm зависит от cpu

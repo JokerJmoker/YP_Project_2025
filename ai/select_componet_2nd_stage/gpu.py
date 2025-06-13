@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from psycopg2.extras import DictCursor
 import sys
 import os
@@ -67,10 +67,11 @@ def find_similar_gpu(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage:
             return similar_gpu.model_dump()
 
 
-def run_gpu_selection_test(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> None:
+def run_gpu_selection_test(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     try:
         gpu_info = find_similar_gpu(input_data_1st_stage, input_data_2nd_stage)
         print(json.dumps(gpu_info, indent=4, ensure_ascii=False))
+        return gpu_info
     except ValueError as e:
         print(f"Error: {e}")
 

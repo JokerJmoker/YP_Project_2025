@@ -25,8 +25,11 @@ def get_cpu_model_by_name(cpu_name: str) -> CpuModel:
                 raise ValueError(f"CPU '{cpu_name}' not found in database")
             return CpuModel.from_orm(result)
 
-
-def find_similar_cpu(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> Dict[str, Any]:
+def find_similar_cpu(
+    input_data_1st_stage: Dict[str, Any], 
+    input_data_2nd_stage: Dict[str, Any], 
+    gpu_data: Dict[str, Any]  # Добавлен параметр с данными GPU
+) -> Dict[str, Any]:
     user_request = input_data_2nd_stage["user_request"]
     method = user_request["allocations"]["mandatory"]["method"]
 
@@ -54,31 +57,42 @@ def find_similar_cpu(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage:
 
     suffix = "BOX" if included_with_cpu else "OEM"
 
+    # Берём версию PCIe из gpu_data
+    gpu_pcie_version = gpu_data.get("interface")
+    if not gpu_pcie_version:
+        raise ValueError("GPU PCIe interface version not specified")
+
     query = """
-        SELECT * FROM pc_components.cpu 
-        WHERE price <= %s AND name ILIKE %s
+        SELECT * FROM pc_components.cpu
+        WHERE price <= %s
+          AND name ILIKE %s
+          AND pci_express >= %s  -- Предполагаем, что у CPU есть поле pcie_version для сравнения
         ORDER BY ABS(benchmark_rate - %s), price DESC
         LIMIT 1
     """
 
     with Database() as conn:
         with conn.cursor(cursor_factory=DictCursor) as cursor:
-            cursor.execute(query, (max_price, f"%{suffix}%", target_benchmark))
+            cursor.execute(query, (max_price, f"%{suffix}%", gpu_pcie_version, target_benchmark))
             result = cursor.fetchone()
             if not result:
-                raise ValueError("No similar CPU found within budget and criteria")
+                raise ValueError("No similar CPU found within budget, criteria and PCIe version")
             similar_cpu = CpuModel.from_orm(result)
             return similar_cpu.model_dump()
 
 
-def run_cpu_selection_test(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+def run_cpu_selection_test(
+    input_data_1st_stage: Dict[str, Any], 
+    input_data_2nd_stage: Dict[str, Any], 
+    gpu_data: Dict[str, Any]
+) -> Optional[Dict[str, Any]]:
     try:
-        cpu_info = find_similar_cpu(input_data_1st_stage, input_data_2nd_stage)
+        cpu_info = find_similar_cpu(input_data_1st_stage, input_data_2nd_stage, gpu_data)
         print(json.dumps(cpu_info, indent=4, ensure_ascii=False))
         return cpu_info  
     except ValueError as e:
         print(f"Error: {e}")
-        return None  
+        return None
 
 # Пример вызова
 if __name__ == "__main__":
@@ -149,4 +163,32 @@ if __name__ == "__main__":
         "dimm": "Оперативная память G.Skill Trident Z5 RGB [F5-7800J3646H16GX2-TZ5RK] 32 ГБ"
     }
 
-    run_cpu_selection_test(input_data_1st_stage, input_data_2nd_stage)
+    chosen_gpu = {
+    "id": 191,
+    "name": "Видеокарта ASRock AMD Radeon RX 7700 XT Challenger OC [RX7700XT CL 12GO]",
+    "price": 44999,
+    "interface": "PCIe 4.0",
+    "slot_width": "PCIe x16",
+    "low_profile": False,
+    "slots": "2.5",
+    "length": 266,
+    "width": 130,
+    "thickness": 51,
+    "tdp": 12,
+    "power_connectors": "2 x 8 pin",
+    "recommended_psu": 750,
+    "gpu_model": "Radeon RX 7700 XT",
+    "architecture": "AMD RDNA 3",
+    "vram_size": 12,
+    "vram_type": "GDDR6",
+    "bus_width": 192,
+    "base_clock": 1900,
+    "boost_clock": 2584,
+    "cuda_cores": 3456,
+    "ray_tracing": True,
+    "tensor_cores": 0,
+    "video_outputs": "3 x DisplayPort, HDMI",
+    "max_resolution": "7680x4320 (8K Ultra HD)",
+    "benchmark_rate": 55.64
+}
+    run_cpu_selection_test(input_data_1st_stage, input_data_2nd_stage, chosen_gpu)
