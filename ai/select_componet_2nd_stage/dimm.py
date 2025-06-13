@@ -61,45 +61,71 @@ def find_similar_dimm(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage
     cpu = get_cpu_model_by_name(cpu_name)
     original_dimm = get_dimm_model_by_name(dimm_name)
 
-    # Совместимые параметры
-    target_memory_type = cpu.memory_type
-    target_memory_frequency = cpu.memory_frequency
-    target_channels = cpu.memory_channels
-    target_ecc = original_dimm.ecc if hasattr(original_dimm, "ecc") else False
-    target_registered = original_dimm.registered if hasattr(original_dimm, "registered") else False
+    # Парсим типы памяти из cpu.memory_type, убираем пробелы, получаем список
+    memory_types = [mt.strip() for mt in cpu.memory_type.split(",")]
+    memory_types.reverse()  # теперь будет DDR5, DDR4, если было DDR4, DDR5
 
-    # Основные параметры выбора: совместимость + параметры оригинала
+
+    target_channels = cpu.memory_channels
+    target_ecc = original_dimm.ecc_memory
+    target_registered = original_dimm.registered_memory
+    total_memory_value = original_dimm.total_memory
+    if isinstance(total_memory_value, str):
+        target_total_memory = int(''.join(filter(str.isdigit, total_memory_value)))
+    else:
+        target_total_memory = total_memory_value
+
+    # Частота для диапазона
+    target_freq = original_dimm.frequency
+    min_freq = int(target_freq * 0.9)
+    max_freq = int(target_freq * 1.1)
+
     query = """
-        SELECT * FROM pc_components.dimm
+        WITH parsed_dimm AS (
+            SELECT * ,
+                NULLIF(REGEXP_REPLACE(frequency, '[^0-9]', '', 'g'), '')::INTEGER AS parsed_frequency,
+                NULLIF(REGEXP_REPLACE(modules_count, '[^0-9]', '', 'g'), '')::INTEGER AS parsed_modules_count,
+                NULLIF(REGEXP_REPLACE(total_memory, '[^0-9]', '', 'g'), '')::INTEGER AS parsed_total_memory
+            FROM pc_components.dimm
+        )
+        SELECT * FROM parsed_dimm
         WHERE price <= %s
-          AND memory_type = %s
-          AND frequency BETWEEN %s AND %s
-          AND modules_count = %s
-          AND ecc = %s
-          AND registered = %s
-        ORDER BY ABS(frequency - %s), price ASC
+        AND memory_type = %s
+        AND parsed_frequency BETWEEN %s AND %s
+        AND parsed_modules_count = %s
+        AND parsed_total_memory = %s
+        AND ecc_memory = %s
+        AND registered_memory = %s
+        ORDER BY ABS(parsed_frequency - %s), price ASC
         LIMIT 1
     """
 
+    query_params_template = (
+        max_price,
+        None,  # memory_type — будет подставлено в цикле
+        min_freq,
+        max_freq,
+        target_channels,
+        target_total_memory,
+        target_ecc,
+        target_registered,
+        target_freq
+    )
+
     with Database() as conn:
         with conn.cursor(cursor_factory=DictCursor) as cursor:
-            cursor.execute(query, (
-                max_price,
-                target_memory_type,
-                original_dimm.frequency * 0.9,
-                original_dimm.frequency * 1.1,
-                target_channels,
-                target_ecc,
-                target_registered,
-                original_dimm.frequency
-            ))
-            result = cursor.fetchone()
-            if not result:
-                raise ValueError("No similar DIMM found within budget and compatibility criteria")
-            similar_dimm = DimmModel.from_orm(result)
-            return similar_dimm.model_dump()
+            for mem_type in memory_types:
+                params = list(query_params_template)
+                params[1] = mem_type
+                cursor.execute(query, params)
+                result = cursor.fetchone()
+                if result:
+                    similar_dimm = DimmModel.from_orm(result)
+                    return similar_dimm.model_dump()
 
+    raise ValueError(f"No similar DIMM found for memory types: {memory_types} within budget and compatibility criteria")
 
+        
 def run_dimm_selection_test(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> None:
     try:
         dimm_info = find_similar_dimm(input_data_1st_stage, input_data_2nd_stage)
@@ -150,7 +176,7 @@ if __name__ == "__main__":
                     "percentage_based": {
                         "cpu_percentage": 25,
                         "gpu_percentage": 40,
-                        "dimm_percentage": 10,
+                        "dimm_percentage": 100,
                         "ssd_percentage": 8,
                         "motherboard_percentage": 7,
                         "power_supply_percentage": 5
