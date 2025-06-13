@@ -3,48 +3,24 @@ from psycopg2.extras import DictCursor
 import sys
 import os
 import json
-# Добавляем корневой путь проекта в sys.path
+import re
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from ai.ai_db.database import Database
 from ai.models.components.motherboard import MotherboardModel
-import re
-
 
 def extract_pcie_version(interface_str: str) -> float:
-    """
-    Извлекает версию PCIe из строки, например 'PCIe 5.0' -> 5.0
-    Если не удаётся определить, возвращает 0.0
-    """
     match = re.search(r'PCIe\s*(\d+(\.\d+)?)', interface_str, re.IGNORECASE)
-    if match:
-        return float(match.group(1))
-    return 0.0
+    return float(match.group(1)) if match else 0.0
 
 def extract_highest_pcie_version(slots_description: str) -> float:
-    """
-    Извлекает максимальную версию PCIe из строки с описанием слотов.
-    Пример: "1 x PCIe 3.0 (x4), 1 x PCIe 5.0 (x16)" -> 5.0
-    """
-    if not slots_description:
-        return 0.0
-    
-    matches = re.findall(r'PCIe\s*(\d+\.\d+)', slots_description, re.IGNORECASE)
-    if not matches:
-        return 0.0
-    
-    versions = [float(ver) for ver in matches]
-    return max(versions)
-
-def extract_highest_pcie_version(slots_description: str) -> float:
-    """Извлекает максимальную версию PCIe из описания слотов"""
     if not slots_description:
         return 0.0
     matches = re.findall(r'PCIe\s*(\d+\.\d+)', slots_description, re.IGNORECASE)
     return max(float(ver) for ver in matches) if matches else 0.0
 
 def parse_power_phases(phases_str: str) -> int:
-    """Преобразует строку фаз питания в число (например '7+1+1' -> 7)"""
     if not phases_str:
         return 0
     try:
@@ -53,7 +29,6 @@ def parse_power_phases(phases_str: str) -> int:
         return 0
 
 def extract_number(value: Any) -> int:
-    """Извлекает число из строки (например '64 ГБ' -> 64)"""
     if isinstance(value, int):
         return value
     if not value:
@@ -65,35 +40,45 @@ def extract_number(value: Any) -> int:
         return 0
 
 def check_memory_compatibility(dimm: Dict[str, Any], mb: Dict[str, Any]) -> bool:
-    """Проверяет совместимость оперативной памяти с материнской платой"""
-    # Проверка типа памяти
     if dimm["memory_type"] != mb["memory_type"]:
         return False
-    
-    # Проверка количества слотов
     if dimm["modules_count"] > extract_number(mb["memory_slots"]):
         return False
-    
-    # Проверка максимального объема
     if extract_number(dimm["total_memory"]) > extract_number(mb["max_memory"]):
         return False
     
-    # Проверка поддерживаемых частот
     base_freq = extract_number(mb["base_memory_frequency"])
     oc_freqs = [extract_number(f) for f in mb["oc_memory_frequency"].split(",")] if mb["oc_memory_frequency"] else []
     max_supported_freq = max([base_freq] + oc_freqs)
     
-    if extract_number(dimm["frequency"]) > max_supported_freq:
-        return False
-    
-    return True
+    return extract_number(dimm["frequency"]) <= max_supported_freq
 
-def check_m2_slot(slots_info: str, required_pcie: float, form_factor: str, ssd_m2_interface: str) -> bool:
-    """Проверяет конкретный слот M.2 на совместимость"""
+def check_ssd_m2_compatibility(ssd_data: Dict[str, Any], mb: Dict[str, Any]) -> bool:
+    ssd_interface = ssd_data.get("interface", "")
+    ssd_form_factor = ssd_data.get("form_factor", "")
+    ssd_pcie_version = extract_pcie_version(ssd_interface)
+    
+    if ssd_pcie_version > 0:
+        mb_pcie_version = extract_pcie_version(mb.get("nvme_pcie_version", ""))
+        if mb_pcie_version == 0.0:
+            mb_pcie_version = max(
+                extract_pcie_version(mb.get("m2_cpu_slots", "")),
+                extract_pcie_version(mb.get("m2_chipset_slots", ""))
+            )
+        if mb_pcie_version > 0 and ssd_pcie_version > mb_pcie_version:
+            return False
+    
+    if check_m2_slot(mb.get("m2_cpu_slots", ""), ssd_form_factor, ssd_interface):
+        return True
+    if check_m2_slot(mb.get("m2_chipset_slots", ""), ssd_form_factor, ssd_interface):
+        return True
+    
+    return False
+
+def check_m2_slot(slots_info: str, form_factor: str, ssd_interface: str) -> bool:
     if not slots_info or not form_factor:
         return False
     
-    # Ищем все слоты в описании
     slot_matches = re.finditer(
         r'(\d+)\s*x\s*(\d{4}(?:\/\d{4})*)\s*\((.*?)\)', 
         slots_info
@@ -103,37 +88,13 @@ def check_m2_slot(slots_info: str, required_pcie: float, form_factor: str, ssd_m
         supported_sizes = match.group(2).split('/')
         slot_desc = match.group(3)
         
-        # Проверяем форм-фактор
         if form_factor not in supported_sizes:
             continue
             
-        # Проверяем PCIe версию
-        if "PCIe" in slot_desc:
-            slot_pcie = extract_pcie_version(slot_desc)
-            if slot_pcie >= required_pcie:
-                return True
-        elif "SATA" in slot_desc and "PCIe" not in ssd_m2_interface:
+        if "PCIe" in ssd_interface and "PCIe" in slot_desc:
             return True
-            
-    return False
-
-def check_ssd_m2_compatibility(ssd_m2_data: Dict[str, Any], mb: Dict[str, Any]) -> bool:
-    """Проверяет совместимость SSD M.2 с материнской платой"""
-    ssd_m2_interface = ssd_m2_data.get("interface", "")
-    ssd_m2_form_factor = ssd_m2_data.get("form_factor", "")
-    
-    # Извлекаем версию PCIe из SSD
-    ssd_m2_pcie_version = extract_pcie_version(ssd_m2_interface)
-    
-    # Проверяем слоты CPU
-    cpu_slots = mb.get("m2_cpu_slots", "")
-    if check_m2_slot(cpu_slots, ssd_m2_pcie_version, ssd_m2_form_factor, ssd_m2_interface):
-        return True
-    
-    # Проверяем слоты чипсета
-    chipset_slots = mb.get("m2_chipset_slots", "")
-    if check_m2_slot(chipset_slots, ssd_m2_pcie_version, ssd_m2_form_factor, ssd_m2_interface):
-        return True
+        if "SATA" in ssd_interface and "SATA" in slot_desc:
+            return True
     
     return False
 
@@ -151,7 +112,6 @@ def find_compatible_motherboard(
     gpu_slot_width = gpu_data.get("slot_width", "")
     required_gpu_pcie_version = extract_pcie_version(gpu_interface)
 
-    # Преобразуем параметры памяти
     dimm_memory_type = dimm_data["memory_type"]
     dimm_modules_count = dimm_data["modules_count"]
     dimm_total_memory = extract_number(dimm_data["total_memory"])
@@ -180,16 +140,13 @@ def find_compatible_motherboard(
 
             compatible = []
             for row in results:
-                # Проверка CPU
                 max_pcie_version = extract_highest_pcie_version(row.get("pcie_x16_slots", ""))
                 cpu_ok = max_pcie_version >= required_cpu_pcie_version
                 
-                # Проверка GPU
                 gpu_ok = False
                 if gpu_slot_width == "PCIe x16":
                     gpu_ok = "x16" in row.get("pcie_x16_slots", "").lower()
                 
-                # Проверка RAM (частота)
                 ram_ok = True
                 if "base_memory_frequency" in row and "oc_memory_frequency" in row:
                     base_freq = extract_number(row["base_memory_frequency"])
@@ -197,24 +154,14 @@ def find_compatible_motherboard(
                     max_supported_freq = max([base_freq] + oc_freqs)
                     ram_ok = dimm_freq <= max_supported_freq
                 
-                # Проверка SSD
                 ssd_m2_ok = check_ssd_m2_compatibility(ssd_m2_data, row)
                 
                 if cpu_ok and gpu_ok and ram_ok and ssd_m2_ok:
                     compatible.append(row)
 
             if not compatible:
-                raise ValueError(
-                    f"Нет полностью совместимых плат с сокетом '{socket}'\n"
-                    f"Требования:\n"
-                    f"- PCIe CPU ≥ {required_cpu_pcie_version}\n"
-                    f"- Слот PCIe x16 для GPU\n"
-                    f"- Память: {dimm_memory_type} {dimm_total_memory}ГБ "
-                    f"(x{dimm_modules_count}) @ {dimm_freq}МГц\n"
-                    f"- M.2 {ssd_m2_data['form_factor']} PCIe {extract_pcie_version(ssd_m2_data['interface'])}"
-                )
+                raise ValueError("Нет полностью совместимых плат с заданными компонентами")
 
-            # Выбираем лучшую плату
             best_match = max(
                 compatible,
                 key=lambda x: (
@@ -225,7 +172,7 @@ def find_compatible_motherboard(
             )
             
             return MotherboardModel.from_orm(best_match).model_dump()
-        
+            
 def run_motherboard_selection_test(
     cpu_data: Dict[str, Any], 
     gpu_data: Dict[str, Any],
