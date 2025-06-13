@@ -53,7 +53,7 @@ def find_similar_gpu(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage:
     query = """
         SELECT * FROM pc_components.gpu 
         WHERE price <= %s
-        ORDER BY ABS(benchmark_rate - %s), price ASC
+        ORDER BY ABS(benchmark_rate - %s), price DESC
         LIMIT 1
     """
 

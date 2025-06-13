@@ -47,42 +47,38 @@ def find_similar_dimm(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage
         raise ValueError(f"Unsupported allocation method: {method}")
 
     dimm_name_from_2nd = user_request["components"]["mandatory"]["dimm"]
-    if dimm_name_from_2nd == "any":
-        dimm_name = input_data_1st_stage.get("dimm")
-        if not dimm_name:
-            raise ValueError("DIMM name not specified in input_data_1st_stage")
-    else:
-        dimm_name = dimm_name_from_2nd
+    dimm_name = (
+        input_data_1st_stage.get("dimm") if dimm_name_from_2nd == "any" else dimm_name_from_2nd
+    )
+    if not dimm_name:
+        raise ValueError("DIMM name not specified")
 
     cpu_name = input_data_1st_stage.get("cpu") or user_request["components"]["mandatory"]["cpu"]
     if not cpu_name or cpu_name == "any":
-        raise ValueError("CPU name must be specified to determine DIMM compatibility")
+        raise ValueError("CPU name must be specified")
 
     cpu = get_cpu_model_by_name(cpu_name)
     original_dimm = get_dimm_model_by_name(dimm_name)
 
-    # Парсим типы памяти из cpu.memory_type, убираем пробелы, получаем список
     memory_types = [mt.strip() for mt in cpu.memory_type.split(",")]
-    memory_types.reverse()  # теперь будет DDR5, DDR4, если было DDR4, DDR5
-
+    memory_types.reverse()  # предпочтение DDR5
 
     target_channels = cpu.memory_channels
     target_ecc = original_dimm.ecc_memory
     target_registered = original_dimm.registered_memory
-    total_memory_value = original_dimm.total_memory
-    if isinstance(total_memory_value, str):
-        target_total_memory = int(''.join(filter(str.isdigit, total_memory_value)))
-    else:
-        target_total_memory = total_memory_value
 
-    # Частота для диапазона
+    total_memory_value = original_dimm.total_memory
+    target_total_memory = (
+        int("".join(filter(str.isdigit, total_memory_value))) if isinstance(total_memory_value, str) else total_memory_value
+    )
+
     target_freq = original_dimm.frequency
     min_freq = int(target_freq * 0.9)
     max_freq = int(target_freq * 1.1)
 
     query = """
         WITH parsed_dimm AS (
-            SELECT * ,
+            SELECT *,
                 NULLIF(REGEXP_REPLACE(frequency, '[^0-9]', '', 'g'), '')::INTEGER AS parsed_frequency,
                 NULLIF(REGEXP_REPLACE(modules_count, '[^0-9]', '', 'g'), '')::INTEGER AS parsed_modules_count,
                 NULLIF(REGEXP_REPLACE(total_memory, '[^0-9]', '', 'g'), '')::INTEGER AS parsed_total_memory
@@ -96,20 +92,19 @@ def find_similar_dimm(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage
         AND parsed_total_memory = %s
         AND ecc_memory = %s
         AND registered_memory = %s
-        ORDER BY ABS(parsed_frequency - %s), price ASC
+        ORDER BY price DESC
         LIMIT 1
     """
 
     query_params_template = (
         max_price,
-        None,  # memory_type — будет подставлено в цикле
+        None,  # memory_type
         min_freq,
         max_freq,
         target_channels,
         target_total_memory,
         target_ecc,
-        target_registered,
-        target_freq
+        target_registered
     )
 
     with Database() as conn:
@@ -176,7 +171,7 @@ if __name__ == "__main__":
                     "percentage_based": {
                         "cpu_percentage": 25,
                         "gpu_percentage": 40,
-                        "dimm_percentage": 100,
+                        "dimm_percentage": 20,
                         "ssd_percentage": 8,
                         "motherboard_percentage": 7,
                         "power_supply_percentage": 5

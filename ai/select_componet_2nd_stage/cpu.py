@@ -57,7 +57,7 @@ def find_similar_cpu(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage:
     query = """
         SELECT * FROM pc_components.cpu 
         WHERE price <= %s AND name ILIKE %s
-        ORDER BY ABS(benchmark_rate - %s), price ASC
+        ORDER BY ABS(benchmark_rate - %s), price DESC
         LIMIT 1
     """
 
