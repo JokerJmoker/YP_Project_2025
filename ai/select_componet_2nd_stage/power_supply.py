@@ -108,50 +108,51 @@ def find_similar_power_supply(
     chosen_motherboard: Dict[str, Any]
 ) -> Optional[Dict[str, Any]]:
     """
-    Улучшенный подбор блока питания с учетом:
-    - класса видеокарты
-    - близости к заданной цене
-    - требуемой мощности с запасом
-    - форм-фактора
+    Подбор блока питания с учётом:
+    - Если у GPU tdp None, используем recommended_psu без суммирования с CPU.
+    - Иначе суммируем tdp CPU + tdp GPU с запасом.
+    - Оптимизация по цене и форм-фактору.
     """
     try:
-        # 1. Рассчитываем бюджет
         user_request = input_data_2nd_stage["user_request"]
         method = user_request["allocations"]["mandatory"]["method"]
-        
+
         if method == "fixed_price_based":
             max_price = user_request["allocations"]["mandatory"][method]["power_supply_max_price"]
-            target_price = max_price * 0.9  # Стремимся к 90% от максимального бюджета
+            target_price = max_price * 0.9
         elif method == "percentage_based":
             total_budget = user_request["budget"]["amount"]
             ps_percentage = user_request["allocations"]["mandatory"][method]["power_supply_percentage"]
             max_price = round((ps_percentage / 100) * total_budget)
-            target_price = max_price * 0.85  # Оптимальная цель - 85% от выделенного бюджета
+            target_price = max_price * 0.85
         else:
             raise ValueError(f"Unsupported allocation method: {method}")
 
-        # 2. Рассчитываем мощность с запасом
-        cpu_power = max(chosen_cpu.get("tdp", 0), chosen_cpu.get("base_tdp", 0))
-        gpu_power = chosen_gpu.get("tdp") or chosen_gpu.get("recommended_psu", 0)
-        
-        power_multiplier = 1.3 if chosen_gpu.get("tdp", 0) >= 250 else 1.2
-        required_wattage = (cpu_power + gpu_power) * power_multiplier
-        
-        # Ближайшая стандартная мощность
-        standard_wattages = [550, 650, 750, 850, 1000, 1200, 1600]
-        required_wattage = min(w for w in standard_wattages if w >= required_wattage)
+        cpu_power = max(chosen_cpu.get("tdp", 0) or 0, chosen_cpu.get("base_tdp", 0) or 0)
 
-        # 3. Определяем форм-фактор
+        gpu_tdp = chosen_gpu.get("tdp")
+        recommended_psu_wattage = chosen_gpu.get("recommended_psu")
+
+        # Если tdp у GPU None, то используем recommended_psu как требуемую мощность (без сложения с CPU)
+        if gpu_tdp is None:
+            required_wattage = recommended_psu_wattage or 550  # запас по умолчанию, если None
+        else:
+            # Иначе суммируем tdp CPU + GPU
+            gpu_power = gpu_tdp
+            power_multiplier = 1.3 if gpu_power >= 250 else 1.2
+            required_wattage = (cpu_power + gpu_power) * power_multiplier
+
+        # Округляем к ближайшему стандартному значению из списка
+        standard_wattages = [550, 650, 750, 850, 1000, 1200, 1600]
+        required_wattage = min((w for w in standard_wattages if w >= required_wattage), default=1600)
+
         mb_form_factor = chosen_motherboard.get("form_factor", "Standard-ATX")
         psu_form_factor = map_motherboard_to_psu_form_factor(mb_form_factor)
 
-        # 4. Получаем рекомендуемый стандарт
         recommended_cert = get_recommended_certification(chosen_gpu)
 
-        # 5. Ищем блок питания с оптимизацией по цене
         with Database() as conn:
             with conn.cursor(cursor_factory=DictCursor) as cursor:
-                # Основной запрос с приоритетом по близости к целевой цене
                 cursor.execute("""
                     SELECT *,
                         ABS(price - %s) AS price_diff,
@@ -176,11 +177,9 @@ def find_similar_power_supply(
                 """, (target_price, recommended_cert, required_wattage, psu_form_factor, max_price))
                 
                 result = cursor.fetchone()
-                
                 if result:
                     return dict(result)
-                
-                # Fallback 1: пробуем ATX если не нашли в нужном форм-факторе
+
                 if psu_form_factor != "ATX":
                     cursor.execute("""
                         SELECT *,
@@ -204,12 +203,10 @@ def find_similar_power_supply(
                             wattage DESC
                         LIMIT 1
                     """, (target_price, recommended_cert, required_wattage, max_price))
-                    
                     result = cursor.fetchone()
                     if result:
                         return dict(result)
-                
-                # Fallback 2: пробуем найти любой подходящий по мощности и цене
+
                 cursor.execute("""
                     SELECT *,
                         ABS(price - %s) AS price_diff
@@ -221,15 +218,13 @@ def find_similar_power_supply(
                         wattage DESC
                     LIMIT 1
                 """, (target_price, required_wattage, max_price))
-                
                 result = cursor.fetchone()
                 if result:
                     return dict(result)
-        
-        return None
 
+        return None
     except Exception as e:
-        print(f"Error in find_similar_power_supply: {e}")
+        logger.error(f"Error in find_similar_power_supply: {e}", exc_info=True)
         return None
     
 def run_power_supply_selection_test(
@@ -293,17 +288,17 @@ if __name__ == "__main__":
         "game": {
         "title": "cyberpunk_2077",
         "graphics": {
-            "quality": "ultra",
-            "target_fps": 60,
-            "resolution": "2160",
+            "quality": "high",
+            "target_fps": 240,
+            "resolution": "1080",
             "ray_tracing": False,
-            "dlss": "performance",
+            "dlss": "disabled",
             "fsr": "disabled"
         }
         },
         "budget": {
-        "amount": 200000,
-        "allocation_method": "fixed_price_based"
+        "amount": 120000,
+        "allocation_method": "percentage_based"
         },
         "components": {
         "mandatory": {
@@ -315,29 +310,29 @@ if __name__ == "__main__":
             "power_supply": "any"
         },
         "optional": {
-            "cooling": "any",
-            "pc_case": "normal_size",
-            "cpu_cooler": "included_with_cpu"
+            "cooling": "water_cooling",
+            "pc_case": "small_size",
+            "cpu_cooler": "any"
         }
         },
         "allocations": {
         "mandatory": {
-            "method": "fixed_price_based",
-            "fixed_price_based": {
-            "cpu_max_price": 40000,
-            "gpu_max_price": 120000,
-            "dimm_max_price": 15000,
-            "ssd_m2_max_price": 12000,
-            "motherboard_max_price": 20000,
-            "power_supply_max_price": 15000
+            "method": "percentage_based",
+            "percentage_based": {
+            "cpu_percentage": 25,
+            "gpu_percentage": 40,
+            "dimm_percentage": 40,
+            "ssd_m2_percentage": 15,
+            "motherboard_percentage": 20,
+            "power_supply_percentage": 15
             }
         },
         "optional": {
-            "method": "fixed_price_based",
-            "fixed_price_based": {
-            "cooling_max_price": 10000,
-            "pc_case_max_price": 8000,
-            "cpu_cooler_max_price": 0
+            "method": "percentage_based",
+            "percentage_based": {
+            "cooling_percentage": 3,
+            "pc_case_percentage": 1,
+            "cpu_cooler_percentage": 1
             }
         }
         }
@@ -345,105 +340,105 @@ if __name__ == "__main__":
     }
 
     chosen_cpu = {
-        "id": 176,
-        "name": "Процессор Intel Core i7-14700KF BOX",
-        "price": 34999,
-        "socket": "LGA 1700",
-        "tdp": 253,
-        "base_tdp": 125,
-        "cooler_included": True,
-        "total_cores": 20,
-        "performance_cores": 8,
-        "efficiency_cores": 12,
-        "max_threads": 28,
-        "base_frequency": 3.4,
-        "turbo_frequency": 5.6,
-        "unlocked_multiplier": True,
-        "memory_type": "DDR4, DDR5",
-        "max_memory": 192,
-        "memory_channels": 2,
-        "memory_frequency": 5600,
-        "integrated_graphics": False,
-        "gpu_model": "",
-        "pci_express": "PCIe 5.0",
-        "pci_lanes": 20,
-        "benchmark_rate": 33.02
+    "id": 113,
+    "name": "Процессор AMD Ryzen 5 7600X OEM",
+    "price": 16799,
+    "socket": "AM5",
+    "tdp": 105,
+    "base_tdp": 105,
+    "cooler_included": True,
+    "total_cores": 6,
+    "performance_cores": 6,
+    "efficiency_cores": 0,
+    "max_threads": 12,
+    "base_frequency": 4.7,
+    "turbo_frequency": 5.3,
+    "unlocked_multiplier": True,
+    "memory_type": "DDR5",
+    "max_memory": 128,
+    "memory_channels": 2,
+    "memory_frequency": 5200,
+    "integrated_graphics": True,
+    "gpu_model": "AMD Radeon Graphics",
+    "pci_express": "PCIe 5.0",
+    "pci_lanes": 24,
+    "benchmark_rate": 17.67
     }
     chosen_gpu = {
-        "id": 293,
-        "name": "Видеокарта KFA2 GeForce RTX 5070Ti ROCK(X) 3FAN RGB WHITE [57IZN6MDBVGK]",
-        "price": 99999,
-        "interface": "PCIe 5.0",
-        "slot_width": "PCIe x16",
-        "low_profile": False,
-        "slots": "2.5",
-        "length": 322,
-        "width": 130,
-        "thickness": 52,
-        "tdp": 300,
-        "power_connectors": "16 pin (12V-2x6)",
-        "recommended_psu": 750,
-        "gpu_model": "GeForce RTX 5070 Ti",
-        "architecture": "NVIDIA Blackwell",
-        "vram_size": 16,
-        "vram_type": "GDDR7",
-        "bus_width": 256,
-        "base_clock": 2295,
-        "boost_clock": 2512,
-        "cuda_cores": 8960,
-        "ray_tracing": True,
-        "tensor_cores": 2,
-        "video_outputs": "3 x DisplayPort, HDMI",
-        "max_resolution": "7680x4320 (8K Ultra HD)",
-        "benchmark_rate": 81.21
+    "id": 191,
+    "name": "Видеокарта ASRock AMD Radeon RX 7700 XT Challenger OC [RX7700XT CL 12GO]",
+    "price": 44999,
+    "interface": "PCIe 4.0",
+    "slot_width": "PCIe x16",
+    "low_profile": False,
+    "slots": "2.5",
+    "length": 266,
+    "width": 130,
+    "thickness": 51,
+    "tdp": None,
+    "power_connectors": "2 x 8 pin",
+    "recommended_psu": 750,
+    "gpu_model": "Radeon RX 7700 XT",
+    "architecture": "AMD RDNA 3",
+    "vram_size": 12,
+    "vram_type": "GDDR6",
+    "bus_width": 192,
+    "base_clock": 1900,
+    "boost_clock": 2584,
+    "cuda_cores": 3456,
+    "ray_tracing": True,
+    "tensor_cores": 0,
+    "video_outputs": "3 x DisplayPort, HDMI",
+    "max_resolution": "7680x4320 (8K Ultra HD)",
+    "benchmark_rate": 55.64
     }
 
     chosen_motherboard = {
-        "id": 472,
-        "name": "Материнская плата GIGABYTE Z790 AORUS MASTER X",
-        "price": 33999,
-        "socket": "LGA 1700",
-        "chipset": "Intel Z790",
-        "power_phases": 2012,
-        "form_factor": "E-ATX",
-        "height": 305,
-        "width": 260,
-        "memory_type": "DDR5",
-        "memory_slots": 4,
-        "memory_channels": 2,
-        "max_memory": 256,
-        "base_memory_freq": 4800,
-        "oc_memory_freq": [
-            5200,
-            5400,
-            5600,
-            5800,
-            6000,
-            6200,
-            6400,
-            6600,
-            6800,
-            7000,
-            7200,
-            7400
-        ],
-        "memory_form_factor": "DIMM",
-        "pcie_version": 0.0,
-        "pcie_x16_slots": 1,
-        "sli_crossfire": False,
-        "sli_crossfire_count": 2,
-        "nvme_support": True,
-        "nvme_pcie_version": 0.0,
-        "m2_slots": 5,
-        "sata_ports": 4,
-        "sata_raid": False,
-        "nvme_raid": False,
-        "cpu_fan_headers": 1414,
-        "aio_pump_headers": 4,
-        "case_fan_4pin": 4,
-        "case_fan_3pin": 0,
-        "main_power": "24 pin",
-        "cpu_power": "2 x 8 pin"
+    "id": 421,
+    "name": "Материнская плата MSI PRO X870-P WIFI",
+    "price": 22499,
+    "socket": "AM5",
+    "chipset": "",
+    "power_phases": 1421,
+    "form_factor": "Standard-ATX",
+    "height": 305,
+    "width": 244,
+    "memory_type": "DDR5",
+    "memory_slots": 4,
+    "memory_channels": 2,
+    "max_memory": 256,
+    "base_memory_freq": 5600,
+    "oc_memory_freq": [
+        5800,
+        6000,
+        6200,
+        6400,
+        6600,
+        6800,
+        7000,
+        7200,
+        7400,
+        7600,
+        7800,
+        8000
+    ],
+    "memory_form_factor": "DIMM",
+    "pcie_version": 0.0,
+    "pcie_x16_slots": 1,
+    "sli_crossfire": False,
+    "sli_crossfire_count": 0,
+    "nvme_support": True,
+    "nvme_pcie_version": 0.0,
+    "m2_slots": 3,
+    "sata_ports": 4,
+    "sata_raid": False,
+    "nvme_raid": False,
+    "cpu_fan_headers": 14,
+    "aio_pump_headers": 1,
+    "case_fan_4pin": 6,
+    "case_fan_3pin": 0,
+    "main_power": "24 pin",
+    "cpu_power": "2 x 8 pin"
     }
 
     run_power_supply_selection_test(input_data_2nd_stage, chosen_cpu, chosen_gpu, chosen_motherboard)
