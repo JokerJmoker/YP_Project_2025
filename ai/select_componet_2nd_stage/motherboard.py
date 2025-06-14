@@ -245,62 +245,62 @@ def run_motherboard_selection_test(
         print(f"Ошибка: {e}")
 
 input_data_2nd_stage = {
-        "status": "success",
-        "message": "Данные пользователя успешно разобраны.",
-        "user_request": {
-            "game": {
-                "title": "cyberpunk_2077",
-                "graphics": {
-                    "quality": "high",
-                    "target_fps": 240,
-                    "resolution": "1080",
-                    "ray_tracing": False,
-                    "dlss": "disabled",
-                    "fsr": "disabled"
-                }
-            },
-            "budget": {
-                "amount": 120000,
-                "allocation_method": "percentage_based"
-            },
-            "components": {
-                "mandatory": {
-                    "cpu": "any",
-                    "gpu": "any",
-                    "dimm": "any",
-                    "ssd_m2": "any",
-                    "motherboard": "any",
-                    "power_supply": "any"
-                },
-                "optional": {
-                    "cooling": "water_cooling",
-                    "pc_case": "small_size",
-                    "cpu_cooler": "any"
-                }
-            },
-            "allocations": {
-                "mandatory": {
-                    "method": "percentage_based",
-                    "percentage_based": {
-                        "cpu_percentage": 25,
-                        "gpu_percentage": 40,
-                        "dimm_percentage": 10,
-                        "ssd_percentage": 8,
-                        "motherboard_percentage": 50,
-                        "power_supply_percentage": 5
-                    }
-                },
-                "optional": {
-                    "method": "percentage_based",
-                    "percentage_based": {
-                        "cooling_percentage": 3,
-                        "pc_case_percentage": 1,
-                        "cpu_cooler_percentage": 1
-                    }
-                }
-            }
+  "status": "success",
+  "message": "Данные пользователя успешно разобраны.",
+  "user_request": {
+    "game": {
+      "title": "cyberpunk_2077",
+      "graphics": {
+        "quality": "ultra",
+        "target_fps": 60,
+        "resolution": "2160",
+        "ray_tracing": False,
+        "dlss": "performance",
+        "fsr": "disabled"
+      }
+    },
+    "budget": {
+      "amount": 200000,
+      "allocation_method": "fixed_price_based"
+    },
+    "components": {
+      "mandatory": {
+        "cpu": "any",
+        "gpu": "any",
+        "dimm": "any",
+        "ssd_m2": "any",
+        "motherboard": "any",
+        "power_supply": "any"
+      },
+      "optional": {
+        "cooling": "any",
+        "pc_case": "normal_size",
+        "cpu_cooler": "included_with_cpu"
+      }
+    },
+    "allocations": {
+      "mandatory": {
+        "method": "fixed_price_based",
+        "fixed_price_based": {
+          "cpu_max_price": 40000,
+          "gpu_max_price": 120000,
+          "dimm_max_price": 15000,
+          "ssd_m2_max_price": 12000,
+          "motherboard_max_price": 33000,
+          "power_supply_max_price": 15000
         }
+      },
+      "optional": {
+        "method": "fixed_price_based",
+        "fixed_price_based": {
+          "cooling_max_price": 10000,
+          "pc_case_max_price": 8000,
+          "cpu_cooler_max_price": 0
+        }
+      }
     }
+  }
+}
 
 chosen_cpu = {
     "id": 176,
