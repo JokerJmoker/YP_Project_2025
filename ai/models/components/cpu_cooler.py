@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from parsers import parse_float, parse_int
-
+from .parsers import parse_float, parse_int
 
 class CpuCoolerModel(BaseModel):
     id: int
@@ -9,7 +8,7 @@ class CpuCoolerModel(BaseModel):
     price: int  # в рублях
     
     # Основные параметры совместимости
-    socket: str                    # Сокет процессора (например, "LGA1700, AM5")
+    socket: str                    # Сокет процессора (например, "LGA1700", "AM5")
     tdp: Optional[int] = None      # Рассеиваемая мощность (Вт)
     type_: Optional[str] = None    # Тип кулера (башенный, низкопрофильный и т.д.)
     
@@ -29,19 +28,19 @@ class CpuCoolerModel(BaseModel):
     @classmethod
     def from_orm(cls, cooler_orm):
         return cls(
-            id=cooler_orm.id,
-            name=cooler_orm.name,
-            price=int(cooler_orm.price.replace(' ', '').replace('₽', '')) if cooler_orm.price else 0,
-            socket=cooler_orm.socket,
-            tdp=parse_int(cooler_orm.tdp),
-            type_=cooler_orm.type_,
-            fan_size=parse_int(cooler_orm.fan_size),
-            fan_count=parse_int(cooler_orm.fan_count),
-            max_rpm=parse_int(cooler_orm.max_rpm),
-            min_rpm=parse_int(cooler_orm.min_rpm),
-            max_noise_level=parse_float(cooler_orm.max_noise_level),
-            max_airflow=parse_float(cooler_orm.max_airflow),
-            height=parse_int(cooler_orm.height),
-            width=parse_int(cooler_orm.width),
-            depth=parse_int(cooler_orm.depth)
+            id=cooler_orm['id'],
+            name=cooler_orm['name'],
+            price=int(cooler_orm['price']),
+            socket=cooler_orm['socket'],
+            tdp=parse_int(cooler_orm['tdp']),
+            type_=cooler_orm['type'],
+            fan_size=parse_int(cooler_orm['fan_size']),
+            fan_count=parse_int(cooler_orm['fan_count']),
+            max_rpm=parse_int(cooler_orm['max_rpm']),
+            min_rpm=parse_int(cooler_orm['min_rpm']),
+            max_noise_level=parse_float(cooler_orm['max_noise_level']),
+            max_airflow=parse_float(cooler_orm['max_airflow']),
+            height=parse_int(cooler_orm['height']),
+            width=parse_int(cooler_orm['width']),
+            depth=parse_int(cooler_orm['depth'])
         )

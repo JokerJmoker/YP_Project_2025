@@ -10,6 +10,7 @@ from select_componet_2nd_stage.ssd_m2 import run_ssd_m2_selection_test
 from select_componet_2nd_stage.dimm import run_dimm_selection_test 
 from select_componet_2nd_stage.motherboard import run_motherboard_selection_test
 from select_componet_2nd_stage.power_supply import run_power_supply_selection_test
+from select_componet_2nd_stage.cpu_cooler import run_cpu_cooler_selection_test
 def main():
     file_path = select_json_file()
     if not file_path:
@@ -34,6 +35,8 @@ def main():
         # поиск совместимого компонента 2nd_stage (cpu зависит от gpu , ssd_m2 сам по себе) --> запрос на основе эталонной сборки
         chosen_gpu = run_gpu_selection_test(result_1st_stage,result_2nd_stage)
         chosen_cpu = run_cpu_selection_test(result_1st_stage,result_2nd_stage,chosen_gpu)
+        # не отходя от кассы для cpu выберем куллер, если надо
+        chosen_cpu_cooler = run_cpu_cooler_selection_test(result_2nd_stage, chosen_cpu)
         chosen_ssd_m2 = run_ssd_m2_selection_test(result_1st_stage,result_2nd_stage)
         # dimm зависит от cpu
         chosen_dimm = run_dimm_selection_test(result_1st_stage, result_2nd_stage, chosen_cpu)

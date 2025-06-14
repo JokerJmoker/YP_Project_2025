@@ -38,7 +38,7 @@
       "optional": {
         "cooling": "any",
         "pc_case": "normal_size",
-        "cpu_cooler": "included_with_cpu"
+        "cpu_cooler": "false"
       },
       "optional_allocation": {
         "method": "fixed_price_based",

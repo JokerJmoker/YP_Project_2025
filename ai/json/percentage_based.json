@@ -38,14 +38,14 @@
       "optional": {
         "cooling": "WATER_COOLING",
         "pc_case": "small_size",
-        "cpu_cooler": "any"
+        "cpu_cooler": "true"
       },
       "optional_allocation": {
         "method": "percentage_based",
         "percentage_based": {
           "cooling_percentage": 3,
           "pc_case_percentage": 1,
-          "cpu_cooler_percentage": 1
+          "cpu_cooler_percentage": 10
         }
       }
     }
