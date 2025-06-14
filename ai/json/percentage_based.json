@@ -43,8 +43,8 @@
       "optional_allocation": {
         "method": "percentage_based",
         "percentage_based": {
-          "case_fan_percentage": 3,
-          "pc_case_percentage": 1,
+          "case_fan_percentage": 10,
+          "pc_case_percentage": 10,
           "cpu_cooler_percentage": 10
         }
       }

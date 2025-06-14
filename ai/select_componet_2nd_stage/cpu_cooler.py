@@ -242,7 +242,7 @@ if __name__ == "__main__":
                 "optional": {
                     "cooling": "any",
                     "pc_case": "normal_size",
-                    "cpu_cooler": "air_cooler"
+                    "cpu_cooler": "water_cooling"
                 }
             },
             "allocations": {

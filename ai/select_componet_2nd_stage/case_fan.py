@@ -184,7 +184,7 @@ if __name__ == "__main__":
         "optional": {
             "method": "percentage_based",
             "percentage_based": {
-            "case_fan_percentage": 3,
+            "case_fan_percentage": 20,
             "pc_case_percentage": 1,
             "cpu_cooler_percentage": 1
             }
