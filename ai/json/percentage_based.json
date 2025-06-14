@@ -29,10 +29,10 @@
         "percentage_based": {
           "cpu_percentage": 25,
           "gpu_percentage": 40,
-          "dimm_percentage": 10,
-          "ssd_m2_percentage": 8,
-          "motherboard_percentage": 7,
-          "power_supply_percentage": 5
+          "dimm_percentage": 40,
+          "ssd_m2_percentage": 15,
+          "motherboard_percentage": 20,
+          "power_supply_percentage": 15
         }
       },
       "optional": {

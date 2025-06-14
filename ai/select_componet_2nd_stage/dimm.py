@@ -33,8 +33,6 @@ def get_dimm_model_by_name(dimm_name: str) -> DimmModel:
             return DimmModel.from_orm(result)
 
 
-from ai.models.components.cpu import CpuModel
-
 def find_similar_dimm(
     input_data_1st_stage: Dict[str, Any],
     input_data_2nd_stage: Dict[str, Any],
@@ -136,7 +134,7 @@ def run_dimm_selection_test(
         return dimm_info
     except ValueError as e:
         print(f"Error: {e}")
-
+        return None
 # Пример вызова
 if __name__ == "__main__":
     input_data_2nd_stage = {
@@ -207,29 +205,28 @@ if __name__ == "__main__":
     }
 
     chosen_cpu = {
-    "id": 176,
-    "name": "Процессор Intel Core i7-14700KF BOX",
-    "price": 34999,
-    "socket": "LGA 1700",
-    "tdp": 253,
-    "base_tdp": 125,
+    "id": 113,
+    "name": "Процессор AMD Ryzen 5 7600X OEM",
+    "price": 16799,
+    "socket": "AM5",
+    "tdp": 105,
+    "base_tdp": 105,
     "cooler_included": True,
-    "total_cores": 20,
-    "performance_cores": 8,
-    "efficiency_cores": 12,
-    "max_threads": 28,
-    "base_frequency": 3.4,
-    "turbo_frequency": 5.6,
+    "total_cores": 6,
+    "performance_cores": 6,
+    "efficiency_cores": 0,
+    "max_threads": 12,
+    "base_frequency": 4.7,
+    "turbo_frequency": 5.3,
     "unlocked_multiplier": True,
-    "memory_type": "DDR4, DDR5",
-    "max_memory": 192,
+    "memory_type": "DDR5",
+    "max_memory": 128,
     "memory_channels": 2,
-    "memory_frequency": 5600,
-    "integrated_graphics": False,
-    "gpu_model": "",
+    "memory_frequency": 5200,
+    "integrated_graphics": True,
+    "gpu_model": "AMD Radeon Graphics",
     "pci_express": "PCIe 5.0",
-    "pci_lanes": 20,
-    "benchmark_rate": 33.02
-    }
-
-#run_dimm_selection_test(input_data_1st_stage, input_data_2nd_stage, chosen_cpu)
+    "pci_lanes": 24,
+    "benchmark_rate": 17.67
+}
+    run_dimm_selection_test(input_data_1st_stage, input_data_2nd_stage, chosen_cpu)

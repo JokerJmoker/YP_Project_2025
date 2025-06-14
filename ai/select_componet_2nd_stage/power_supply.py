@@ -284,164 +284,166 @@ def run_power_supply_selection_test(
         print(f"Ошибка при подборе блока питания: {str(e)}")
         return None
 
-input_data_2nd_stage = {
-  "status": "success",
-  "message": "Данные пользователя успешно разобраны.",
-  "user_request": {
-    "game": {
-      "title": "cyberpunk_2077",
-      "graphics": {
-        "quality": "ultra",
-        "target_fps": 60,
-        "resolution": "2160",
-        "ray_tracing": False,
-        "dlss": "performance",
-        "fsr": "disabled"
-      }
-    },
-    "budget": {
-      "amount": 200000,
-      "allocation_method": "fixed_price_based"
-    },
-    "components": {
-      "mandatory": {
-        "cpu": "any",
-        "gpu": "any",
-        "dimm": "any",
-        "ssd_m2": "any",
-        "motherboard": "any",
-        "power_supply": "any"
-      },
-      "optional": {
-        "cooling": "any",
-        "pc_case": "normal_size",
-        "cpu_cooler": "included_with_cpu"
-      }
-    },
-    "allocations": {
-      "mandatory": {
-        "method": "fixed_price_based",
-        "fixed_price_based": {
-          "cpu_max_price": 40000,
-          "gpu_max_price": 120000,
-          "dimm_max_price": 15000,
-          "ssd_m2_max_price": 12000,
-          "motherboard_max_price": 20000,
-          "power_supply_max_price": 15000
+if __name__ == "__main__":
+    
+    input_data_2nd_stage = {
+    "status": "success",
+    "message": "Данные пользователя успешно разобраны.",
+    "user_request": {
+        "game": {
+        "title": "cyberpunk_2077",
+        "graphics": {
+            "quality": "ultra",
+            "target_fps": 60,
+            "resolution": "2160",
+            "ray_tracing": False,
+            "dlss": "performance",
+            "fsr": "disabled"
         }
-      },
-      "optional": {
-        "method": "fixed_price_based",
-        "fixed_price_based": {
-          "cooling_max_price": 10000,
-          "pc_case_max_price": 8000,
-          "cpu_cooler_max_price": 0
+        },
+        "budget": {
+        "amount": 200000,
+        "allocation_method": "fixed_price_based"
+        },
+        "components": {
+        "mandatory": {
+            "cpu": "any",
+            "gpu": "any",
+            "dimm": "any",
+            "ssd_m2": "any",
+            "motherboard": "any",
+            "power_supply": "any"
+        },
+        "optional": {
+            "cooling": "any",
+            "pc_case": "normal_size",
+            "cpu_cooler": "included_with_cpu"
         }
-      }
+        },
+        "allocations": {
+        "mandatory": {
+            "method": "fixed_price_based",
+            "fixed_price_based": {
+            "cpu_max_price": 40000,
+            "gpu_max_price": 120000,
+            "dimm_max_price": 15000,
+            "ssd_m2_max_price": 12000,
+            "motherboard_max_price": 20000,
+            "power_supply_max_price": 15000
+            }
+        },
+        "optional": {
+            "method": "fixed_price_based",
+            "fixed_price_based": {
+            "cooling_max_price": 10000,
+            "pc_case_max_price": 8000,
+            "cpu_cooler_max_price": 0
+            }
+        }
+        }
     }
-  }
-}
+    }
 
-chosen_cpu = {
-    "id": 176,
-    "name": "Процессор Intel Core i7-14700KF BOX",
-    "price": 34999,
-    "socket": "LGA 1700",
-    "tdp": 253,
-    "base_tdp": 125,
-    "cooler_included": True,
-    "total_cores": 20,
-    "performance_cores": 8,
-    "efficiency_cores": 12,
-    "max_threads": 28,
-    "base_frequency": 3.4,
-    "turbo_frequency": 5.6,
-    "unlocked_multiplier": True,
-    "memory_type": "DDR4, DDR5",
-    "max_memory": 192,
-    "memory_channels": 2,
-    "memory_frequency": 5600,
-    "integrated_graphics": False,
-    "gpu_model": "",
-    "pci_express": "PCIe 5.0",
-    "pci_lanes": 20,
-    "benchmark_rate": 33.02
-}
-chosen_gpu = {
-    "id": 293,
-    "name": "Видеокарта KFA2 GeForce RTX 5070Ti ROCK(X) 3FAN RGB WHITE [57IZN6MDBVGK]",
-    "price": 99999,
-    "interface": "PCIe 5.0",
-    "slot_width": "PCIe x16",
-    "low_profile": False,
-    "slots": "2.5",
-    "length": 322,
-    "width": 130,
-    "thickness": 52,
-    "tdp": 300,
-    "power_connectors": "16 pin (12V-2x6)",
-    "recommended_psu": 750,
-    "gpu_model": "GeForce RTX 5070 Ti",
-    "architecture": "NVIDIA Blackwell",
-    "vram_size": 16,
-    "vram_type": "GDDR7",
-    "bus_width": 256,
-    "base_clock": 2295,
-    "boost_clock": 2512,
-    "cuda_cores": 8960,
-    "ray_tracing": True,
-    "tensor_cores": 2,
-    "video_outputs": "3 x DisplayPort, HDMI",
-    "max_resolution": "7680x4320 (8K Ultra HD)",
-    "benchmark_rate": 81.21
-}
+    chosen_cpu = {
+        "id": 176,
+        "name": "Процессор Intel Core i7-14700KF BOX",
+        "price": 34999,
+        "socket": "LGA 1700",
+        "tdp": 253,
+        "base_tdp": 125,
+        "cooler_included": True,
+        "total_cores": 20,
+        "performance_cores": 8,
+        "efficiency_cores": 12,
+        "max_threads": 28,
+        "base_frequency": 3.4,
+        "turbo_frequency": 5.6,
+        "unlocked_multiplier": True,
+        "memory_type": "DDR4, DDR5",
+        "max_memory": 192,
+        "memory_channels": 2,
+        "memory_frequency": 5600,
+        "integrated_graphics": False,
+        "gpu_model": "",
+        "pci_express": "PCIe 5.0",
+        "pci_lanes": 20,
+        "benchmark_rate": 33.02
+    }
+    chosen_gpu = {
+        "id": 293,
+        "name": "Видеокарта KFA2 GeForce RTX 5070Ti ROCK(X) 3FAN RGB WHITE [57IZN6MDBVGK]",
+        "price": 99999,
+        "interface": "PCIe 5.0",
+        "slot_width": "PCIe x16",
+        "low_profile": False,
+        "slots": "2.5",
+        "length": 322,
+        "width": 130,
+        "thickness": 52,
+        "tdp": 300,
+        "power_connectors": "16 pin (12V-2x6)",
+        "recommended_psu": 750,
+        "gpu_model": "GeForce RTX 5070 Ti",
+        "architecture": "NVIDIA Blackwell",
+        "vram_size": 16,
+        "vram_type": "GDDR7",
+        "bus_width": 256,
+        "base_clock": 2295,
+        "boost_clock": 2512,
+        "cuda_cores": 8960,
+        "ray_tracing": True,
+        "tensor_cores": 2,
+        "video_outputs": "3 x DisplayPort, HDMI",
+        "max_resolution": "7680x4320 (8K Ultra HD)",
+        "benchmark_rate": 81.21
+    }
 
-chosen_motherboard = {
-    "id": 472,
-    "name": "Материнская плата GIGABYTE Z790 AORUS MASTER X",
-    "price": 33999,
-    "socket": "LGA 1700",
-    "chipset": "Intel Z790",
-    "power_phases": 2012,
-    "form_factor": "E-ATX",
-    "height": 305,
-    "width": 260,
-    "memory_type": "DDR5",
-    "memory_slots": 4,
-    "memory_channels": 2,
-    "max_memory": 256,
-    "base_memory_freq": 4800,
-    "oc_memory_freq": [
-        5200,
-        5400,
-        5600,
-        5800,
-        6000,
-        6200,
-        6400,
-        6600,
-        6800,
-        7000,
-        7200,
-        7400
-    ],
-    "memory_form_factor": "DIMM",
-    "pcie_version": 0.0,
-    "pcie_x16_slots": 1,
-    "sli_crossfire": False,
-    "sli_crossfire_count": 2,
-    "nvme_support": True,
-    "nvme_pcie_version": 0.0,
-    "m2_slots": 5,
-    "sata_ports": 4,
-    "sata_raid": False,
-    "nvme_raid": False,
-    "cpu_fan_headers": 1414,
-    "aio_pump_headers": 4,
-    "case_fan_4pin": 4,
-    "case_fan_3pin": 0,
-    "main_power": "24 pin",
-    "cpu_power": "2 x 8 pin"
-}
+    chosen_motherboard = {
+        "id": 472,
+        "name": "Материнская плата GIGABYTE Z790 AORUS MASTER X",
+        "price": 33999,
+        "socket": "LGA 1700",
+        "chipset": "Intel Z790",
+        "power_phases": 2012,
+        "form_factor": "E-ATX",
+        "height": 305,
+        "width": 260,
+        "memory_type": "DDR5",
+        "memory_slots": 4,
+        "memory_channels": 2,
+        "max_memory": 256,
+        "base_memory_freq": 4800,
+        "oc_memory_freq": [
+            5200,
+            5400,
+            5600,
+            5800,
+            6000,
+            6200,
+            6400,
+            6600,
+            6800,
+            7000,
+            7200,
+            7400
+        ],
+        "memory_form_factor": "DIMM",
+        "pcie_version": 0.0,
+        "pcie_x16_slots": 1,
+        "sli_crossfire": False,
+        "sli_crossfire_count": 2,
+        "nvme_support": True,
+        "nvme_pcie_version": 0.0,
+        "m2_slots": 5,
+        "sata_ports": 4,
+        "sata_raid": False,
+        "nvme_raid": False,
+        "cpu_fan_headers": 1414,
+        "aio_pump_headers": 4,
+        "case_fan_4pin": 4,
+        "case_fan_3pin": 0,
+        "main_power": "24 pin",
+        "cpu_power": "2 x 8 pin"
+    }
 
-run_power_supply_selection_test(input_data_2nd_stage, chosen_cpu, chosen_gpu, chosen_motherboard)
+    run_power_supply_selection_test(input_data_2nd_stage, chosen_cpu, chosen_gpu, chosen_motherboard)

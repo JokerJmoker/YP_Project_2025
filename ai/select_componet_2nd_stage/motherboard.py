@@ -244,163 +244,164 @@ def run_motherboard_selection_test(
     except ValueError as e:
         print(f"Ошибка: {e}")
 
-input_data_2nd_stage = {
-  "status": "success",
-  "message": "Данные пользователя успешно разобраны.",
-  "user_request": {
-    "game": {
-      "title": "cyberpunk_2077",
-      "graphics": {
-        "quality": "ultra",
-        "target_fps": 60,
-        "resolution": "2160",
-        "ray_tracing": False,
-        "dlss": "performance",
-        "fsr": "disabled"
-      }
-    },
-    "budget": {
-      "amount": 200000,
-      "allocation_method": "fixed_price_based"
-    },
-    "components": {
-      "mandatory": {
-        "cpu": "any",
-        "gpu": "any",
-        "dimm": "any",
-        "ssd_m2": "any",
-        "motherboard": "any",
-        "power_supply": "any"
-      },
-      "optional": {
-        "cooling": "any",
-        "pc_case": "normal_size",
-        "cpu_cooler": "included_with_cpu"
-      }
-    },
-    "allocations": {
-      "mandatory": {
-        "method": "fixed_price_based",
-        "fixed_price_based": {
-          "cpu_max_price": 40000,
-          "gpu_max_price": 120000,
-          "dimm_max_price": 15000,
-          "ssd_m2_max_price": 12000,
-          "motherboard_max_price": 33000,
-          "power_supply_max_price": 15000
+if __name__ == "__main__":
+    input_data_2nd_stage = {
+    "status": "success",
+    "message": "Данные пользователя успешно разобраны.",
+    "user_request": {
+        "game": {
+        "title": "cyberpunk_2077",
+        "graphics": {
+            "quality": "ultra",
+            "target_fps": 60,
+            "resolution": "2160",
+            "ray_tracing": False,
+            "dlss": "performance",
+            "fsr": "disabled"
         }
-      },
-      "optional": {
-        "method": "fixed_price_based",
-        "fixed_price_based": {
-          "cooling_max_price": 10000,
-          "pc_case_max_price": 8000,
-          "cpu_cooler_max_price": 0
+        },
+        "budget": {
+        "amount": 200000,
+        "allocation_method": "fixed_price_based"
+        },
+        "components": {
+        "mandatory": {
+            "cpu": "any",
+            "gpu": "any",
+            "dimm": "any",
+            "ssd_m2": "any",
+            "motherboard": "any",
+            "power_supply": "any"
+        },
+        "optional": {
+            "cooling": "any",
+            "pc_case": "normal_size",
+            "cpu_cooler": "included_with_cpu"
         }
-      }
+        },
+        "allocations": {
+        "mandatory": {
+            "method": "fixed_price_based",
+            "fixed_price_based": {
+            "cpu_max_price": 40000,
+            "gpu_max_price": 120000,
+            "dimm_max_price": 15000,
+            "ssd_m2_max_price": 12000,
+            "motherboard_max_price": 33000,
+            "power_supply_max_price": 15000
+            }
+        },
+        "optional": {
+            "method": "fixed_price_based",
+            "fixed_price_based": {
+            "cooling_max_price": 10000,
+            "pc_case_max_price": 8000,
+            "cpu_cooler_max_price": 0
+            }
+        }
+        }
     }
-  }
-}
+    }
 
-chosen_cpu = {
-    "id": 176,
-    "name": "Процессор Intel Core i7-14700KF BOX",
-    "price": 34999,
-    "socket": "LGA 1700",
-    "tdp": 253,
-    "base_tdp": 125,
-    "cooler_included": True,
-    "total_cores": 20,
-    "performance_cores": 8,
-    "efficiency_cores": 12,
-    "max_threads": 28,
-    "base_frequency": 3.4,
-    "turbo_frequency": 5.6,
-    "unlocked_multiplier": True,
-    "memory_type": "DDR4, DDR5",
-    "max_memory": 192,
-    "memory_channels": 2,
-    "memory_frequency": 5600,
-    "integrated_graphics": False,
-    "gpu_model": "",
-    "pci_express": "PCIe 5.0",
-    "pci_lanes": 20,
-    "benchmark_rate": 33.02
-}
-chosen_gpu = {
-    "id": 293,
-    "name": "Видеокарта KFA2 GeForce RTX 5070Ti ROCK(X) 3FAN RGB WHITE [57IZN6MDBVGK]",
-    "price": 99999,
-    "interface": "PCIe 5.0",
-    "slot_width": "PCIe x16",
-    "low_profile": False,
-    "slots": "2.5",
-    "length": 322,
-    "width": 130,
-    "thickness": 52,
-    "tdp": 300,
-    "power_connectors": "16 pin (12V-2x6)",
-    "recommended_psu": 750,
-    "gpu_model": "GeForce RTX 5070 Ti",
-    "architecture": "NVIDIA Blackwell",
-    "vram_size": 16,
-    "vram_type": "GDDR7",
-    "bus_width": 256,
-    "base_clock": 2295,
-    "boost_clock": 2512,
-    "cuda_cores": 8960,
-    "ray_tracing": True,
-    "tensor_cores": 2,
-    "video_outputs": "3 x DisplayPort, HDMI",
-    "max_resolution": "7680x4320 (8K Ultra HD)",
-    "benchmark_rate": 81.21
-}
-chosen_ssd_m2 = {
-    "id": 358,
-    "name": "2000 ГБ M.2 NVMe накопитель MSI SPATIUM M470 PRO [S78-440Q990-P83]",
-    "price": 11499,
-    "capacity": "2000",
-    "form_factor": "2280",
-    "interface": "PCIe 4.0 x4",
-    "m2_key": "M",
-    "nvme": True,
-    "controller": "Phison E27T",
-    "cell_type": "",
-    "memory_structure": "3D NAND",
-    "has_dram": False,
-    "dram_size": "",
-    "max_read_speed": 6000,
-    "max_write_speed": 5000,
-    "random_read_iops": 950000,
-    "random_write_iops": 950000,
-    "length": 80,
-    "width": 22,
-    "thickness": 215,
-    "weight": 12,
-    "heatsink_included": False
-}
-chosen_dimm = {
-    "id": 750,
-    "name": "Оперативная память Kingston Fury Renegade White [KF576C38RWK2-32] 32 ГБ",
-    "price": 22799,
-    "memory_type": "DDR5",
-    "module_type": "UDIMM",
-    "total_memory": 32,
-    "modules_count": 2,
-    "frequency": 7600,
-    "ecc_memory": False,
-    "registered_memory": False,
-    "cas_latency": 38,
-    "ras_to_cas_delay": 46,
-    "row_precharge_delay": 46,
-    "activate_to_precharge_delay": False,
-    "voltage": 1.45,
-    "intel_xmp": "6800 МГц (36-42-42), 7200 MHz (38-44-44), 7600 MHz (38-46-46)",
-    "amd_expo": "нет",
-    "height": 392,
-    "low_profile": False
-}
+    chosen_cpu = {
+        "id": 176,
+        "name": "Процессор Intel Core i7-14700KF BOX",
+        "price": 34999,
+        "socket": "LGA 1700",
+        "tdp": 253,
+        "base_tdp": 125,
+        "cooler_included": True,
+        "total_cores": 20,
+        "performance_cores": 8,
+        "efficiency_cores": 12,
+        "max_threads": 28,
+        "base_frequency": 3.4,
+        "turbo_frequency": 5.6,
+        "unlocked_multiplier": True,
+        "memory_type": "DDR4, DDR5",
+        "max_memory": 192,
+        "memory_channels": 2,
+        "memory_frequency": 5600,
+        "integrated_graphics": False,
+        "gpu_model": "",
+        "pci_express": "PCIe 5.0",
+        "pci_lanes": 20,
+        "benchmark_rate": 33.02
+    }
+    chosen_gpu = {
+        "id": 293,
+        "name": "Видеокарта KFA2 GeForce RTX 5070Ti ROCK(X) 3FAN RGB WHITE [57IZN6MDBVGK]",
+        "price": 99999,
+        "interface": "PCIe 5.0",
+        "slot_width": "PCIe x16",
+        "low_profile": False,
+        "slots": "2.5",
+        "length": 322,
+        "width": 130,
+        "thickness": 52,
+        "tdp": 300,
+        "power_connectors": "16 pin (12V-2x6)",
+        "recommended_psu": 750,
+        "gpu_model": "GeForce RTX 5070 Ti",
+        "architecture": "NVIDIA Blackwell",
+        "vram_size": 16,
+        "vram_type": "GDDR7",
+        "bus_width": 256,
+        "base_clock": 2295,
+        "boost_clock": 2512,
+        "cuda_cores": 8960,
+        "ray_tracing": True,
+        "tensor_cores": 2,
+        "video_outputs": "3 x DisplayPort, HDMI",
+        "max_resolution": "7680x4320 (8K Ultra HD)",
+        "benchmark_rate": 81.21
+    }
+    chosen_ssd_m2 = {
+        "id": 358,
+        "name": "2000 ГБ M.2 NVMe накопитель MSI SPATIUM M470 PRO [S78-440Q990-P83]",
+        "price": 11499,
+        "capacity": "2000",
+        "form_factor": "2280",
+        "interface": "PCIe 4.0 x4",
+        "m2_key": "M",
+        "nvme": True,
+        "controller": "Phison E27T",
+        "cell_type": "",
+        "memory_structure": "3D NAND",
+        "has_dram": False,
+        "dram_size": "",
+        "max_read_speed": 6000,
+        "max_write_speed": 5000,
+        "random_read_iops": 950000,
+        "random_write_iops": 950000,
+        "length": 80,
+        "width": 22,
+        "thickness": 215,
+        "weight": 12,
+        "heatsink_included": False
+    }
+    chosen_dimm = {
+        "id": 750,
+        "name": "Оперативная память Kingston Fury Renegade White [KF576C38RWK2-32] 32 ГБ",
+        "price": 22799,
+        "memory_type": "DDR5",
+        "module_type": "UDIMM",
+        "total_memory": 32,
+        "modules_count": 2,
+        "frequency": 7600,
+        "ecc_memory": False,
+        "registered_memory": False,
+        "cas_latency": 38,
+        "ras_to_cas_delay": 46,
+        "row_precharge_delay": 46,
+        "activate_to_precharge_delay": False,
+        "voltage": 1.45,
+        "intel_xmp": "6800 МГц (36-42-42), 7200 MHz (38-44-44), 7600 MHz (38-46-46)",
+        "amd_expo": "нет",
+        "height": 392,
+        "low_profile": False
+    }
 
 
 # Пример запуска:
-run_motherboard_selection_test(input_data_2nd_stage,cpu_data=chosen_cpu, gpu_data=chosen_gpu, dimm_data=chosen_dimm, ssd_m2_data=chosen_ssd_m2)
+    run_motherboard_selection_test(input_data_2nd_stage,cpu_data=chosen_cpu, gpu_data=chosen_gpu, dimm_data=chosen_dimm, ssd_m2_data=chosen_ssd_m2)
