@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Union, List
 from psycopg2.extras import DictCursor
 import sys
 import os
@@ -15,7 +15,8 @@ def select_pc_case(
     chosen_gpu: Dict[str, Any],
     chosen_cpu_cooler: Dict[str, Any],
     chosen_motherboard: Dict[str, Any],
-    chosen_power_supply: Dict[str, Any]
+    chosen_power_supply: Dict[str, Any],
+    chosen_case_fan: Dict[str, Any]
 ) -> Dict[str, Any]:
     """
     Подбирает корпус на основе:
@@ -24,6 +25,7 @@ def select_pc_case(
     3. Высоты кулера процессора
     4. Форм-фактора материнской платы
     5. Форм-фактора и длины блока питания
+    6. Поддержки вентиляторов корпуса (±5 мм)
     """
     print("\n[DEBUG] ===== НАЧАЛО ПОДБОРА КОРПУСА =====")
     
@@ -54,8 +56,48 @@ def select_pc_case(
     psu_length = chosen_power_supply.get("length", 0)
     print(f"[DEBUG] Блок питания: форм-фактор={psu_form_factor}, длина={psu_length} мм")
 
-    # 6. Формируем и выполняем основной запрос
-    query = """
+    # 6. Получаем параметры вентиляторов корпуса
+    fan_size = chosen_case_fan.get("fan_size", 120)  # По умолчанию 120 мм
+    print(f"[DEBUG] Размер вентиляторов корпуса: {fan_size} мм (±5 мм)")
+
+    # Функция для парсинга размеров вентиляторов из строки
+    def parse_fan_sizes(fan_str: str) -> List[int]:
+        """Извлекает все размеры вентиляторов из строки формата '3 x 140 или 4 x 120 мм'"""
+        if not fan_str:
+            return []
+        
+        # Ищем все числа, за которыми стоит "мм" (с учетом возможных пробелов)
+        sizes = re.findall(r'(\d+)\s*мм', fan_str)
+        # Преобразуем найденные строки в числа и оставляем только уникальные значения
+        unique_sizes = list(set(int(size) for size in sizes))
+        # Сортируем по убыванию (обычно сначала указывают большие размеры)
+        unique_sizes.sort(reverse=True)
+        
+        return unique_sizes
+
+    # Функция для проверки поддержки вентиляторов
+    def check_fan_support(support_data: Union[str, List[int], int], target_size: int, tolerance: int = 5) -> bool:
+        """Проверяет поддержку вентилятора с учетом допуска ±5 мм"""
+        if not support_data:
+            return False
+        
+        # Если данные в виде списка чисел (например [140, 120])
+        if isinstance(support_data, list):
+            return any(abs(size - target_size) <= tolerance for size in support_data)
+        
+        # Если данные в виде строки ("3 x 140 или 4 x 120 мм")
+        if isinstance(support_data, str):
+            sizes = parse_fan_sizes(support_data)
+            return any(abs(size - target_size) <= tolerance for size in sizes)
+        
+        # Если данные в виде числа (140)
+        if isinstance(support_data, int):
+            return abs(support_data - target_size) <= tolerance
+        
+        return False
+
+    # 7. Формируем и выполняем основной запрос
+    base_query = """
         SELECT 
             id, name, price,
             max_gpu_length,
@@ -67,13 +109,7 @@ def select_pc_case(
             rear_fan_support,
             top_fan_support,
             bottom_fan_support,
-            side_fan_support,
-            liquid_cooling_support,
-            front_radiator_support,
-            top_radiator_support,
-            rear_radiator_support,
-            bottom_radiator_support,
-            side_radiator_support
+            side_fan_support
         FROM pc_components.pc_case
         WHERE price <= %s
         AND (
@@ -106,17 +142,17 @@ def select_pc_case(
             CAST(SUBSTRING(max_gpu_length FROM '[0-9]+') AS INTEGER) DESC,
             CAST(SUBSTRING(max_cpu_cooler_height FROM '[0-9]+') AS INTEGER) DESC,
             CAST(SUBSTRING(max_psu_length FROM '[0-9]+') AS INTEGER) DESC
-        LIMIT 1
     """
-    
+
     print(f"[DEBUG] Выполняем основной запрос с параметрами: "
           f"бюджет={max_price} руб., GPU={gpu_length} мм, "
           f"кулер={cpu_cooler_height} мм, MB={mb_form_factor}, "
-          f"PSU={psu_form_factor}/{psu_length}мм")
-    
+          f"PSU={psu_form_factor}/{psu_length}мм, Fan={fan_size}мм (±5 мм)")
+
     with Database() as conn:
         with conn.cursor(cursor_factory=DictCursor) as cursor:
-            cursor.execute(query, (
+            # Сначала выполняем запрос без проверки вентиляторов
+            cursor.execute(base_query, (
                 max_price, 
                 gpu_length, 
                 cpu_cooler_height,
@@ -127,10 +163,28 @@ def select_pc_case(
                 psu_length,
                 mb_form_factor
             ))
-            result = cursor.fetchone()
             
-            if not result:
-                # 7. Fallback: если не найдено по основному запросу
+            # Фильтруем результаты в Python, проверяя поддержку вентиляторов
+            found_case = None
+            for case in cursor.fetchall():
+                # Проверяем поддержку вентиляторов в разных позициях
+                front_support = case['front_fan_support']
+                rear_support = case['rear_fan_support']
+                top_support = case['top_fan_support']
+                bottom_support = case['bottom_fan_support']
+                side_support = case['side_fan_support']
+                
+                # Проверяем поддержку хотя бы в одной позиции
+                if (check_fan_support(front_support, fan_size) or
+                    check_fan_support(rear_support, fan_size) or
+                    check_fan_support(top_support, fan_size) or
+                    check_fan_support(bottom_support, fan_size) or
+                    check_fan_support(side_support, fan_size)):
+                    found_case = case
+                    break
+            
+            if not found_case:
+                # 8. Fallback: если не найдено по основному запросу
                 print("[DEBUG] Не найдено по основному запросу, пробуем fallback")
                 fallback_query = """
                     SELECT 
@@ -139,7 +193,12 @@ def select_pc_case(
                         max_cpu_cooler_height,
                         motherboard_form_factors,
                         psu_form_factor,
-                        max_psu_length
+                        max_psu_length,
+                        front_fan_support,
+                        rear_fan_support,
+                        top_fan_support,
+                        bottom_fan_support,
+                        side_fan_support
                     FROM pc_components.pc_case
                     WHERE price <= %s
                     ORDER BY 
@@ -152,7 +211,7 @@ def select_pc_case(
                         CAST(SUBSTRING(max_cpu_cooler_height FROM '[0-9]+') AS INTEGER) DESC,
                         CAST(SUBSTRING(max_gpu_length FROM '[0-9]+') AS INTEGER) DESC,
                         price ASC
-                    LIMIT 1
+                    LIMIT 50
                 """
                 cursor.execute(fallback_query, (
                     max_price, 
@@ -160,42 +219,83 @@ def select_pc_case(
                     psu_form_factor,
                     psu_form_factor
                 ))
-                result = cursor.fetchone()
                 
-                if not result:
+                # Ищем первый подходящий по вентиляторам вариант
+                for case in cursor.fetchall():
+                    front_support = case['front_fan_support']
+                    rear_support = case['rear_fan_support']
+                    top_support = case['top_fan_support']
+                    bottom_support = case['bottom_fan_support']
+                    side_support = case['side_fan_support']
+                    
+                    if (check_fan_support(front_support, fan_size) or
+                        check_fan_support(rear_support, fan_size) or
+                        check_fan_support(top_support, fan_size) or
+                        check_fan_support(bottom_support, fan_size) or
+                        check_fan_support(side_support, fan_size)):
+                        found_case = case
+                        break
+                
+                if not found_case:
                     raise ValueError("Не удалось найти подходящий корпус в рамках бюджета")
                 
-                print(f"[DEBUG] Найден fallback вариант: {result['name']}") 
+                print(f"[DEBUG] Найден fallback вариант: {found_case['name']}") 
             
-            # 8. Валидация и преобразование данных через модель
-            try:
-                case_model = PcCaseModel.from_orm(result)
-                actual_max_gpu_length = case_model.max_gpu_length or "0 мм"
-                actual_max_cpu_cooler_height = case_model.max_cpu_cooler_height or "0 мм"
-                actual_max_psu_length = case_model.max_psu_length or "0 мм"
-                mb_support = case_model.motherboard_form_factors or ""
-                psu_support = case_model.psu_form_factor or ""
-                
-                print("\n[DEBUG] ===== РЕЗУЛЬТАТ ПОДБОРА =====")
-                print(f"Модель: {case_model.name}")
-                print(f"Макс. длина GPU: {actual_max_gpu_length}")
-                print(f"Макс. высота кулера: {actual_max_cpu_cooler_height}")
-                print(f"Поддерживаемые форм-факторы: {mb_support}")
-                print(f"Форм-фактор БП: {psu_support}")
-                print(f"Макс. длина БП: {actual_max_psu_length}")
-                print(f"Цена: {case_model.price} руб.")
-                
-                return case_model.model_dump()
+            # 9. Формируем информацию о поддержке вентиляторов
+            fan_support_info = []
+            fan_positions = {
+                'front_fan_support': 'передние',
+                'rear_fan_support': 'задние',
+                'top_fan_support': 'верхние',
+                'bottom_fan_support': 'нижние',
+                'side_fan_support': 'боковые'
+            }
             
-            except Exception as e:
-                raise ValueError(f"Ошибка обработки данных корпуса: {str(e)}")
+            for field, position in fan_positions.items():
+                if check_fan_support(found_case[field], fan_size):
+                    fan_support_info.append(position)
+            
+            # 10. Подготавливаем результат
+            result = {
+                "id": found_case["id"],
+                "name": found_case["name"],
+                "price": found_case["price"],
+                "max_gpu_length": found_case["max_gpu_length"],
+                "max_cpu_cooler_height": found_case["max_cpu_cooler_height"],
+                "motherboard_form_factors": found_case["motherboard_form_factors"],
+                "psu_form_factor": found_case["psu_form_factor"],
+                "max_psu_length": found_case["max_psu_length"],
+                "fan_support": {
+                    "size": fan_size,
+                    "positions": fan_support_info,
+                    "front": parse_fan_sizes(found_case["front_fan_support"]),
+                    "rear": parse_fan_sizes(found_case["rear_fan_support"]),
+                    "top": parse_fan_sizes(found_case["top_fan_support"]),
+                    "bottom": parse_fan_sizes(found_case["bottom_fan_support"]),
+                    "side": parse_fan_sizes(found_case["side_fan_support"])
+                }
+            }
+            
+            # 11. Выводим отладочную информацию
+            print("\n[DEBUG] ===== РЕЗУЛЬТАТ ПОДБОРА =====")
+            print(f"Модель: {result['name']}")
+            print(f"Цена: {result['price']} руб.")
+            print(f"Макс. длина GPU: {result['max_gpu_length']}")
+            print(f"Макс. высота кулера: {result['max_cpu_cooler_height']}")
+            print(f"Поддерживаемые форм-факторы: {result['motherboard_form_factors']}")
+            print(f"Форм-фактор БП: {result['psu_form_factor']}")
+            print(f"Макс. длина БП: {result['max_psu_length']}")
+            print(f"Поддержка вентиляторов {fan_size}мм (±5 мм): {', '.join(fan_support_info) or 'нет'}")
+            
+            return result
 
 def run_pc_case_selection_test(
     input_data_2nd_stage: Dict[str, Any],
     chosen_gpu: Dict[str, Any],
     chosen_cpu_cooler: Dict[str, Any],
     chosen_motherboard: Dict[str, Any],
-    chosen_power_supply: Dict[str, Any]
+    chosen_power_supply: Dict[str, Any],
+    chosen_case_fan: Dict[str, Any]
 ) -> None:
     """Тестовая функция для проверки подбора корпуса"""
     print("===== ТЕСТИРОВАНИЕ ПОДБОРА КОРПУСА =====")
@@ -205,7 +305,8 @@ def run_pc_case_selection_test(
             chosen_gpu,
             chosen_cpu_cooler,
             chosen_motherboard,
-            chosen_power_supply
+            chosen_power_supply,
+            chosen_case_fan
         )
         print("\nРезультат:")
         print(json.dumps(pc_case_info, indent=2, ensure_ascii=False))
@@ -480,7 +581,7 @@ if __name__ == "__main__":
     "id": 909,
     "name": "Комплект вентиляторов LIAN LI UNI FAN TL 120 [G99.12TL3W.R0]",
     "price": 11999,
-    "fan_size": 124,
+    "fan_size": 140,
     "fan_thickness": 28,
     "max_rotation_speed": 2600,
     "min_rotation_speed": 0,
@@ -491,4 +592,4 @@ if __name__ == "__main__":
     "power_connector_type": "4 pin, 7 pin (LIAN LI)"
     }
     run_pc_case_selection_test(input_data_2nd_stage, chosen_gpu, chosen_cpu_cooler, chosen_motherboard,
-                               chosen_power_supply)
+                               chosen_power_supply, chosen_case_fan)
