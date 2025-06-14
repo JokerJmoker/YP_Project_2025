@@ -21,8 +21,8 @@
         "gpu": "any/custom_value - string (passed)",
         "dimm": "any/custom_value - string (passed)",
         "ssd_m2": "any/custom_value - string (passed)",
-        "motherboard": "any/custom_value - string (passed)",
-        "power_supply": "any/custom_value - string (passed)"
+        "motherboard": "any - string (passed)",
+        "power_supply": "any - string (passed)"
       },
       "mandatory_allocation": {
         "method": "percentage_based/fixed_price_based - string (passed)",
@@ -44,19 +44,19 @@
         }
       },
       "optional": {
-        "cooling": "any/WATER_COOLING/AIR_COOLING/custom_value - string (passed)",
-        "pc_case": "any/small_size/normal_size/custom_value - string (passed)",
-        "cpu_cooler": "any/included_with_cpu/custom_value - string (passed)"
+        "case_fan": "any- string (passed)",
+        "pc_case": "any- string (passed)",
+        "cpu_cooler": "included_with_cpu/water_cooling/air_cooler- string (passed)"
       },
       "optional_allocation": {
         "method": "percentage_based/fixed_price_based - string (passed)",
         "percentage_based": {
-          "cooling_percentage": "3-10% - int (passed)",
-          "pc_case_percentage": "3-10% - int (passed)",
-          "cpu_cooler_percentage": "2-8% - int (passed)"
+          "case_fan_percentage": "3-10 - int (passed)",
+          "pc_case_percentage": "3-10 - int (passed)",
+          "cpu_cooler_percentage": "2-8 - int (passed)"
         },
         "fixed_price_based": {
-          "cooling_max_price": "2000-15000 - int (passed)",
+          "case_fan_max_price": "2000-15000 - int (passed)",
           "pc_case_max_price": "3000-20000 - int (passed)",
           "cpu_cooler_max_price": "2000-10000 - int (passed)"
         }

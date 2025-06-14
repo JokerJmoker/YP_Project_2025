@@ -9,7 +9,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 from ai.ai_db.database import Database
 from ai.models.components.case_fan import CaseFanModel
 
-def select_cooling_system(
+def select_case_fan_system(
     input_data_2nd_stage: Dict[str, Any],
     chosen_power_supply: Dict[str, Any]
 ) -> Dict[str, Any]:
@@ -37,10 +37,10 @@ def select_cooling_system(
     # 2. Рассчитываем максимальный бюджет
     user_request = input_data_2nd_stage["user_request"]
     if user_request["allocations"]["optional"]["method"] == "percentage_based":
-        cooling_percentage = user_request["allocations"]["optional"]["percentage_based"]["cooling_percentage"]
-        max_price = round((cooling_percentage / 100) * user_request["budget"]["amount"])
+        case_fan_percentage = user_request["allocations"]["optional"]["percentage_based"]["case_fan_percentage"]
+        max_price = round((case_fan_percentage / 100) * user_request["budget"]["amount"])
     else:
-        max_price = user_request["allocations"]["optional"]["fixed_price_based"]["cooling_max_price"]
+        max_price = user_request["allocations"]["optional"]["fixed_price_based"]["case_fan_max_price"]
     
     print(f"[DEBUG] Максимальный бюджет: {max_price} руб.")
 
@@ -118,16 +118,16 @@ def select_cooling_system(
             except Exception as e:
                 raise ValueError(f"Ошибка обработки данных вентилятора: {str(e)}")
 
-def run_cooling_selection_test(
+def run_case_fan_selection_test(
     input_data_2nd_stage: Dict[str, Any],
     chosen_power_supply: Dict[str, Any]
 ) -> None:
     """Тестовая функция для проверки подбора охлаждения"""
     print("===== ТЕСТИРОВАНИЕ ПОДБОРА СИСТЕМЫ ОХЛАЖДЕНИЯ =====")
     try:
-        cooling_info = select_cooling_system(input_data_2nd_stage, chosen_power_supply)
+        case_fan_info = select_case_fan_system(input_data_2nd_stage, chosen_power_supply)
         print("\nРезультат:")
-        print(json.dumps(cooling_info, indent=2, ensure_ascii=False))
+        print(json.dumps(case_fan_info, indent=2, ensure_ascii=False))
     except ValueError as e:
         print(f"\nОшибка: {e}")
 
@@ -164,7 +164,7 @@ if __name__ == "__main__":
             "power_supply": "any"
         },
         "optional": {
-            "cooling": "any",
+            "case_fan": "any",
             "pc_case": "small_size",
             "cpu_cooler": "any"
         }
@@ -184,7 +184,7 @@ if __name__ == "__main__":
         "optional": {
             "method": "percentage_based",
             "percentage_based": {
-            "cooling_percentage": 3,
+            "case_fan_percentage": 3,
             "pc_case_percentage": 1,
             "cpu_cooler_percentage": 1
             }
@@ -207,7 +207,7 @@ if __name__ == "__main__":
         "sata_connectors": 8,
         "molex_connectors": 8,
         "floppy_connector": True,
-        "cooling_type": "активная",
+        "case_fan_type": "активная",
         "fan_size": 120120,
         "hybrid_mode": True,
         "certification_80plus": "Gold",
@@ -217,4 +217,4 @@ if __name__ == "__main__":
         "height": 86,
         "weight": 2.89
     }
-    run_cooling_selection_test(input_data_2nd_stage, chosen_power_supply)
+    run_case_fan_selection_test(input_data_2nd_stage, chosen_power_supply)

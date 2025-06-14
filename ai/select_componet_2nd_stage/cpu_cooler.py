@@ -18,91 +18,182 @@ from ai.ai_db.database import Database
 from ai.models.components.cpu_cooler import CpuCoolerModel
 
 
+from typing import Dict, Any, Optional
+from psycopg2.extras import DictCursor
+import sys
+import os
+import json
+import logging
+import re
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s"
+)
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+from ai.ai_db.database import Database
+from ai.models.components.cpu_cooler import CpuCoolerModel
+from ai.models.components.water_cooling import WaterCoolingModel
+
+
+def get_required_fan_airflow(tdp: int) -> float:
+    if tdp <= 50:
+        return 25.5
+    elif tdp <= 100:
+        return 38.25
+    elif tdp <= 150:
+        return 51.0
+    elif tdp <= 200:
+        return 63.75
+    elif tdp <= 250:
+        return 76.5
+    else:
+        return 89.25
+
+from typing import Dict, Any, Optional
+from psycopg2.extras import DictCursor
+import sys
+import os
+import logging
+import re
+
+# Настройка логирования
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s"
+)
+
+# Добавляем корневой путь проекта в sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+from ai.ai_db.database import Database
+from ai.models.components.cpu_cooler import CpuCoolerModel
+from ai.models.components.water_cooling import WaterCoolingModel
+
+
+def get_required_fan_airflow(tdp: int) -> float:
+    if tdp <= 50:
+        return 25.5
+    elif tdp <= 100:
+        return 38.25
+    elif tdp <= 150:
+        return 51.0
+    elif tdp <= 200:
+        return 63.75
+    elif tdp <= 250:
+        return 76.5
+    else:
+        return 89.25
+
+
 def find_compatible_cpu_cooler(
     input_data: Dict[str, Any],
     chosen_cpu: Dict[str, Any]
 ) -> Optional[Dict[str, Any]]:
-    """
-    Находит совместимый кулер для процессора с учетом:
-    - Явного указания "cpu_cooler": "false" в запросе
-    - Наличия BOX-версии процессора (включенного кулера)
-    - Сокета и TDP процессора
-    - Бюджета (сортировка по близости к заданной цене)
-    """
-    # Проверка необходимости подбора кулера
-    if input_data["user_request"]["components"]["optional"].get("cpu_cooler", "any") == "false":
-        return None
-    
-    # Проверка BOX-версии процессора
-    if "box" in chosen_cpu.get("name", "").lower() and chosen_cpu.get("included_with_cpu", False):
+    cooler_type = input_data["user_request"]["components"]["optional"].get("cpu_cooler", "any")
+    logging.info(f"Выбран тип кулера: {cooler_type}")
+
+    if cooler_type in ("false", "included_with_cpu"):
+        logging.info("Кулер не требуется (false или included_with_cpu). Возврат None.")
         return None
 
-    # Основные параметры процессора
+    if "box" in chosen_cpu.get("name", "").lower() and chosen_cpu.get("included_with_cpu", False):
+        logging.info("CPU с коробочным кулером, включенным в комплект. Возврат None.")
+        return None
+
     cpu_socket = chosen_cpu.get("socket")
     cpu_tdp = chosen_cpu.get("tdp")
-    
     if not cpu_socket or not cpu_tdp:
+        logging.error("Не указаны сокет или TDP процессора")
         raise ValueError("Не указаны сокет или TDP процессора")
+
     if chosen_cpu.get("included_with_cpu", False):
+        logging.info("CPU уже включает кулер, возврат None.")
         return None
 
-    # Получение бюджета
     try:
         budget_data = input_data["user_request"]["allocations"]["optional"]["fixed_price_based"]
         target_price = budget_data.get("cpu_cooler_target_price")
         max_price = budget_data.get("cpu_cooler_max_price")
         target_price = target_price if target_price is not None else max_price
+        logging.info(f"Целевая цена кулера: {target_price}, Максимальная цена: {max_price}")
     except Exception:
         target_price = None
         max_price = None
+        logging.warning("Не удалось получить бюджет на кулер, цены не заданы")
 
-    # Формирование SQL запроса
-    query = """
-        SELECT 
-            id, name, price, socket, tdp, type, fan_size, fan_count,
-            max_rpm, min_rpm, max_noise_level, max_airflow, height, width, depth
-        FROM pc_components.cpu_cooler
-        WHERE CAST(NULLIF(REGEXP_REPLACE(tdp, '[^0-9]', '', 'g'), '') AS INTEGER) >= %s
-          AND %s = ANY (string_to_array(socket, ', '))
-          {price_filter}
-        ORDER BY 
-            ABS(price - %s) ASC,
-            CAST(NULLIF(REGEXP_REPLACE(tdp, '[^0-9]', '', 'g'), '') AS INTEGER) DESC,
-            price ASC
-        LIMIT 1
-    """
-
-    params = [cpu_tdp, cpu_socket, target_price if target_price is not None else 0]
-    price_filter = "AND (price IS NULL OR price <= %s)" if max_price is not None else ""
-    
     with Database() as conn:
         with conn.cursor(cursor_factory=DictCursor) as cursor:
             try:
-                # Основной запрос
-                cursor.execute(query.format(price_filter=price_filter), 
-                             tuple(params + ([max_price] if max_price is not None else [])))
-                result = cursor.fetchone()
-
-                if not result:
-                    # Запасной запрос без учета TDP
-                    cursor.execute(f"""
+                if cooler_type == "air_cooler":
+                    price_filter = "AND price <= %s" if target_price is not None else ""
+                    query = """
                         SELECT * FROM pc_components.cpu_cooler
                         WHERE %s = ANY (string_to_array(socket, ', '))
-                        {price_filter}
-                        ORDER BY ABS(price - %s) ASC, price ASC
+                        {}
+                        ORDER BY price DESC, ABS(price - %s) ASC
                         LIMIT 1
-                    """.format(price_filter=price_filter), 
-                    (cpu_socket, target_price if target_price is not None else 0) + 
-                    ((max_price,) if max_price is not None else ()))
-                    
-                    result = cursor.fetchone()
-                    if not result:
-                        raise ValueError("Не найдено подходящих кулеров")
+                    """.format(price_filter)
+                    params = [cpu_socket]
+                    if target_price is not None:
+                        params.append(target_price)
+                    params.append(target_price if target_price is not None else 0)
 
-                return CpuCoolerModel.from_orm(dict(result)).model_dump()
+                    logging.info(f"Выполнение запроса для воздушного кулера с параметрами: {params}")
+                    cursor.execute(query, tuple(params))
+                    result = cursor.fetchone()
+
+                    if not result:
+                        logging.error("Не найдено подходящих воздушных кулеров")
+                        raise ValueError("Не найдено подходящих воздушных кулеров")
+
+                    logging.info(f"Найден воздушный кулер: {result['name']}")
+                    return CpuCoolerModel.from_orm(dict(result)).model_dump()
+
+                elif cooler_type == "water_cooling":
+                    required_fan_airflow = get_required_fan_airflow(cpu_tdp)
+                    price_filter = "AND price <= %s" if target_price is not None else ""
+                    query = """
+                        SELECT 
+                            id, name, price, compatible_sockets, fan_airflow, radiator_size, fans_count,
+                            fan_max_noise, pump_speed, fan_max_speed, tube_length
+                        FROM pc_components.water_cooling
+                        WHERE 
+                            REGEXP_REPLACE(fan_airflow, '[^0-9.]', '', 'g') <> ''
+                            AND CAST(REGEXP_REPLACE(fan_airflow, '[^0-9.]', '', 'g') AS FLOAT) >= %s
+                            AND %s = ANY (string_to_array(compatible_sockets, ', '))
+                            {}
+                        ORDER BY 
+                            price DESC,
+                            CAST(REGEXP_REPLACE(fan_airflow, '[^0-9.]', '', 'g') AS FLOAT) DESC
+                        LIMIT 1
+                    """.format(price_filter)
+                    params = [required_fan_airflow, cpu_socket]
+                    if target_price is not None:
+                        params.append(target_price)
+
+                    logging.info(f"Выполнение запроса для водяного кулера с параметрами: {params}")
+                    cursor.execute(query, tuple(params))
+                    result = cursor.fetchone()
+
+
+                    if not result:
+                        logging.error("Не найдено подходящих водяных кулеров")
+                        raise ValueError("Не найдено подходящих водяных кулеров")
+
+                    logging.info(f"Найден водяной кулер: {result['name']}")
+                    return WaterCoolingModel.from_orm(dict(result)).model_dump()
+
+                else:
+                    logging.error(f"Неизвестный тип кулера: {cooler_type}")
+                    raise ValueError(f"Неизвестный тип кулера: {cooler_type}")
 
             except Exception as e:
+                logging.error(f"Ошибка при поиске кулера: {str(e)}")
                 raise ValueError(f"Ошибка при поиске кулера: {str(e)}")
+
 
 def run_cpu_cooler_selection_test(input_data: Dict[str, Any], chosen_cpu: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     logging.info("=== Тест подбора кулера ===")
@@ -116,6 +207,7 @@ def run_cpu_cooler_selection_test(input_data: Dict[str, Any], chosen_cpu: Dict[s
     except Exception as e:
         logging.exception("Неожиданная ошибка")
         return None
+
 
 
 if __name__ == "__main__":
@@ -150,7 +242,7 @@ if __name__ == "__main__":
                 "optional": {
                     "cooling": "any",
                     "pc_case": "normal_size",
-                    "cpu_cooler": "true"
+                    "cpu_cooler": "air_cooler"
                 }
             },
             "allocations": {
@@ -170,7 +262,7 @@ if __name__ == "__main__":
                     "fixed_price_based": {
                         "cooling_max_price": 10000,
                         "pc_case_max_price": 8000,
-                        "cpu_cooler_max_price": 9000
+                        "cpu_cooler_max_price": 12000
                     }
                 }
             }
