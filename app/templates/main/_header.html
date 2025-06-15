@@ -1,28 +1,33 @@
 <header class="header p-3 text-bg-dark">
   <div class="container">
-    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-      <a href="{{ url_for('post.all')}}" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none me-4">
-        <img class="header__img" src="{{ url_for('static', filename='img/image.png') }}" alt="logo">
-      </a>
+    <div class="d-flex flex-wrap align-items-center justify-content-between">
+      <!-- Логотип и название слева -->
+      <div class="d-flex align-items-center">
+        <a href="{{ url_for('post.all')}}" class="d-flex align-items-center text-white text-decoration-none me-4">
+          <img class="header__img" src="{{ url_for('static', filename='img/image.png') }}" alt="logo">
+          <span class="ms-2 fs-4 fw-bold">SCPC</span>
+        </a>
+      </div>
 
-      <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-        <li><a href="{{ url_for('post.all')}}" class="nav-link px-3 {{ 'active' if request.endpoint == 'post.all' }}">Главная</a></li>
-        <li><a href="{{ url_for('configurator.index')}}" class="nav-link px-3 {{ 'active' if request.endpoint == 'configurator.index' }}">Конфигуратор</a></li>
-        <li><a href="{{ url_for('components.index')}}" class="nav-link px-3 {{ 'active' if request.endpoint == 'components.index' }}">Компоненты</a></li>
+      <!-- Навигация по центру -->
+      <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+        <li><a href="{{ url_for('post.all')}}" class="nav-link px-3 {{ 'active' if request.endpoint == 'post.all' }}">ГЛАВНАЯ</a></li>
+        <li><a href="{{ url_for('configurator.index')}}" class="nav-link px-3 {{ 'active' if request.endpoint == 'configurator.index' }}">КОНФИГУРАТОР</a></li>
+        <li><a href="{{ url_for('components.index')}}" class="nav-link px-3 {{ 'active' if request.endpoint == 'components.index' }}">КОМПОНЕНТЫ</a></li>
         {% if current_user.is_authenticated %}
-        <li><a href="{{ url_for('post.create')}}" class="nav-link px-3 {{ 'active' if request.endpoint == 'post.create' }}">Добавить тему</a></li>
+        <!--<li><a href="{{ url_for('post.create')}}" class="nav-link px-3 {{ 'active' if request.endpoint == 'post.create' }}">Добавить тему</a></li>-->
         {% endif %}
       </ul>
 
-      <div class="text-end d-flex align-items-center">
+      <!-- Кнопки авторизации справа -->
+      <div class="auth-buttons">
         {% if current_user.is_authenticated %}
-        <span class="text-white me-3">Добро пожаловать, {{ current_user.login }}</span>
-        <a href="{{ url_for('user.logout') }}" class="btn btn-outline-light me-2">Выйти</a>
+            <a href="{{ url_for('user.logout') }}" class="auth-link logout">ВЫЙТИ</a>
         {% else %}
-        <a href="{{ url_for('user.login') }}" class="btn btn-outline-light me-2">Войти</a>
-        <a href="{{ url_for('user.register') }}" class="btn btn-warning">Зарегистрироваться</a>
+            <a href="{{ url_for('user.login') }}" class="auth-link login">ВОЙТИ</a>
+            <a href="{{ url_for('user.register') }}" class="auth-link register">ЗАРЕГИСТРИРОВАТЬСЯ</a>
         {% endif %}
-      </div>
+    </div>
     </div>
   </div>
 </header>

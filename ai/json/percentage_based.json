@@ -1,0 +1,53 @@
+{
+  "user_selections": {
+    "game": {
+      "title": "cyberpunk_2077",
+      "graphics_settings": {
+        "quality": "High",
+        "target_fps": 240,
+        "resolution": 1080,
+        "ray_tracing": false,
+        "dlss": "Disabled",
+        "fsr": "Disabled"
+      }
+    },
+    "budget": {
+      "amount": 120000,
+      "budget_allocation_method": "percentage_based"
+    },
+    "components": {
+      "mandatory": {
+        "cpu": "any",
+        "gpu": "any",
+        "dimm": "any",
+        "ssd_m2": "any",
+        "motherboard": "any",
+        "power_supply": "any"
+      },
+      "mandatory_allocation": {
+        "method": "percentage_based",
+        "percentage_based": {
+          "cpu_percentage": 25,
+          "gpu_percentage": 40,
+          "dimm_percentage": 40,
+          "ssd_m2_percentage": 15,
+          "motherboard_percentage": 20,
+          "power_supply_percentage": 15
+        }
+      },
+      "optional": {
+        "case_fan": "any",
+        "pc_case": "any",
+        "cpu_cooler": "air_cooler"
+      },
+      "optional_allocation": {
+        "method": "percentage_based",
+        "percentage_based": {
+          "case_fan_percentage": 10,
+          "pc_case_percentage": 10,
+          "cpu_cooler_percentage": 10
+        }
+      }
+    }
+  }
+}

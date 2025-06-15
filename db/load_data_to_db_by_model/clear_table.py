@@ -1,20 +1,20 @@
 import subprocess
 
 def main():
-    table_name = input("Введите имя таблицы для удаления: ").strip()
+    table_name = input("Введите имя таблицы для очистки: ").strip()
     if not table_name:
         print("Имя таблицы не может быть пустым.")
         return
 
     try:
-        # Формируем SQL для удаления таблицы из схемы pc_components
+        # Формируем SQL для очистки таблицы в схеме pc_components
         sql_commands = f"""
         \\c mydb
-        DROP TABLE IF EXISTS "pc_components"."{table_name}";
+        TRUNCATE TABLE "pc_components"."{table_name}";
         \\q
         """
 
-        print(f"[INFO] Удаление таблицы pc_components.{table_name} из базы данных mydb...")
+        print(f"[INFO] Очистка таблицы pc_components.{table_name} в базе данных mydb...")
         subprocess.run(
             ['sudo', '-u', 'postgres', 'psql'],
             input=sql_commands,
@@ -22,7 +22,7 @@ def main():
             check=True
         )
 
-        print(f"[SUCCESS] Таблица pc_components.{table_name} успешно удалена (если существовала).")
+        print(f"[SUCCESS] Таблица pc_components.{table_name} успешно очищена (все данные удалены).")
 
     except subprocess.CalledProcessError as e:
         print(f"[ERROR] Ошибка при выполнении команды: {e}")

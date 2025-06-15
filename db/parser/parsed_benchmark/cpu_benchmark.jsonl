@@ -1,0 +1,277 @@
+{"name": "Процессор AMD A6-7480 OEM", "benchmark_rate": 1.13}
+{"name": "Процессор AMD Athlon X4 950 OEM", "benchmark_rate": 2.22}
+{"name": "Процессор AMD A6-9500E OEM", "benchmark_rate": 1.07}
+{"name": "Процессор Intel Pentium Gold G5500 OEM", "benchmark_rate": 2.38}
+{"name": "Процессор AMD A6-9500 OEM", "benchmark_rate": 1.17}
+{"name": "Процессор AMD A8-7680 OEM", "benchmark_rate": 2.23}
+{"name": "Процессор AMD FX-4300 BOX", "benchmark_rate": 1.86}
+{"name": "Процессор Intel Pentium G4560 OEM", "benchmark_rate": 2.2}
+{"name": "Процессор AMD Athlon 200GE OEM", "benchmark_rate": 2.55}
+{"name": "Процессор AMD Ryzen 5 3500X OEM", "benchmark_rate": 8.19}
+{"name": "Процессор AMD Ryzen 5 3500 OEM", "benchmark_rate": 7.96}
+{"name": "Процессор AMD Ryzen 5 4500 OEM", "benchmark_rate": 10.02}
+{"name": "Процессор Intel Pentium Gold G6400 OEM", "benchmark_rate": 2.56}
+{"name": "Процессор Intel Celeron G5905 OEM", "benchmark_rate": 1.72}
+{"name": "Процессор AMD Ryzen 3 3200G OEM", "benchmark_rate": 4.38}
+{"name": "Процессор Intel Celeron G5925 OEM", "benchmark_rate": 1.73}
+{"name": "Процессор AMD Athlon 3000G OEM", "benchmark_rate": 2.77}
+{"name": "Процессор Intel Core i3-10100F OEM", "benchmark_rate": 5.42}
+{"name": "Процессор Intel Core i3-12100F OEM", "benchmark_rate": 8.73}
+{"name": "Процессор Intel Pentium Gold G5400 OEM", "benchmark_rate": 2.32}
+{"name": "Процессор Intel Core i5-9400F OEM", "benchmark_rate": 5.88}
+{"name": "Процессор Intel Core i3-9100F OEM", "benchmark_rate": 4.18}
+{"name": "Процессор AMD Ryzen 5 3600 OEM", "benchmark_rate": 11.01}
+{"name": "Процессор Intel Pentium Gold G5420 OEM", "benchmark_rate": 2.31}
+{"name": "Процессор Intel Celeron G6900 OEM", "benchmark_rate": 2.81}
+{"name": "Процессор Intel Core i5-8400 OEM", "benchmark_rate": 5.74}
+{"name": "Процессор Intel Core i5-9400F OEM", "benchmark_rate": 5.88}
+{"name": "Процессор AMD Ryzen 3 4100 OEM", "benchmark_rate": 6.88}
+{"name": "Процессор AMD Ryzen 5 3400G OEM", "benchmark_rate": 5.73}
+{"name": "Процессор AMD Ryzen 3 3200G BOX", "benchmark_rate": 4.38}
+{"name": "Процессор AMD Ryzen 5 2400G OEM", "benchmark_rate": 5.43}
+{"name": "Процессор Intel Core i3-14100F OEM", "benchmark_rate": 9.56}
+{"name": "Процессор Intel Core i3-10105F BOX", "benchmark_rate": 5.55}
+{"name": "Процессор Intel Core i3-10105 OEM", "benchmark_rate": 5.19}
+{"name": "Процессор Intel Core i5-12400F OEM", "benchmark_rate": 12.12}
+{"name": "Процессор AMD Ryzen 5 PRO 3600 OEM", "benchmark_rate": 11.01}
+{"name": "Процессор AMD Ryzen 3 4100 BOX", "benchmark_rate": 6.88}
+{"name": "Процессор Intel Core i3-12100 OEM", "benchmark_rate": 7.68}
+{"name": "Процессор AMD Ryzen 5 5600 OEM", "benchmark_rate": 13.41}
+{"name": "Процессор Intel Core i3-12100F BOX", "benchmark_rate": 8.73}
+{"name": "Процессор AMD Ryzen 5 5600 BOX", "benchmark_rate": 13.41}
+{"name": "Процессор Intel Pentium Gold G6405 BOX", "benchmark_rate": 2.36}
+{"name": "Процессор AMD Ryzen 5 3600X OEM", "benchmark_rate": 11.3}
+{"name": "Процессор AMD Ryzen 5 5600GT OEM", "benchmark_rate": 12.65}
+{"name": "Процессор Intel Core i3-10100 BOX", "benchmark_rate": 5.35}
+{"name": "Процессор Intel Core i3-9100 OEM", "benchmark_rate": 4.11}
+{"name": "Процессор AMD Ryzen 5 4600G OEM", "benchmark_rate": 9.95}
+{"name": "Процессор AMD Ryzen 5 5500 BOX", "benchmark_rate": 12.03}
+{"name": "Процессор Intel Core i3-13100 OEM", "benchmark_rate": 8.51}
+{"name": "Процессор Intel Core i5-11400T OEM", "benchmark_rate": 8.15}
+{"name": "Процессор Intel Core i5-12400F BOX", "benchmark_rate": 12.12}
+{"name": "Процессор AMD Ryzen 5 5600X BOX", "benchmark_rate": 13.6}
+{"name": "Процессор AMD Ryzen 5 5600G BOX", "benchmark_rate": 12.3}
+{"name": "Процессор AMD Ryzen 5 8500G OEM", "benchmark_rate": 13.45}
+{"name": "Процессор AMD Ryzen 3 PRO 4350G OEM", "benchmark_rate": 6.8}
+{"name": "Процессор AMD Ryzen 5 5600 BOX", "benchmark_rate": 13.41}
+{"name": "Процессор Intel Core i5-11400F BOX", "benchmark_rate": 10.53}
+{"name": "Процессор AMD Ryzen 5 5500GT OEM", "benchmark_rate": 11.97}
+{"name": "Процессор Intel Core i3-8100 OEM", "benchmark_rate": 3.79}
+{"name": "Процессор Intel Core i3-14100 BOX", "benchmark_rate": 9.5}
+{"name": "Процессор Intel Core i5-13400F OEM", "benchmark_rate": 15.59}
+{"name": "Процессор Intel Core i3-10105 BOX", "benchmark_rate": 5.19}
+{"name": "Процессор Intel Core i5-12490F BOX", "benchmark_rate": 12.56}
+{"name": "Процессор Intel Core i5-10600KF OEM", "benchmark_rate": 8.82}
+{"name": "Процессор Intel Core i5-13400F BOX", "benchmark_rate": 15.59}
+{"name": "Процессор Intel Core i3-14100F BOX", "benchmark_rate": 9.56}
+{"name": "Процессор Intel Core i5-10400F BOX", "benchmark_rate": 8.1}
+{"name": "Процессор Intel Core i3-14100 OEM", "benchmark_rate": 9.5}
+{"name": "Процессор AMD Ryzen 7 3700X OEM", "benchmark_rate": 13.98}
+{"name": "Процессор Intel Core i5-11400 OEM", "benchmark_rate": 10.51}
+{"name": "Процессор Intel Core i5-13400F OEM", "benchmark_rate": 15.59}
+{"name": "Процессор Intel Core i5-14400 OEM", "benchmark_rate": 15.76}
+{"name": "Процессор AMD Ryzen 5 7400F OEM", "benchmark_rate": 15.98}
+{"name": "Процессор Intel Core i5-12400F BOX", "benchmark_rate": 12.12}
+{"name": "Процессор AMD Ryzen 7 5700X BOX", "benchmark_rate": 16.56}
+{"name": "Процессор Intel Core i5-10400 OEM", "benchmark_rate": 7.48}
+{"name": "Процессор AMD Ryzen 5 5600G OEM", "benchmark_rate": 12.3}
+{"name": "Процессор AMD Ryzen 7 5700X OEM", "benchmark_rate": 16.56}
+{"name": "Процессор Intel Core i3-12100 BOX", "benchmark_rate": 7.68}
+{"name": "Процессор Intel Core i5-11500 OEM", "benchmark_rate": 10.69}
+{"name": "Процессор Intel Core i5-12490F OEM", "benchmark_rate": 12.56}
+{"name": "Процессор Intel Core i3-12300T OEM", "benchmark_rate": 8.22}
+{"name": "Процессор Intel Core i5-10600KF BOX", "benchmark_rate": 8.82}
+{"name": "Процессор AMD Ryzen 5 5600GT BOX", "benchmark_rate": 12.65}
+{"name": "Процессор Intel Core i5-12400F BOX", "benchmark_rate": 12.12}
+{"name": "Процессор AMD Ryzen 5 5600GT BOX", "benchmark_rate": 12.65}
+{"name": "Процессор AMD Ryzen 5 7500F BOX", "benchmark_rate": 16.7}
+{"name": "Процессор AMD Ryzen 3 PRO 5350G OEM", "benchmark_rate": 8.58}
+{"name": "Процессор AMD Ryzen 5 8400F BOX", "benchmark_rate": 15.28}
+{"name": "Процессор Intel Core i5-11600KF OEM", "benchmark_rate": 12.15}
+{"name": "Процессор AMD Ryzen 5 5600XT OEM", "benchmark_rate": 13.8}
+{"name": "Процессор Intel Core i5-9600K OEM", "benchmark_rate": 6.62}
+{"name": "Процессор AMD Ryzen 7 5800X OEM", "benchmark_rate": 17.26}
+{"name": "Процессор Intel Core i5-11600 OEM", "benchmark_rate": 11.16}
+{"name": "Процессор Intel Core i5-14400F OEM", "benchmark_rate": 16.02}
+{"name": "Процессор Intel Core i3-13100 BOX", "benchmark_rate": 8.51}
+{"name": "Процессор AMD Ryzen 7 5800X BOX", "benchmark_rate": 17.26}
+{"name": "Процессор AMD Ryzen 5 7600X BOX", "benchmark_rate": 17.67}
+{"name": "Процессор AMD Ryzen 5 8600G OEM", "benchmark_rate": 15.78}
+{"name": "Процессор Intel Core i5-14400F OEM", "benchmark_rate": 16.02}
+{"name": "Процессор AMD Ryzen 5 5500GT BOX", "benchmark_rate": 11.97}
+{"name": "Процессор Intel Core i5-10400 BOX", "benchmark_rate": 7.48}
+{"name": "Процессор Intel Core i5-12400 OEM", "benchmark_rate": 11.88}
+{"name": "Процессор Intel Core i5-13400 OEM", "benchmark_rate": 14.73}
+{"name": "Процессор Intel Core i5-13490F OEM", "benchmark_rate": 16.44}
+{"name": "Процессор Intel Core i5-12500 OEM", "benchmark_rate": 12.29}
+{"name": "Процессор Intel Core i5-12400T OEM", "benchmark_rate": 9.86}
+{"name": "Процессор Intel Core i5-12400 BOX", "benchmark_rate": 11.88}
+{"name": "Процессор AMD Ryzen 5 7600X OEM", "benchmark_rate": 17.67}
+{"name": "Процессор AMD Ryzen 5 8500G BOX", "benchmark_rate": 13.45}
+{"name": "Процессор Intel Core i5-13400F BOX", "benchmark_rate": 15.59}
+{"name": "Процессор Intel Core i5-12600KF BOX", "benchmark_rate": 17.32}
+{"name": "Процессор AMD Ryzen 5 8500G BOX", "benchmark_rate": 13.45}
+{"name": "Процессор Intel Core i5-12600K OEM", "benchmark_rate": 17.19}
+{"name": "Процессор AMD Ryzen 5 7600 OEM", "benchmark_rate": 16.83}
+{"name": "Процессор AMD Ryzen 7 8700F OEM", "benchmark_rate": 19.52}
+{"name": "Процессор AMD Ryzen 5 7500F OEM", "benchmark_rate": 16.7}
+{"name": "Процессор Intel Core i5-13400 BOX", "benchmark_rate": 14.73}
+{"name": "Процессор Intel Core i5-11600K OEM", "benchmark_rate": 12.15}
+{"name": "Процессор AMD Ryzen 7 5700G BOX", "benchmark_rate": 15.2}
+{"name": "Процессор AMD Ryzen 7 5700X3D OEM", "benchmark_rate": 16.37}
+{"name": "Процессор Intel Core i5-14400 OEM", "benchmark_rate": 15.76}
+{"name": "Процессор Intel Core i5-13500 OEM", "benchmark_rate": 19.54}
+{"name": "Процессор Intel Core i7-12700F OEM", "benchmark_rate": 18.95}
+{"name": "Процессор AMD Ryzen 5 8600G BOX", "benchmark_rate": 15.78}
+{"name": "Процессор AMD Ryzen 5 7500F BOX", "benchmark_rate": 16.7}
+{"name": "Процессор Intel Core i5-14600KF OEM", "benchmark_rate": 24.17}
+{"name": "Процессор Intel Core i5-13600KF OEM", "benchmark_rate": 23.34}
+{"name": "Процессор Intel Core i5-13600K OEM", "benchmark_rate": 23.44}
+{"name": "Процессор AMD Ryzen 7 5700X BOX", "benchmark_rate": 16.56}
+{"name": "Процессор Intel Core i5-14400 BOX", "benchmark_rate": 15.76}
+{"name": "Процессор Intel Core i5-12600K BOX", "benchmark_rate": 17.19}
+{"name": "Процессор AMD Ryzen 7 7700 OEM", "benchmark_rate": 21.43}
+{"name": "Процессор AMD Ryzen 5 9600X BOX", "benchmark_rate": 18.64}
+{"name": "Процессор Intel Core i5-12500T OEM", "benchmark_rate": 10.21}
+{"name": "Процессор AMD Ryzen 5 9600X OEM", "benchmark_rate": 18.64}
+{"name": "Процессор Intel Core i7-12700KF OEM", "benchmark_rate": 21.23}
+{"name": "Процессор AMD Ryzen 7 5700 BOX", "benchmark_rate": 15.12}
+{"name": "Процессор Intel Core i7-13700F OEM", "benchmark_rate": 23.94}
+{"name": "Процессор Intel Core i7-9700F OEM", "benchmark_rate": 8.2}
+{"name": "Процессор Intel Core i7-9700KF OEM", "benchmark_rate": 8.86}
+{"name": "Процессор Intel Core i5-13490F BOX", "benchmark_rate": 16.44}
+{"name": "Процессор Intel Core i5-14600KF BOX", "benchmark_rate": 24.17}
+{"name": "Процессор Intel Core i7-13700KF OEM", "benchmark_rate": 28.79}
+{"name": "Процессор Intel Core Ultra 5 225F OEM", "benchmark_rate": 19.31}
+{"name": "Процессор Intel Core i7-10700KF OEM", "benchmark_rate": 11.47}
+{"name": "Процессор AMD Ryzen 7 8700G OEM", "benchmark_rate": 19.72}
+{"name": "Процессор Intel Core i7-12700 OEM", "benchmark_rate": 18.92}
+{"name": "Процессор AMD Ryzen 9 5900X OEM", "benchmark_rate": 24.27}
+{"name": "Процессор Intel Core i5-14500 OEM", "benchmark_rate": 19.45}
+{"name": "Процессор AMD Ryzen 5 7600X BOX", "benchmark_rate": 17.67}
+{"name": "Процессор AMD Ryzen 7 5800X BOX", "benchmark_rate": 17.26}
+{"name": "Процессор Intel Core i5-14600K BOX", "benchmark_rate": 24.08}
+{"name": "Процессор Intel Core i5-13600KF BOX", "benchmark_rate": 23.34}
+{"name": "Процессор Intel Core i5-13600K BOX", "benchmark_rate": 23.44}
+{"name": "Процессор AMD Ryzen 7 5700X3D BOX", "benchmark_rate": 16.37}
+{"name": "Процессор Intel Core i7-12700F BOX", "benchmark_rate": 18.95}
+{"name": "Процессор Intel Core Ultra 5 245K OEM", "benchmark_rate": 27.12}
+{"name": "Процессор Intel Core i5-14600K OEM", "benchmark_rate": 24.08}
+{"name": "Процессор Intel Core i7-11700KF OEM", "benchmark_rate": 14.82}
+{"name": "Процессор AMD Ryzen 9 5900X BOX", "benchmark_rate": 24.27}
+{"name": "Процессор Intel Core i9-10900F OEM", "benchmark_rate": 12.31}
+{"name": "Процессор Intel Core i7-13700 OEM", "benchmark_rate": 22.7}
+{"name": "Процессор Intel Core i9-12900F OEM", "benchmark_rate": 22.44}
+{"name": "Процессор Intel Core i7-10700F OEM", "benchmark_rate": 10.12}
+{"name": "Процессор Intel Core i9-11900K OEM", "benchmark_rate": 15.58}
+{"name": "Процессор AMD Ryzen 5 8600G BOX", "benchmark_rate": 15.78}
+{"name": "Процессор Intel Core i7-14700 OEM", "benchmark_rate": 25.92}
+{"name": "Процессор Intel Core i7-10700K OEM", "benchmark_rate": 11.59}
+{"name": "Процессор Intel Core i9-10900 OEM", "benchmark_rate": 12.07}
+{"name": "Процессор Intel Core i7-12700K OEM", "benchmark_rate": 21.44}
+{"name": "Процессор AMD Ryzen 5 7600X3D BOX", "benchmark_rate": 15.93}
+{"name": "Процессор Intel Core i7-14700F OEM", "benchmark_rate": 26.02}
+{"name": "Процессор AMD Ryzen 5 9600X BOX", "benchmark_rate": 18.64}
+{"name": "Процессор Intel Core i7-14700KF BOX", "benchmark_rate": 33.02}
+{"name": "Процессор AMD Ryzen 9 5950X BOX", "benchmark_rate": 28.27}
+{"name": "Процессор Intel Core i7-12700KF BOX", "benchmark_rate": 21.23}
+{"name": "Процессор AMD Ryzen 9 5950X OEM", "benchmark_rate": 28.27}
+{"name": "Процессор AMD Ryzen 7 5800XT BOX", "benchmark_rate": 17.44}
+{"name": "Процессор Intel Core Ultra 5 245KF BOX", "benchmark_rate": 27.13}
+{"name": "Процессор AMD Ryzen 5 7600X3D OEM", "benchmark_rate": 15.93}
+{"name": "Процессор AMD Ryzen 7 9700X OEM", "benchmark_rate": 23.14}
+{"name": "Процессор Intel Core i9-12900KF BOX", "benchmark_rate": 25.53}
+{"name": "Процессор Intel Core i7-14700K OEM", "benchmark_rate": 32.72}
+{"name": "Процессор Intel Core i7-12700K BOX", "benchmark_rate": 21.44}
+{"name": "Процессор Intel Core i9-12900KF OEM", "benchmark_rate": 25.53}
+{"name": "Процессор AMD Ryzen 9 5900X BOX", "benchmark_rate": 24.27}
+{"name": "Процессор Intel Core i7-12700T OEM", "benchmark_rate": 13.23}
+{"name": "Процессор Intel Core i7-13700F BOX", "benchmark_rate": 23.94}
+{"name": "Процессор Intel Core i9-10900 BOX", "benchmark_rate": 12.07}
+{"name": "Процессор AMD Ryzen 9 7900 OEM", "benchmark_rate": 30.12}
+{"name": "Процессор AMD Ryzen 9 9900X OEM", "benchmark_rate": 34.02}
+{"name": "Процессор Intel Core i7-13700KF BOX", "benchmark_rate": 28.79}
+{"name": "Процессор AMD Ryzen 7 7700X OEM", "benchmark_rate": 22.28}
+{"name": "Процессор Intel Core Ultra 5 245K BOX", "benchmark_rate": 27.12}
+{"name": "Процессор AMD Ryzen 7 7700 BOX", "benchmark_rate": 21.43}
+{"name": "Процессор AMD Ryzen 7 8700G BOX", "benchmark_rate": 19.72}
+{"name": "Процессор Intel Core i9-13900F BOX", "benchmark_rate": 31.16}
+{"name": "Процессор Intel Core i7-13700KF BOX", "benchmark_rate": 28.79}
+{"name": "Процессор AMD Ryzen 9 7900X OEM", "benchmark_rate": 31.99}
+{"name": "Процессор Intel Core i7-13700K OEM", "benchmark_rate": 28.6}
+{"name": "Процессор Intel Core i9-14900KF BOX", "benchmark_rate": 36.52}
+{"name": "Процессор Intel Core i7-13790F BOX", "benchmark_rate": 28.8}
+{"name": "Процессор AMD Ryzen 9 7900 BOX", "benchmark_rate": 30.12}
+{"name": "Процессор Intel Core Ultra 7 265K OEM", "benchmark_rate": 36.59}
+{"name": "Процессор AMD Ryzen 9 5950X BOX", "benchmark_rate": 28.27}
+{"name": "Процессор AMD Ryzen 9 5900XT BOX", "benchmark_rate": 27.4}
+{"name": "Процессор Intel Core i7-14700F BOX", "benchmark_rate": 26.02}
+{"name": "Процессор Intel Core i7-14700 BOX", "benchmark_rate": 25.92}
+{"name": "Процессор Intel Core i9-13900K OEM", "benchmark_rate": 36.49}
+{"name": "Процессор Intel Core i9-11900 BOX", "benchmark_rate": 13.97}
+{"name": "Процессор Intel Core Ultra 5 245K BOX", "benchmark_rate": 27.12}
+{"name": "Процессор Intel Core i7-13700 BOX", "benchmark_rate": 22.7}
+{"name": "Процессор Intel Core Ultra 5 225 OEM", "benchmark_rate": 19.11}
+{"name": "Процессор Intel Core i7-13700K BOX", "benchmark_rate": 28.6}
+{"name": "Процессор Intel Core i7-14790F BOX", "benchmark_rate": 18.5}
+{"name": "Процессор Intel Core i9-13900F OEM", "benchmark_rate": 31.16}
+{"name": "Процессор Intel Core i7-14790F OEM", "benchmark_rate": 18.5}
+{"name": "Процессор Intel Core i9-12900 OEM", "benchmark_rate": 21.0}
+{"name": "Процессор Intel Core i9-13900KF OEM", "benchmark_rate": 35.97}
+{"name": "Процессор AMD Ryzen 7 9700X BOX", "benchmark_rate": 23.14}
+{"name": "Процессор AMD Ryzen 9 9950X OEM", "benchmark_rate": 41.11}
+{"name": "Процессор Intel Core Ultra 7 265KF OEM", "benchmark_rate": 36.61}
+{"name": "Процессор AMD Ryzen 9 7900X3D BOX", "benchmark_rate": 31.31}
+{"name": "Процессор AMD Ryzen 7 7800X3D OEM", "benchmark_rate": 21.29}
+{"name": "Процессор Intel Core i9-12900KS OEM", "benchmark_rate": 27.28}
+{"name": "Процессор AMD Ryzen 7 8700G BOX", "benchmark_rate": 19.72}
+{"name": "Процессор Intel Core i9-14900KS OEM", "benchmark_rate": 37.79}
+{"name": "Процессор Intel Core i9-11900KF BOX", "benchmark_rate": 15.4}
+{"name": "Процессор Intel Core i9-14900K OEM", "benchmark_rate": 36.64}
+{"name": "Процессор Intel Core Ultra 7 265KF BOX", "benchmark_rate": 36.61}
+{"name": "Процессор Intel Core i9-12900KS BOX", "benchmark_rate": 27.28}
+{"name": "Процессор Intel Core i9-13900 OEM", "benchmark_rate": 28.53}
+{"name": "Процессор Intel Core Ultra 7 265K BOX", "benchmark_rate": 36.59}
+{"name": "Процессор Intel Core Ultra 5 245KF OEM", "benchmark_rate": 27.13}
+{"name": "Процессор Intel Core i9-12900KS BOX", "benchmark_rate": 27.28}
+{"name": "Процессор AMD Ryzen 7 9700X BOX", "benchmark_rate": 23.14}
+{"name": "Процессор Intel Core i9-14900KF OEM", "benchmark_rate": 36.52}
+{"name": "Процессор AMD Ryzen 7 7700X BOX", "benchmark_rate": 22.28}
+{"name": "Процессор Intel Core i9-13900KF BOX", "benchmark_rate": 35.97}
+{"name": "Процессор Intel Core i9-14900 OEM", "benchmark_rate": 28.36}
+{"name": "Процессор Intel Core i7-9700K OEM", "benchmark_rate": 8.97}
+{"name": "Процессор Intel Core Ultra 7 265K BOX", "benchmark_rate": 36.59}
+{"name": "Процессор AMD Ryzen 9 9900X BOX", "benchmark_rate": 34.02}
+{"name": "Процессор Intel Core i9-14900K BOX", "benchmark_rate": 36.64}
+{"name": "Процессор Intel Core i9-14900F OEM", "benchmark_rate": 29.07}
+{"name": "Процессор Intel Core i9-13900K BOX", "benchmark_rate": 36.49}
+{"name": "Процессор AMD Ryzen 9 7950X OEM", "benchmark_rate": 38.89}
+{"name": "Процессор AMD Ryzen 9 7950X3D OEM", "benchmark_rate": 38.83}
+{"name": "Процессор Intel Core i7-13790F OEM", "benchmark_rate": 28.8}
+{"name": "Процессор AMD Ryzen 7 7800X3D BOX", "benchmark_rate": 21.29}
+{"name": "Процессор AMD Ryzen 7 9800X3D OEM", "benchmark_rate": 24.89}
+{"name": "Процессор AMD Ryzen 9 9900X3D OEM", "benchmark_rate": 35.15}
+{"name": "Процессор Intel Core i9-13900KS BOX", "benchmark_rate": 37.83}
+{"name": "Процессор AMD Ryzen 9 7950X BOX", "benchmark_rate": 38.89}
+{"name": "Процессор Intel Core i9-10940X OEM", "benchmark_rate": 17.3}
+{"name": "Процессор Intel Core Ultra 7 265 OEM", "benchmark_rate": 30.53}
+{"name": "Процессор AMD Ryzen 7 7800X3D BOX", "benchmark_rate": 21.29}
+{"name": "Процессор Intel Core Ultra 9 285K OEM", "benchmark_rate": 42.16}
+{"name": "Процессор AMD Ryzen 7 9800X3D BOX", "benchmark_rate": 24.89}
+{"name": "Процессор AMD Ryzen 9 7950X3D BOX", "benchmark_rate": 38.83}
+{"name": "Процессор Intel Core Ultra 9 285 OEM", "benchmark_rate": 35.06}
+{"name": "Процессор AMD Ryzen 9 9950X BOX", "benchmark_rate": 41.11}
+{"name": "Процессор Intel Core i9-13900KS OEM", "benchmark_rate": 37.83}
+{"name": "Процессор AMD Ryzen 9 9900X BOX", "benchmark_rate": 34.02}
+{"name": "Процессор AMD Ryzen 9 9900X3D BOX", "benchmark_rate": 35.15}
+{"name": "Процессор Intel Core i9-10920X OEM", "benchmark_rate": 16.2}
+{"name": "Процессор Intel Core i9-14900KS BOX", "benchmark_rate": 37.79}
+{"name": "Процессор AMD Ryzen 9 9950X3D OEM", "benchmark_rate": 43.76}
+{"name": "Процессор AMD Ryzen Threadripper PRO 5995WX OEM", "benchmark_rate": 59.21}
+{"name": "Процессор AMD Ryzen 9 7950X3D BOX", "benchmark_rate": 38.83}
+{"name": "Процессор AMD Ryzen 7 5800X3D OEM", "benchmark_rate": 17.61}
+{"name": "Процессор AMD Ryzen 7 9800X3D BOX", "benchmark_rate": 24.89}
+{"name": "Процессор AMD Ryzen Threadripper 2970WX BOX", "benchmark_rate": 19.3}
+{"name": "Процессор AMD Ryzen 9 9950X BOX", "benchmark_rate": 41.11}
+{"name": "Процессор AMD Ryzen 9 7900X BOX", "benchmark_rate": 31.99}
+{"name": "Процессор AMD Ryzen 9 7950X BOX", "benchmark_rate": 38.89}

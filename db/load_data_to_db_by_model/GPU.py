@@ -17,7 +17,14 @@ class GPUDataLoader(BaseDataLoader):
         gpu = self.model_class()
 
         self.common_fields(gpu, item)
-
+        
+        # Оценка бенчмарка
+        if 'benchmark_rate' in item:  # Проверяем корневой уровень item
+            gpu.benchmark_rate = float(item['benchmark_rate']) if item['benchmark_rate'] is not None else None
+        elif 'benchmark_rate' in specs:  # Проверяем внутри specs
+            gpu.benchmark_rate = float(specs['benchmark_rate']) if specs['benchmark_rate'] is not None else None
+        else:
+            gpu.benchmark_rate = None  # Явно устанавливаем None, если поле отсутствует
         # Заводские данные
         gpu.warranty = self.extract_spec_value(specs, 'Заводские данные', 'Гарантия продавца / производителя')
         gpu.country = self.extract_spec_value(specs, 'Заводские данные', 'Страна-производитель')

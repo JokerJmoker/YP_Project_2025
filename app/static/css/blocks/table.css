@@ -1,6 +1,6 @@
 a
 .custom-table {
-    min-width: 900px;
+    max-width: 900px;
 }
 
 .custom-table thead tr, 

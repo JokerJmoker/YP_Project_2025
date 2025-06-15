@@ -16,11 +16,18 @@ class BaseDataLoader(ABC):
             Path.cwd()  # Текущая рабочая директория как fallback
         ]
 
-    def common_fields(self, instance, item):
+    def parse_price_to_int(self, price_str: str) -> int | None:
+        """Преобразует строку типа '1 499 ₽' в число 1499."""
+        if not price_str:
+            return None
+        digits = ''.join(filter(str.isdigit, price_str))
+        return int(digits) if digits else None
+    
+    def common_fields(self, instance, item: dict) -> None:
+        """Устанавливает общие поля для всех компонентов."""
         instance.name = item.get('name', '')
-        instance.price = item.get('price', '')
+        instance.price = self.parse_price_to_int(item.get('price', ''))
         instance.image_url = item.get('image_url', '')
-        instance.image_path = item.get('image_path', '')
 
     def get_default_path(self):
         """Возвращает первый существующий путь из списка default_paths"""

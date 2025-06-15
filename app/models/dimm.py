@@ -7,9 +7,8 @@ class Dimm(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(300), nullable=False)  # Увеличено с 250 до 300
-    price = db.Column(db.String(50), nullable=False)
+    price = db.Column(db.Integer, nullable=False)
     image_url = db.Column(db.String(500), nullable=False)
-    image_path = db.Column(db.String(500), nullable=False)
 
     # Заводские данные
     warranty = db.Column(db.String(100))  # Увеличено с 50 до 100
