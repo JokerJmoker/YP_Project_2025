@@ -36,14 +36,14 @@
         }
       },
       "optional": {
-        "cooling": "any",
-        "pc_case": "normal_size",
+        "case_fan": "any",
+        "pc_case": "any",
         "cpu_cooler": "included_with_cpu"
       },
       "optional_allocation": {
         "method": "fixed_price_based",
         "fixed_price_based": {
-          "cooling_max_price": 10000,
+          "case_fan_max_price": 10000,
           "pc_case_max_price": 8000,
           "cpu_cooler_max_price": 0
         }

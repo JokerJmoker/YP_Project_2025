@@ -7,6 +7,7 @@ class GpuModel(BaseModel):
     id: int
     name: str
     price: int  # in rubles
+    image_url: Optional[str] = None  # URL изображения
 
     # Critical compatibility parameters
     interface: str                     # PCIe version (e.g. "PCIe 4.0 x16")
@@ -61,6 +62,7 @@ class GpuModel(BaseModel):
             id=gpu_orm['id'],
             name=gpu_orm['name'],
             price=int(gpu_orm['price']),
+            image_url=str(gpu_orm['image_url']),
             interface=gpu_orm['interface'],
             slot_width=gpu_orm['slot_width'],
             length=parse_gpu_size(gpu_orm.get('length')),

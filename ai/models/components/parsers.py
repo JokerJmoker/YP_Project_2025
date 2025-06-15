@@ -1,4 +1,5 @@
 import re
+from typing import Dict, Any
 
 def parse_int(value):
     """
@@ -123,3 +124,44 @@ def parse_memory_frequency(value):
         if frequencies:
             return max(frequencies)
     return None
+
+def parse_str_list(value: str | None) -> list[int] | None:
+    """
+    Парсит строку вида "4800, 5200, 5600" или "4800 5200 5600" в список целых чисел.
+    Возвращает None, если входное значение пустое или None.
+    """
+    if not value:
+        return None
+
+    # Разделение по запятой или пробелу
+    parts = [part.strip() for part in value.replace(',', ' ').split()]
+    result = []
+
+    for part in parts:
+        try:
+            result.append(int(part))
+        except ValueError:
+            continue  # Пропускаем некорректные элементы
+
+    return result if result else None
+
+def extract_pcie_version(interface_str: str) -> float:
+    """
+    Извлекает версию PCIe из строки, например 'PCIe 5.0' -> 5.0
+    Если не удаётся определить, возвращает 0.0
+    """
+    match = re.search(r'PCIe\s*(\d+(\.\d+)?)', interface_str, re.IGNORECASE)
+    if match:
+        return float(match.group(1))
+    return 0.0
+
+def extract_number(value: Any) -> int:
+    if isinstance(value, int):
+        return value
+    if not value:
+        return 0
+    try:
+        match = re.search(r'\d+', str(value))
+        return int(match.group()) if match else 0
+    except (ValueError, AttributeError):
+        return 0

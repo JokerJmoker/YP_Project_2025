@@ -28,7 +28,7 @@ PC_CONFIGS = [
         "quality": "high",
         "cpu": "Процессор AMD Ryzen 7 5800X3D OEM",
         "gpu": "Видеокарта MSI GeForce RTX 4070 SUPER VENTUS 2X OC [GeForce RTX 4070 SUPER 12G VENTUS 2X OC]",
-        "dimm": "Оперативная память Kingston FURY Renegade RGB [KF436C16RB12AK2/32] 32 ГБ",
+        "dimm": "Оперативная память G.Skill Trident Z5 RGB [F5-7800J3646H16GX2-TZ5RK] 32 ГБ",
         "ssd_m2": "1000 ГБ M.2 NVMe накопитель Samsung 980 PRO [MZ-V8P1T0BW]",
     },
     {

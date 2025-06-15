@@ -83,4 +83,4 @@ if __name__ == "__main__":
     process_component_lookup(input_data_1st_stage, "cpu")
     #process_component_lookup(input_data_1st_stage, "gpu")
     #process_component_lookup(input_data_1st_stage, "ssd_m2")
-    process_component_lookup(input_data_1st_stage, "dimm")
+    #process_component_lookup(input_data_1st_stage, "dimm")
