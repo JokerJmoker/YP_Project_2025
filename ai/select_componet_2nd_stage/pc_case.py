@@ -9,6 +9,19 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 
 from ai.ai_db.database import Database
 from ai.models.components.pc_case import PcCaseModel
+import logging
+import datetime
+import re
+from typing import Dict, Any, List, Union
+from psycopg2.extras import DictCursor
+
+# Настройка логгера с форматом времени и уровня
+logging.basicConfig(
+    format='%(asctime)s | %(levelname)s | %(message)s',
+    level=logging.INFO,
+    datefmt='%H:%M:%S'
+)
+
 def select_pc_case(
     input_data_2nd_stage: Dict[str, Any],
     chosen_gpu: Dict[str, Any],
@@ -17,26 +30,18 @@ def select_pc_case(
     chosen_power_supply: Dict[str, Any],
     chosen_case_fan: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """
-    Подбирает корпус на основе:
-    1. Бюджета (с постепенным снижением требований)
-    2. Длины видеокарты
-    3. Поддержки кулера (воздушного или водяного)
-    4. Форм-фактора материнской платы
-    5. Форм-фактора и длины блока питания
-    6. Поддержки вентиляторов корпуса (±5 мм)
-    """
-    print("\n[DEBUG] ===== НАЧАЛО ПОДБОРА КОРПУСА =====")
-    
-    # 1. Рассчитываем максимальный бюджет
+
     user_request = input_data_2nd_stage["user_request"]
+
+    # 1. Определение бюджета на корпус
     if user_request["allocations"]["optional"]["method"] == "percentage_based":
         pc_case_percentage = user_request["allocations"]["optional"]["percentage_based"]["pc_case_percentage"]
         original_max_price = round((pc_case_percentage / 100) * user_request["budget"]["amount"])
+        logging.info(f"Метод выделения бюджета для корпуса: percentage_based ({pc_case_percentage}%)")
     else:
         original_max_price = user_request["allocations"]["optional"]["fixed_price_based"]["pc_case_max_price"]
-    
-    print(f"[DEBUG] Исходный максимальный бюджет: {original_max_price} руб.")
+        logging.info("Метод выделения бюджета для корпуса: fixed_price_based")
+    logging.info(f"Максимальная цена корпуса: {original_max_price} руб.")
 
     # 2. Получаем параметры компонентов
     gpu_length = chosen_gpu.get("length", 0)
@@ -44,28 +49,22 @@ def select_pc_case(
     psu_form_factor = chosen_power_supply.get("form_factor", "ATX")
     psu_length = chosen_power_supply.get("length", 0)
     fan_size = chosen_case_fan.get("fan_size", 120)
-    
-    print(f"[DEBUG] Длина видеокарты: {gpu_length} мм")
-    print(f"[DEBUG] Форм-фактор материнской платы: {mb_form_factor}")
-    print(f"[DEBUG] Блок питания: {psu_form_factor}, длина={psu_length} мм")
-    print(f"[DEBUG] Размер вентиляторов: {fan_size} мм")
 
-    # 3. Обрабатываем тип охлаждения
+    logging.info(f"Параметры GPU: длина видеокарты = {gpu_length} мм")
+    logging.info(f"Параметры материнской платы: форм-фактор = {mb_form_factor}")
+    logging.info(f"Параметры блока питания: форм-фактор = {psu_form_factor}, длина = {psu_length} мм")
+    logging.info(f"Параметры вентиляторов корпуса: размер = {fan_size} мм")
+
+    # 3. Определяем тип охлаждения
     cooler_type = user_request["components"]["optional"]["cpu_cooler"]
-    cpu_cooler_height = 0
-    radiator_size = None
-    found_case = None
-    
-    print(f"[DEBUG] Определён тип охлаждения: {cooler_type}")
+    logging.info(f"Тип охлаждения CPU: {cooler_type}")
 
     def parse_sizes(size_str: str) -> List[int]:
-        """Парсит размеры из строки (120 мм, 140мм и т.д.)"""
         if not size_str:
             return []
         return list(set(int(size) for size in re.findall(r'(\d+)\s*мм', size_str)))
 
     def check_support(support_data: Union[str, List[int], int], target: int) -> bool:
-        """Проверяет поддержку конкретного размера"""
         if not support_data:
             return False
         sizes = parse_sizes(support_data) if isinstance(support_data, str) else (
@@ -73,59 +72,60 @@ def select_pc_case(
         )
         return target in sizes
 
-    # Пытаемся найти корпус с постепенным снижением требований
+    found_case = None
+    radiator_size = None
+    cpu_cooler_height = 0
+
     for attempt in range(1, 4):
-        current_max_price = original_max_price * (1.0 - 0.1 * (attempt - 1))  # Уменьшаем бюджет на 10% с каждой попыткой
-        print(f"\n[DEBUG] Попытка #{attempt}: максимальная цена {current_max_price:.0f} руб.")
-        
+        current_max_price = original_max_price * (1.0 - 0.1 * (attempt - 1))
+        logging.info(f"Попытка #{attempt}: поиск корпуса с ценой до {int(current_max_price)} руб.")
+
         if cooler_type == "water_cooling":
-            print(f"[DEBUG] Выбрана СЖО: {chosen_cpu_cooler}")
             radiator_str = chosen_cpu_cooler.get("radiator_size", "")
             radiator_match = re.search(r'(\d+)\s*мм', radiator_str)
             if radiator_match:
                 radiator_size = int(radiator_match.group(1))
-                print(f"[DEBUG] Размер радиатора: {radiator_size} мм")
-                
-                query = """
-                    SELECT id, name, price, image_url, max_gpu_length, liquid_cooling_support,
-                    motherboard_form_factors, psu_form_factor, max_psu_length,
-                    front_radiator_support, rear_radiator_support, top_radiator_support,
-                    bottom_radiator_support, side_radiator_support,
-                    front_fan_support, rear_fan_support, top_fan_support,
-                    bottom_fan_support, side_fan_support
-                    FROM pc_components.pc_case
-                    WHERE price <= %s
-                    AND CAST(SUBSTRING(max_gpu_length FROM '[0-9]+') AS INTEGER) >= %s
-                    AND liquid_cooling_support = TRUE
-                    AND (%s = ANY(string_to_array(REPLACE(REPLACE(motherboard_form_factors, ' ', ''), ',', ','), ',')))
-                    AND (psu_form_factor = %s OR psu_form_factor LIKE '%%' || %s || '%%')
-                    AND CAST(SUBSTRING(max_psu_length FROM '[0-9]+') AS INTEGER) >= %s
-                    ORDER BY price DESC
-                    LIMIT 1
-                """
-                
-                try:
-                    with Database() as conn:
-                        with conn.cursor(cursor_factory=DictCursor) as cursor:
-                            print(f"[DEBUG] Выполняем запрос для водяного охлаждения")
-                            
-                            cursor.execute(query, (
-                                current_max_price, gpu_length, mb_form_factor, 
-                                psu_form_factor, psu_form_factor, psu_length
-                            ))
-                            found_case = cursor.fetchone()
-                            
-                            if found_case:
-                                print(f"[DEBUG] Найден корпус: {found_case['name']}")
-                                break
-                except Exception as e:
-                    print(f"[ERROR] Ошибка SQL запроса: {e}")
-                    continue
+                logging.info(f"Размер радиатора СЖО: {radiator_size} мм")
+            else:
+                logging.info("Размер радиатора СЖО не указан, поиск будет без учёта радиатора")
+
+            query = """
+                SELECT id, name, price, image_url, max_gpu_length, liquid_cooling_support,
+                motherboard_form_factors, psu_form_factor, max_psu_length,
+                front_radiator_support, rear_radiator_support, top_radiator_support,
+                bottom_radiator_support, side_radiator_support,
+                front_fan_support, rear_fan_support, top_fan_support,
+                bottom_fan_support, side_fan_support
+                FROM pc_components.pc_case
+                WHERE price <= %s
+                AND CAST(SUBSTRING(max_gpu_length FROM '[0-9]+') AS INTEGER) >= %s
+                AND liquid_cooling_support = TRUE
+                AND (%s = ANY(string_to_array(REPLACE(REPLACE(motherboard_form_factors, ' ', ''), ',', ','), ',')))
+                AND (psu_form_factor = %s OR psu_form_factor LIKE '%%' || %s || '%%')
+                AND CAST(SUBSTRING(max_psu_length FROM '[0-9]+') AS INTEGER) >= %s
+                ORDER BY price DESC
+                LIMIT 1
+            """
+
+            try:
+                with Database() as conn:
+                    with conn.cursor(cursor_factory=DictCursor) as cursor:
+                        cursor.execute(query, (
+                            current_max_price, gpu_length, mb_form_factor,
+                            psu_form_factor, psu_form_factor, psu_length
+                        ))
+                        found_case = cursor.fetchone()
+                        if found_case:
+                            logging.info(f"Найден корпус: {found_case['name']} (цена: {found_case['price']} руб.)")
+                            break
+            except Exception as e:
+                logging.error(f"Ошибка SQL запроса для СЖО: {e}")
+                continue
 
         elif cooler_type in ["air_cooler", "included_with_cpu"]:
             cpu_cooler_height = chosen_cpu_cooler.get("height", 80 if cooler_type == "included_with_cpu" else 0)
-            print(f"[DEBUG] Высота кулера: {cpu_cooler_height} мм")
-            
+            logging.info(f"Высота воздушного кулера: {cpu_cooler_height} мм")
+
             query = """
                 SELECT id, name, price, image_url, max_gpu_length, max_cpu_cooler_height, liquid_cooling_support,
                     motherboard_form_factors, psu_form_factor, max_psu_length,
@@ -145,27 +145,25 @@ def select_pc_case(
             try:
                 with Database() as conn:
                     with conn.cursor(cursor_factory=DictCursor) as cursor:
-                        print(f"[DEBUG] Выполняем запрос для воздушного охлаждения")
-                        
                         cursor.execute(query, (
-                            current_max_price, 
-                            gpu_length, 
+                            current_max_price,
+                            gpu_length,
                             cpu_cooler_height,
-                            mb_form_factor, 
-                            psu_form_factor, 
-                            psu_form_factor, 
+                            mb_form_factor,
+                            psu_form_factor,
+                            psu_form_factor,
                             psu_length
                         ))
                         found_case = cursor.fetchone()
-                        
                         if found_case:
-                            print(f"[DEBUG] Найден корпус: {found_case['name']}")
+                            logging.info(f"Найден корпус: {found_case['name']} (цена: {found_case['price']} руб.)")
                             break
             except Exception as e:
-                print(f"[ERROR] Ошибка SQL запроса: {e}")
+                logging.error(f"Ошибка SQL запроса для воздушного охлаждения: {e}")
                 continue
 
     if not found_case:
+        logging.error("Не удалось найти подходящий корпус после нескольких попыток")
         raise ValueError("Не удалось найти подходящий корпус после нескольких попыток")
 
     # Формируем результат
@@ -180,7 +178,7 @@ def select_pc_case(
         "max_psu_length": found_case["max_psu_length"],
         "fan_support": {
             "size": fan_size,
-            "positions": [pos for pos in ['front', 'rear', 'top', 'bottom', 'side'] 
+            "positions": [pos for pos in ['front', 'rear', 'top', 'bottom', 'side']
                          if check_support(found_case.get(f"{pos}_fan_support"), fan_size)]
         }
     }
@@ -189,22 +187,19 @@ def select_pc_case(
         result.update({
             "liquid_cooling_support": True,
             "radiator_size": radiator_size,
-            "radiator_positions": [pos for pos in ['front', 'top', 'rear', 'bottom', 'side'] 
+            "radiator_positions": [pos for pos in ['front', 'top', 'rear', 'bottom', 'side']
                                   if check_support(found_case.get(f"{pos}_radiator_support"), radiator_size)]
         })
+        logging.info(f"Поддержка радиатора {radiator_size} мм на позициях: {', '.join(result['radiator_positions'])}")
     else:
         result["max_cpu_cooler_height"] = found_case.get("max_cpu_cooler_height", 0)
+        logging.info(f"Максимальная высота кулера: {result['max_cpu_cooler_height']} мм")
 
-    print("\n[DEBUG] ===== РЕЗУЛЬТАТ =====")
-    print(f"Корпус: {result['name']}")
-    print(f"Цена: {result['price']} руб.")
-    if cooler_type == "water_cooling":
-        print(f"Поддержка радиатора: {result['radiator_size']}мм в позициях: {', '.join(result['radiator_positions'])}")
-    else:
-        print(f"Макс. высота кулера: {result['max_cpu_cooler_height']} мм")
-    print(f"Поддержка вентиляторов: {fan_size}мм в позициях: {', '.join(result['fan_support']['positions'])}")
-    
+    logging.info(f"Поддержка вентиляторов {fan_size} мм в позициях: {', '.join(result['fan_support']['positions'])}")
+    logging.info("===== ПОДБОР КОРПУСА ЗАВЕРШЕН УСПЕШНО =====")
+
     return result
+
 
 def run_pc_case_selection_test(
     input_data_2nd_stage: Dict[str, Any],
@@ -214,7 +209,6 @@ def run_pc_case_selection_test(
     chosen_power_supply: Dict[str, Any],
     chosen_case_fan: Dict[str, Any]
 ) -> None:
-    """Тестовая функция для проверки подбора корпуса"""
     print("===== ТЕСТИРОВАНИЕ ПОДБОРА КОРПУСА =====")
     try:
         pc_case_info = select_pc_case(
@@ -225,10 +219,12 @@ def run_pc_case_selection_test(
             chosen_power_supply,
             chosen_case_fan
         )
-        print("\nРезультат:")
+        print("\nНайден совместимый корпус:")
+        import json
         print(json.dumps(pc_case_info, indent=2, ensure_ascii=False))
     except ValueError as e:
-        print(f"\nОшибка: {e}")
+        logging.error(f"Ошибка: {e}")
+
 
 if __name__ == "__main__":
 

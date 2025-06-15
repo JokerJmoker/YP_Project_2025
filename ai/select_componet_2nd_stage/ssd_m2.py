@@ -27,10 +27,15 @@ def get_ssd_m2_model_by_name(ssd_m2_name: str) -> SsdM2Model:
                 raise ValueError(f"ssd_m2 '{ssd_m2_name}' not found in database")
             return SsdM2Model.from_orm(result)
 
+import logging
+import json
+from typing import Optional, Dict, Any
 
 def find_similar_ssd_m2(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> Dict[str, Any]:
+    logging.info("Запуск поиска похожего SSD M.2")
     user_request = input_data_2nd_stage["user_request"]
     method = user_request["allocations"]["mandatory"]["method"]
+    logging.info(f"Метод распределения бюджета: {method}")
 
     if method == "fixed_price_based":
         max_price = user_request["allocations"]["mandatory"][method]["ssd_m2_max_price"]
@@ -39,19 +44,23 @@ def find_similar_ssd_m2(input_data_1st_stage: Dict[str, Any], input_data_2nd_sta
         ssd_m2_percentage = user_request["allocations"]["mandatory"][method]["ssd_m2_percentage"]
         max_price = round((ssd_m2_percentage / 100) * total_budget)
     else:
+        logging.error(f"Неподдерживаемый метод: {method}")
         raise ValueError(f"Unsupported allocation method: {method}")
+    logging.info(f"Максимальная цена SSD M.2: {max_price}")
 
     ssd_m2_name_from_2nd = user_request["components"]["mandatory"]["ssd_m2"]
     if ssd_m2_name_from_2nd == "any":
         ssd_m2_name = input_data_1st_stage.get("ssd_m2")
         if not ssd_m2_name:
+            logging.error("Не указано имя SSD M.2 ни в первом, ни во втором этапе")
             raise ValueError("ssd_m2 name not specified in input_data_1st_stage")
     else:
         ssd_m2_name = ssd_m2_name_from_2nd
+    logging.info(f"Исходное имя SSD M.2: {ssd_m2_name}")
 
     original_ssd_m2 = get_ssd_m2_model_by_name(ssd_m2_name)
+    logging.info(f"Получена модель оригинального SSD M.2: {original_ssd_m2.name}")
 
-    # Выбираем кандидатов из БД по цене <= max_price
     query = """
         SELECT * FROM pc_components.ssd_m2
         WHERE price <= %s
@@ -61,49 +70,56 @@ def find_similar_ssd_m2(input_data_1st_stage: Dict[str, Any], input_data_2nd_sta
         with conn.cursor(cursor_factory=DictCursor) as cursor:
             cursor.execute(query, (max_price,))
             candidates_raw = cursor.fetchall()
+    logging.info(f"Найдено кандидатов по цене: {len(candidates_raw)}")
 
     candidates = [SsdM2Model.from_orm(row) for row in candidates_raw]
 
-    # Функция оценки "близости" ssd_m2 к оригинальному
     def ssd_m2_score(ssd_m2: SsdM2Model):
         score = 0
-        # Чем меньше разница в скорости чтения/записи — тем лучше
         score += abs((ssd_m2.max_read_speed or 0) - (original_ssd_m2.max_read_speed or 0))
         score += abs((ssd_m2.max_write_speed or 0) - (original_ssd_m2.max_write_speed or 0))
-        # Разница в IOPS
         score += abs((ssd_m2.random_read_iops or 0) - (original_ssd_m2.random_read_iops or 0)) / 1000
         score += abs((ssd_m2.random_write_iops or 0) - (original_ssd_m2.random_write_iops or 0)) / 1000
-        # Разница в объеме (capacity в ГБ — строки, нужно перевести в int)
         try:
             capacity_int = int(ssd_m2.capacity) if ssd_m2.capacity else 0
             orig_capacity_int = int(original_ssd_m2.capacity) if original_ssd_m2.capacity else 0
             score += abs(capacity_int - orig_capacity_int) * 10
-        except Exception:
-            pass
-        # Серьезный штраф, если NVMe не совпадает
+        except Exception as e:
+            logging.warning(f"Ошибка при вычислении capacity: {e}")
         if ssd_m2.nvme != original_ssd_m2.nvme:
             score += 100000
-        # Штраф, если DRAM не совпадает
         if ssd_m2.has_dram != original_ssd_m2.has_dram:
             score += 50000
-        # Чем дешевле, тем лучше (отрицательное влияние цены для сортировки)
         score -= ssd_m2.price / 1000
         return score
 
     best_ssd_m2 = min(candidates, key=ssd_m2_score, default=None)
     if best_ssd_m2 is None:
+        logging.error("Не найден подходящий SSD M.2 по заданным критериям")
         raise ValueError("No similar ssd_m2 found within budget and criteria")
 
+    logging.info(f"Выбран SSD M.2: {best_ssd_m2.name} с ценой {best_ssd_m2.price}")
     return best_ssd_m2.model_dump()
 
 
-def run_ssd_m2_selection_test(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any])  -> Optional[Dict[str, Any]]:
+def run_ssd_m2_selection_test(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s | %(levelname)s | %(message)s",
+        datefmt="%H:%M:%S"
+    )
+    print("===== ТЕСТИРОВАНИЕ ПОДБОРА SSD M.2 =====")
+
     try:
         ssd_m2_info = find_similar_ssd_m2(input_data_1st_stage, input_data_2nd_stage)
+        print("Результат подбора SSD M.2:")
         print(json.dumps(ssd_m2_info, indent=4, ensure_ascii=False))
         return ssd_m2_info
     except ValueError as e:
-        print(f"Error: {e}")
+        logging.error(f"Ошибка подбора SSD M.2: {e}")
+        print(f"[ОШИБКА] {e}")
+        return None
+
 
 
 # --- Пример запуска ---

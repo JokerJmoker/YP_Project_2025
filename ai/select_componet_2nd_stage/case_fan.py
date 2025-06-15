@@ -8,20 +8,21 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 
 from ai.ai_db.database import Database
 from ai.models.components.case_fan import CaseFanModel
+import logging
+import json
+from typing import Dict, Any
+from psycopg2.extras import DictCursor
+
+# Настройка логгера
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s | %(levelname)s | %(message)s')
 
 def select_case_fan_system(
     input_data_2nd_stage: Dict[str, Any],
     chosen_power_supply: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """
-    Подбирает систему охлаждения на основе:
-    - сертификата блока питания (определяет минимальный CFM)
-    - бюджета
-    - предпочтений по размеру корпуса
-    """
-    print("\n[DEBUG] ===== НАЧАЛО ПОДБОРА СИСТЕМЫ ОХЛАЖДЕНИЯ =====")
-    
-    # 1. Определяем минимальные требования к воздушному потоку
+    logger.info("НАЧАЛО ПОДБОРА СИСТЕМЫ ОХЛАЖДЕНИЯ")
+
     certification = chosen_power_supply.get("certification_80plus", "Standard")
     required_cfm = {
         "Standard": 25.5,
@@ -31,25 +32,29 @@ def select_case_fan_system(
         "Platinum": 76.5,
         "Titanium": 89.25
     }.get(certification, 25.5)
-    
-    print(f"[DEBUG] Требуемый воздушный поток: {required_cfm} CFM (сертификат: {certification})")
 
-    # 2. Рассчитываем максимальный бюджет
+    logger.info(f"Сертификат блока питания: {certification}")
+    logger.info(f"Требуемый воздушный поток (CFM): {required_cfm}")
+
     user_request = input_data_2nd_stage["user_request"]
-    if user_request["allocations"]["optional"]["method"] == "percentage_based":
+    method = user_request["allocations"]["optional"]["method"]
+    logger.info(f"Метод выделения бюджета на систему охлаждения: {method}")
+
+    if method == "percentage_based":
         case_fan_percentage = user_request["allocations"]["optional"]["percentage_based"]["case_fan_percentage"]
         max_price = round((case_fan_percentage / 100) * user_request["budget"]["amount"])
+        logger.info(f"Процент от бюджета на охлаждение: {case_fan_percentage}%")
     else:
         max_price = user_request["allocations"]["optional"]["fixed_price_based"]["case_fan_max_price"]
-    
-    print(f"[DEBUG] Максимальный бюджет: {max_price} руб.")
+        logger.info(f"Фиксированный бюджет на охлаждение: {max_price} руб.")
 
-    # 3. Проверяем предпочтения по размеру корпуса
+    logger.info(f"Максимальная цена вентилятора: {max_price} руб.")
+
     pc_case_pref = user_request["components"]["optional"].get("pc_case", "any")
-    size_condition = "AND (fan_size ~ '^[0-9]+$' OR fan_size ~ '120')" if pc_case_pref == "small_size" else ""
-    print(f"[DEBUG] Предпочтения по корпусу: {pc_case_pref}")
+    logger.info(f"Предпочтения по корпусу: {pc_case_pref}")
 
-    # 4. Формируем и выполняем основной запрос
+    size_condition = "AND (fan_size ~ '^[0-9]+$' OR fan_size ~ '120')" if pc_case_pref == "small_size" else ""
+
     query = f"""
         SELECT 
             id, name, price, image_url,
@@ -70,17 +75,17 @@ def select_case_fan_system(
             END DESC
         LIMIT 1
     """
-    
-    print(f"[DEBUG] Выполняем основной запрос с бюджетом {max_price} руб.")
-    
+
+    logger.debug(f"Выполняется основной запрос с бюджетом {max_price} руб.")
+
     with Database() as conn:
         with conn.cursor(cursor_factory=DictCursor) as cursor:
             cursor.execute(query, (max_price,))
             result = cursor.fetchone()
-            
+
             if not result:
-                # 5. Fallback: если не найдено по основному запросу
-                print("[DEBUG] Не найдено по основному запросу, пробуем fallback")
+                logger.warning("Не найдено вентиляторов по основному запросу, выполняется fallback")
+
                 fallback_query = f"""
                     SELECT 
                         id, name, price, image_url,
@@ -91,42 +96,46 @@ def select_case_fan_system(
                     ORDER BY price ASC
                     LIMIT 1
                 """
+
                 cursor.execute(fallback_query, (max_price,))
                 result = cursor.fetchone()
-                
-                if not result:
-                    raise ValueError("Не удалось найти подходящую систему охлаждения в рамках бюджета")
-                
-                print(f"[DEBUG] Найден fallback вариант: {result['name']}")
 
-            # 6. Валидация и преобразование данных через модель
+                if not result:
+                    error_msg = "Не удалось найти подходящую систему охлаждения в рамках бюджета"
+                    logger.error(error_msg)
+                    raise ValueError(error_msg)
+
+                logger.info(f"Найден fallback вариант вентилятора: {result['name']}")
+
             try:
                 fan_model = CaseFanModel.from_orm(result)
                 actual_cfm = fan_model.max_airflow or 0
-                
+
                 if actual_cfm < required_cfm:
-                    print(f"[WARNING] Фактический CFM ({actual_cfm}) ниже требуемого ({required_cfm})")
-                
-                print("\n[DEBUG] ===== РЕЗУЛЬТАТ ПОДБОРА =====")
-                print(f"Модель: {fan_model.name}")
-                print(f"Воздушный поток: {actual_cfm} CFM")
-                print(f"Размер: {fan_model.fan_size} мм")
-                print(f"Цена: {fan_model.price} руб.")
-                
+                    logger.warning(f"Фактический CFM ({actual_cfm}) ниже требуемого ({required_cfm})")
+
+                logger.info("ПОДБОР СИСТЕМЫ ОХЛАЖДЕНИЯ ЗАВЕРШЁН УСПЕШНО")
+                logger.info(f"Модель вентилятора: {fan_model.name}")
+                logger.info(f"Воздушный поток: {actual_cfm} CFM")
+                logger.info(f"Размер вентилятора: {fan_model.fan_size} мм")
+                logger.info(f"Цена: {fan_model.price} руб.")
+
                 return fan_model.model_dump()
-            
+
             except Exception as e:
-                raise ValueError(f"Ошибка обработки данных вентилятора: {str(e)}")
+                error_msg = f"Ошибка обработки данных вентилятора: {str(e)}"
+                logger.error(error_msg)
+                raise ValueError(error_msg)
+
 
 def run_case_fan_selection_test(
     input_data_2nd_stage: Dict[str, Any],
     chosen_power_supply: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """Тестовая функция для проверки подбора охлаждения, возвращает результат или ошибку"""
     print("===== ТЕСТИРОВАНИЕ ПОДБОРА СИСТЕМЫ ОХЛАЖДЕНИЯ =====")
     try:
         case_fan_info = select_case_fan_system(input_data_2nd_stage, chosen_power_supply)
-        print("\nРезультат:")
+        print("\nРезультат подбора системы охлаждения:")
         print(json.dumps(case_fan_info, indent=2, ensure_ascii=False))
         return {
             "status": "success",
@@ -134,11 +143,12 @@ def run_case_fan_selection_test(
         }
     except ValueError as e:
         error_msg = f"Ошибка: {e}"
-        print(f"\n{error_msg}")
+        logger.error(error_msg)
         return {
             "status": "error",
             "message": error_msg
         }
+
 
 # Пример вызова тестовой функции
 if __name__ == "__main__":

@@ -102,6 +102,7 @@ def find_compatible_cpu_cooler(
     # Проверяем, нужно ли возвращать стандартный кулер (включен в комплект или box в названии)
     is_box_cpu = "box" in chosen_cpu.get("name", "").lower()
     has_included_cooler = chosen_cpu.get("included_with_cpu", False)
+    logging.info(f"Проверка стандартного кулера: is_box_cpu={is_box_cpu}, has_included_cooler={has_included_cooler}")
     
     if cooler_type == "included_with_cpu" or (is_box_cpu and has_included_cooler):
         logging.info("Возврат стандартного коробочного кулера (included_with_cpu или box в названии)")
@@ -120,6 +121,7 @@ def find_compatible_cpu_cooler(
 
     cpu_socket = chosen_cpu.get("socket")
     cpu_tdp = chosen_cpu.get("tdp")
+    logging.info(f"Получены параметры CPU: socket={cpu_socket}, tdp={cpu_tdp}")
     if not cpu_socket or not cpu_tdp:
         logging.error("Не указаны сокет или TDP процессора")
         raise ValueError("Не указаны сокет или TDP процессора")
@@ -130,23 +132,23 @@ def find_compatible_cpu_cooler(
         max_price = budget_data.get("cpu_cooler_max_price")
         target_price = target_price if target_price is not None else max_price
         logging.info(f"Целевая цена кулера: {target_price}, Максимальная цена: {max_price}")
-    except Exception:
+    except Exception as e:
         target_price = None
         max_price = None
-        logging.warning("Не удалось получить бюджет на кулер, цены не заданы")
+        logging.warning(f"Не удалось получить бюджет на кулер, цены не заданы. Ошибка: {e}")
 
     with Database() as conn:
         with conn.cursor(cursor_factory=DictCursor) as cursor:
             try:
                 if cooler_type == "air_cooler":
                     price_filter = "AND price <= %s" if target_price is not None else ""
-                    query = """
+                    query = f"""
                         SELECT * FROM pc_components.cpu_cooler
                         WHERE %s = ANY (string_to_array(socket, ', '))
-                        {}
+                        {price_filter}
                         ORDER BY price DESC, ABS(price - %s) ASC
                         LIMIT 1
-                    """.format(price_filter)
+                    """
                     params = [cpu_socket]
                     if target_price is not None:
                         params.append(target_price)
@@ -165,8 +167,10 @@ def find_compatible_cpu_cooler(
 
                 elif cooler_type == "water_cooling":
                     required_fan_airflow = get_required_fan_airflow(cpu_tdp)
+                    logging.info(f"Требуемый воздушный поток вентилятора для водяного охлаждения: {required_fan_airflow}")
+
                     price_filter = "AND price <= %s" if target_price is not None else ""
-                    query = """
+                    query = f"""
                         SELECT 
                             id, name, price, image_url, compatible_sockets, fan_airflow, radiator_size, fans_count,
                             fan_max_noise, pump_speed, fan_max_speed, tube_length
@@ -175,12 +179,12 @@ def find_compatible_cpu_cooler(
                             REGEXP_REPLACE(fan_airflow, '[^0-9.]', '', 'g') <> ''
                             AND CAST(REGEXP_REPLACE(fan_airflow, '[^0-9.]', '', 'g') AS FLOAT) >= %s
                             AND %s = ANY (string_to_array(compatible_sockets, ', '))
-                            {}
+                            {price_filter}
                         ORDER BY 
                             price DESC,
                             CAST(REGEXP_REPLACE(fan_airflow, '[^0-9.]', '', 'g') AS FLOAT) DESC
                         LIMIT 1
-                    """.format(price_filter)
+                    """
                     params = [required_fan_airflow, cpu_socket]
                     if target_price is not None:
                         params.append(target_price)
@@ -209,16 +213,18 @@ def run_cpu_cooler_selection_test(
     input_data: Dict[str, Any], 
     chosen_cpu: Dict[str, Any]
 ) -> Optional[Dict[str, Any]]:
-    """Тест подбора кулера CPU, просто возвращает результат find_compatible_cpu_cooler"""
-    logging.info("=== Тест подбора кулера ===")
+    print("\n===== ТЕСТИРОВАНИЕ ПОДБОРА КУЛЕРА ДЛЯ CPU =====")
     try:
         cooler_info = find_compatible_cpu_cooler(input_data, chosen_cpu)
         if cooler_info is not None:
+            print("\nРезультат подбора кулера:")
             print(json.dumps(cooler_info, indent=4, ensure_ascii=False))
         return cooler_info
     except Exception:
         logging.exception("Ошибка подбора кулера")
+        print("\n[ОШИБКА] Ошибка при подборе кулера CPU. Подробности в логе.")
         return None
+
 
 
 if __name__ == "__main__":

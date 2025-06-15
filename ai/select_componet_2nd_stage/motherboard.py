@@ -97,45 +97,46 @@ def check_m2_slot(slots_info: str, form_factor: str, ssd_interface: str) -> bool
             return True
     
     return False
+import logging
+
+# Настройка логгера — обычно это делают один раз в основном файле приложения
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
 
 def find_compatible_motherboard(
-    input_data_2nd_stage: Dict[str, Any],
-    cpu_data: Dict[str, Any],
-    gpu_data: Dict[str, Any],
-    dimm_data: Dict[str, Any],
-    ssd_m2_data: Dict[str, Any]
-) -> Dict[str, Any]:
-    """
-    Find compatible motherboard based on components and budget allocation.
-    
-    Args:
-        input_data_1st_stage: First stage input data containing component info
-        input_data_2nd_stage: Second stage input data with user preferences
-        cpu_data: Selected CPU data
-        gpu_data: Selected GPU data
-        dimm_data: Selected RAM data
-        ssd_m2_data: Selected SSD data
-        
-    Returns:
-        Dictionary with compatible motherboard info
-    """
+    input_data_2nd_stage: dict,
+    cpu_data: dict,
+    gpu_data: dict,
+    dimm_data: dict,
+    ssd_m2_data: dict
+) -> dict:
+    print("===== ТЕСТИРОВАНИЕ ПОДБОРА МАТЕРИНСКОЙ ПЛАТЫ =====")
+
     user_request = input_data_2nd_stage["user_request"]
     method = user_request["allocations"]["mandatory"]["method"]
+    logger.info(f"Метод выделения бюджета для материнской платы: {method}")
 
-    # Calculate max price based on allocation method
     if method == "fixed_price_based":
         max_price = user_request["allocations"]["mandatory"][method]["motherboard_max_price"]
+        logger.info(f"Максимальная цена платы (фиксированная): {max_price}")
     elif method == "percentage_based":
         total_budget = user_request["budget"]["amount"]
         mb_percentage = user_request["allocations"]["mandatory"][method]["motherboard_percentage"]
         max_price = round((mb_percentage / 100) * total_budget)
+        logger.info(f"Бюджет пользователя: {total_budget}, процент на материнскую плату: {mb_percentage}%, максимальная цена платы: {max_price}")
     else:
+        logger.error(f"Неподдерживаемый метод выделения бюджета: {method}")
         raise ValueError(f"Unsupported allocation method: {method}")
 
-    # Get motherboard preference (if specified)
     mb_preference = user_request["components"]["mandatory"]["motherboard"]
+    logger.info(f"Предпочтения пользователя по материнской плате: {mb_preference}")
+
     if mb_preference != "any":
-        # If specific motherboard is requested, try to find exact match
+        logger.info(f"Ищем материнскую плату с названием, содержащим '{mb_preference}', по цене до {max_price}")
         with Database() as conn:
             with conn.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(
@@ -144,22 +145,19 @@ def find_compatible_motherboard(
                 )
                 result = cursor.fetchone()
                 if result:
+                    logger.info(f"Найдена материнская плата по предпочтению: {result['name']}")
                     return MotherboardModel.from_orm(result).model_dump()
-                # If exact match not found, continue with compatibility check
+                logger.info("Материнская плата по предпочтению не найдена, продолжаем поиск по совместимости")
 
-    # Proceed with compatibility-based selection
     socket = cpu_data.get("socket", "").strip()
-    cpu_pcie_str = cpu_data.get("pci_express", "")
-    required_cpu_pcie_version = extract_pcie_version(cpu_pcie_str)
-    
+    required_cpu_pcie_version = extract_pcie_version(cpu_data.get("pci_express", ""))
     gpu_interface = gpu_data.get("interface", "")
     gpu_slot_width = gpu_data.get("slot_width", "")
     required_gpu_pcie_version = extract_pcie_version(gpu_interface)
 
-    dimm_memory_type = dimm_data["memory_type"]
-    dimm_modules_count = dimm_data["modules_count"]
-    dimm_total_memory = extract_number(dimm_data["total_memory"])
-    dimm_freq = dimm_data["frequency"]
+    logger.info(f"Параметры CPU: сокет {socket}, требуемая версия PCIe: {required_cpu_pcie_version}")
+    logger.info(f"Параметры GPU: интерфейс {gpu_interface}, слот {gpu_slot_width}")
+    logger.info(f"Параметры памяти DIMM: тип {dimm_data['memory_type']}, количество модулей {dimm_data['modules_count']}, общий объем {dimm_data['total_memory']}, частота {dimm_data['frequency']}")
 
     query = """
         SELECT *, 
@@ -178,46 +176,47 @@ def find_compatible_motherboard(
 
     with Database() as conn:
         with conn.cursor(cursor_factory=DictCursor) as cursor:
+            logger.info(f"Поиск материнских плат с параметрами: сокет={socket}, тип памяти={dimm_data['memory_type']}, модули памяти>={dimm_data['modules_count']}, объем памяти>={extract_number(dimm_data['total_memory'])}, цена<={max_price}")
             cursor.execute(query, {
                 "socket": socket,
-                "memory_type": dimm_memory_type,
-                "modules_count": dimm_modules_count,
-                "total_memory": dimm_total_memory,
+                "memory_type": dimm_data["memory_type"],
+                "modules_count": dimm_data["modules_count"],
+                "total_memory": extract_number(dimm_data["total_memory"]),
                 "max_price": max_price
             })
             results = cursor.fetchall()
             
             if not results:
+                logger.error(f"Не найдено материнских плат с сокетом '{socket}', поддержкой памяти и в рамках бюджета")
                 raise ValueError(f"No motherboards found with socket '{socket}', RAM support, and within budget")
 
             compatible = []
             for row in results:
                 max_pcie_version = extract_highest_pcie_version(row.get("pcie_x16_slots", ""))
                 cpu_ok = max_pcie_version >= required_cpu_pcie_version
-                
+
                 gpu_ok = False
                 if gpu_slot_width == "PCIe x16":
                     gpu_ok = "x16" in row.get("pcie_x16_slots", "").lower()
-                
+
                 ram_ok = True
                 if "base_memory_frequency" in row and "oc_memory_frequency" in row:
                     base_freq = extract_number(row["base_memory_frequency"])
                     oc_freqs = [extract_number(f) for f in row["oc_memory_frequency"].split(",")] if row["oc_memory_frequency"] else []
                     max_supported_freq = max([base_freq] + oc_freqs)
-                    ram_ok = dimm_freq <= max_supported_freq
-                
+                    ram_ok = dimm_data["frequency"] <= max_supported_freq
+
                 ssd_m2_ok = check_ssd_m2_compatibility(ssd_m2_data, row)
-                
+
+                #logger.info(f"Материнская плата '{row['name']}' - CPU PCIe OK: {cpu_ok}, GPU PCIe OK: {gpu_ok}, RAM OK: {ram_ok}, SSD M.2 OK: {ssd_m2_ok}")
+
                 if cpu_ok and gpu_ok and ram_ok and ssd_m2_ok:
                     compatible.append(row)
 
             if not compatible:
+                logger.error("Не найдено полностью совместимых материнских плат с заданными компонентами и бюджетом")
                 raise ValueError("No fully compatible motherboards found with the given components and budget")
 
-            # Select best match considering:
-            # 1. Highest PCIe version
-            # 2. Most power phases
-            # 3. Lowest price (within same feature tier)
             best_match = max(
                 compatible,
                 key=lambda x: (
@@ -227,7 +226,10 @@ def find_compatible_motherboard(
                 )
             )
             
+            logger.info(f"Выбрана материнская плата {best_match['name']} стоимостью {best_match['price']}")
+            logger.info("Подбор материнской платы завершён успешно")
             return MotherboardModel.from_orm(best_match).model_dump()
+
     
 def run_motherboard_selection_test(
     input_data_2nd_stage: Dict[str, Any],
@@ -238,7 +240,7 @@ def run_motherboard_selection_test(
 )  -> Optional[Dict[str, Any]]:
     try:
         motherboard_info = find_compatible_motherboard(input_data_2nd_stage, cpu_data, gpu_data, dimm_data, ssd_m2_data)
-        print("Найдена совместимая материнская плата:")
+        print("\nНайдена совместимая материнская плата:")
         print(json.dumps(motherboard_info, indent=4, ensure_ascii=False))
         return motherboard_info
     except ValueError as e:

@@ -28,11 +28,6 @@ def map_motherboard_to_psu_form_factor(mb_form_factor: str) -> str:
     }
     return mapping.get(mb_form_factor, "ATX")
 
-
-import logging
-import re
-from typing import Dict, Any
-
 # Настройка логгера
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -227,6 +222,7 @@ def find_similar_power_supply(
         logger.error(f"Error in find_similar_power_supply: {e}", exc_info=True)
         return None
     
+
 def run_power_supply_selection_test(
     input_data_2nd_stage: Dict[str, Any],
     chosen_cpu: Dict[str, Any], 
@@ -234,19 +230,39 @@ def run_power_supply_selection_test(
     chosen_motherboard: Dict[str, Any]
 ) -> Optional[Dict[str, Any]]:
     """
-    Тестирует подбор блока питания и выводит результат в формате JSON.
-    
-    Args:
-        input_data_2nd_stage: Данные пользователя и бюджет
-        chosen_cpu: Выбранный процессор
-        chosen_gpu: Выбранная видеокарта
-        chosen_motherboard: Выбранная материнская плата
-        
-    Returns:
-        Словарь с информацией о блоке питания в формате JSON или None
+    Тестирует подбор блока питания и выводит результат в формате JSON с красивым логом.
     """
     try:
-        # Получаем данные блока питания
+        # Лог: старт теста
+        print("===== ТЕСТИРОВАНИЕ ПОДБОРА БЛОКА ПИТАНИЯ =====")
+        
+        user_request = input_data_2nd_stage.get("user_request", {})
+        method = user_request.get("allocations", {}).get("mandatory", {}).get("method", "unknown")
+        logger.info(f"Метод выделения бюджета для блока питания: {method}")
+
+        # Лог по бюджету
+        if method == "fixed_price_based":
+            max_price = user_request["allocations"]["mandatory"][method]["power_supply_max_price"]
+            logger.info(f"Максимальная цена блока питания (фиксированная): {max_price}")
+        elif method == "percentage_based":
+            total_budget = user_request.get("budget", {}).get("amount", 0)
+            ps_percentage = user_request["allocations"]["mandatory"][method]["power_supply_percentage"]
+            max_price = round((ps_percentage / 100) * total_budget)
+            logger.info(f"Максимальная цена блока питания (процент бюджета): {max_price}")
+        else:
+            logger.warning(f"Неизвестный метод распределения бюджета: {method}")
+            max_price = None
+
+        # Лог параметров CPU и GPU
+        cpu_power = max(chosen_cpu.get("tdp", 0) or 0, chosen_cpu.get("base_tdp", 0) or 0)
+        gpu_power = chosen_gpu.get("tdp")
+        recommended_cert = get_recommended_certification(chosen_gpu)
+
+        logger.info(f"Параметры CPU: TDP={cpu_power}")
+        logger.info(f"Параметры GPU: модель='{chosen_gpu.get('gpu_model', 'неизвестно')}', TDP={gpu_power}")
+        logger.info(f"Рекомендуемый сертификат 80 Plus для блока питания: {recommended_cert}")
+
+        # Получаем подходящий блок питания
         power_supply_info = find_similar_power_supply(
             input_data_2nd_stage,
             chosen_cpu,
@@ -255,27 +271,28 @@ def run_power_supply_selection_test(
         )
         
         if not power_supply_info:
-            print("Совместимый блок питания не найден")
+            logger.info("Совместимый блок питания не найден")
             return None
-
-        # Преобразуем в модель Pydantic
+        
+        # Преобразуем и выводим блок питания
         ps_model = PowerSupplyModel.from_orm(power_supply_info)
-        
-        # Конвертируем модель в словарь
         ps_dict = ps_model.model_dump()
-        
-        # Выводим результат
-        print("Найден совместимый блок питания:")
+
+        logger.info(f"Выбран блок питания {ps_dict.get('name', 'неизвестно')} стоимостью {ps_dict.get('price', 'N/A')}")
+
+        # Красивый вывод JSON
+        print("\nНайден совместимый блок питания:")
         print(json.dumps(
             ps_dict,
             indent=4,
             ensure_ascii=False,
             default=lambda o: o.isoformat() if isinstance(o, datetime) else str(o)
         ))
-        
+
         return ps_dict
-        
+
     except Exception as e:
+        logger.error(f"Ошибка при подборе блока питания: {e}", exc_info=True)
         print(f"Ошибка при подборе блока питания: {str(e)}")
         return None
 

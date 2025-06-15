@@ -3,7 +3,7 @@ from psycopg2.extras import DictCursor
 import sys
 import os
 import json
-
+import logging
 # Добавляем корневой путь проекта в sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
@@ -12,6 +12,7 @@ from ai.models.components.gpu import GpuModel
 
 
 def get_gpu_model_by_name(gpu_name: str) -> GpuModel:
+    logging.info(f"Запрос GPU по имени: {gpu_name}")
     query = """
         SELECT * FROM pc_components.gpu 
         WHERE name = %s
@@ -22,33 +23,43 @@ def get_gpu_model_by_name(gpu_name: str) -> GpuModel:
             cursor.execute(query, (gpu_name,))
             result = cursor.fetchone()
             if not result:
+                logging.error(f"GPU '{gpu_name}' не найден в базе данных")
                 raise ValueError(f"GPU '{gpu_name}' not found in database")
+            logging.info(f"Найден GPU: {result['name']}")
             return GpuModel.from_orm(result)
 
-
 def find_similar_gpu(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> Dict[str, Any]:
+    logging.info("Начат поиск похожей видеокарты")
     user_request = input_data_2nd_stage["user_request"]
     method = user_request["allocations"]["mandatory"]["method"]
+    logging.info(f"Используемый метод выделения бюджета: {method}")
 
     if method == "fixed_price_based":
         max_price = user_request["allocations"]["mandatory"][method]["gpu_max_price"]
+        logging.info(f"Максимальная цена для GPU из fixed_price_based: {max_price}")
     elif method == "percentage_based":
         total_budget = user_request["budget"]["amount"]
         gpu_percentage = user_request["allocations"]["mandatory"][method]["gpu_percentage"]
         max_price = round((gpu_percentage / 100) * total_budget)
+        logging.info(f"Максимальная цена для GPU из percentage_based: {max_price} (от бюджета {total_budget} и процента {gpu_percentage}%)")
     else:
+        logging.error(f"Неизвестный метод выделения бюджета: {method}")
         raise ValueError(f"Unsupported allocation method: {method}")
 
     gpu_name_from_2nd = user_request["components"]["mandatory"]["gpu"]
     if gpu_name_from_2nd == "any":
         gpu_name = input_data_1st_stage.get("gpu")
+        logging.info(f"GPU в 2-ой стадии = 'any', берем из 1-ой стадии: {gpu_name}")
         if not gpu_name:
+            logging.error("Имя GPU не указано в input_data_1st_stage")
             raise ValueError("GPU name not specified in input_data_1st_stage")
     else:
         gpu_name = gpu_name_from_2nd
+        logging.info(f"GPU указана явно: {gpu_name}")
 
     original_gpu = get_gpu_model_by_name(gpu_name)
     target_benchmark = original_gpu.benchmark_rate
+    logging.info(f"Бенчмарк исходного GPU: {target_benchmark}")
 
     query = """
         SELECT * FROM pc_components.gpu 
@@ -62,18 +73,27 @@ def find_similar_gpu(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage:
             cursor.execute(query, (max_price, target_benchmark))
             result = cursor.fetchone()
             if not result:
+                logging.error("Не найдена похожая видеокарта в заданном бюджете")
                 raise ValueError("No similar GPU found within budget and criteria")
             similar_gpu = GpuModel.from_orm(result)
+            logging.info(f"Найдена похожая видеокарта: {similar_gpu.name}")
             return similar_gpu.model_dump()
 
-
 def run_gpu_selection_test(input_data_1st_stage: Dict[str, Any], input_data_2nd_stage: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s | %(levelname)s | %(message)s",
+        datefmt="%H:%M:%S"
+    )
+    print("\n===== ТЕСТИРОВАНИЕ ПОДБОРА ВИДЕОКАРТЫ =====")
     try:
         gpu_info = find_similar_gpu(input_data_1st_stage, input_data_2nd_stage)
+        print("\nРезультат подбора видеокарты:")
         print(json.dumps(gpu_info, indent=4, ensure_ascii=False))
         return gpu_info
     except ValueError as e:
-        print(f"Error: {e}")
+        print(f"\n[ОШИБКА] {e}")
+        return None
 
 
 # Пример вызова
