@@ -121,15 +121,24 @@ def select_case_fan_system(
 def run_case_fan_selection_test(
     input_data_2nd_stage: Dict[str, Any],
     chosen_power_supply: Dict[str, Any]
-) -> None:
-    """Тестовая функция для проверки подбора охлаждения"""
+) -> Dict[str, Any]:
+    """Тестовая функция для проверки подбора охлаждения, возвращает результат или ошибку"""
     print("===== ТЕСТИРОВАНИЕ ПОДБОРА СИСТЕМЫ ОХЛАЖДЕНИЯ =====")
     try:
         case_fan_info = select_case_fan_system(input_data_2nd_stage, chosen_power_supply)
         print("\nРезультат:")
         print(json.dumps(case_fan_info, indent=2, ensure_ascii=False))
+        return {
+            "status": "success",
+            "data": case_fan_info
+        }
     except ValueError as e:
-        print(f"\nОшибка: {e}")
+        error_msg = f"Ошибка: {e}"
+        print(f"\n{error_msg}")
+        return {
+            "status": "error",
+            "message": error_msg
+        }
 
 # Пример вызова тестовой функции
 if __name__ == "__main__":

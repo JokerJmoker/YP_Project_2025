@@ -95,23 +95,33 @@ def find_compatible_cpu_cooler(
     cooler_type = input_data["user_request"]["components"]["optional"].get("cpu_cooler", "any")
     logging.info(f"Выбран тип кулера: {cooler_type}")
 
-    if cooler_type in ("false", "included_with_cpu"):
-        logging.info("Кулер не требуется (false или included_with_cpu). Возврат None.")
+    if cooler_type == "false":
+        logging.info("Кулер явно не требуется (false). Возврат None.")
         return None
 
-    if "box" in chosen_cpu.get("name", "").lower() and chosen_cpu.get("included_with_cpu", False):
-        logging.info("CPU с коробочным кулером, включенным в комплект. Возврат None.")
-        return None
+    # Проверяем, нужно ли возвращать стандартный кулер (включен в комплект или box в названии)
+    is_box_cpu = "box" in chosen_cpu.get("name", "").lower()
+    has_included_cooler = chosen_cpu.get("included_with_cpu", False)
+    
+    if cooler_type == "included_with_cpu" or (is_box_cpu and has_included_cooler):
+        logging.info("Возврат стандартного коробочного кулера (included_with_cpu или box в названии)")
+        return {
+            "name": "Stock CPU Cooler (Included with CPU)",
+            "type": "air_cooler",
+            "price": 0,
+            "socket": chosen_cpu.get("socket", ""),
+            "height": 70,  # Примерная высота стандартного кулера
+            "tdp": chosen_cpu.get("tdp", 65),  # Примерное значение TDP
+            "noise_level": "30-40 dB",  # Примерный уровень шума
+            "material": "Aluminum + Plastic",
+            "features": "Basic stock cooler included with CPU"
+        }
 
     cpu_socket = chosen_cpu.get("socket")
     cpu_tdp = chosen_cpu.get("tdp")
     if not cpu_socket or not cpu_tdp:
         logging.error("Не указаны сокет или TDP процессора")
         raise ValueError("Не указаны сокет или TDP процессора")
-
-    if chosen_cpu.get("included_with_cpu", False):
-        logging.info("CPU уже включает кулер, возврат None.")
-        return None
 
     try:
         budget_data = input_data["user_request"]["allocations"]["optional"]["fixed_price_based"]
@@ -178,7 +188,6 @@ def find_compatible_cpu_cooler(
                     cursor.execute(query, tuple(params))
                     result = cursor.fetchone()
 
-
                     if not result:
                         logging.error("Не найдено подходящих водяных кулеров")
                         raise ValueError("Не найдено подходящих водяных кулеров")
@@ -195,19 +204,20 @@ def find_compatible_cpu_cooler(
                 raise ValueError(f"Ошибка при поиске кулера: {str(e)}")
 
 
-def run_cpu_cooler_selection_test(input_data: Dict[str, Any], chosen_cpu: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+def run_cpu_cooler_selection_test(
+    input_data: Dict[str, Any], 
+    chosen_cpu: Dict[str, Any]
+) -> Optional[Dict[str, Any]]:
+    """Тест подбора кулера CPU, просто возвращает результат find_compatible_cpu_cooler"""
     logging.info("=== Тест подбора кулера ===")
     try:
         cooler_info = find_compatible_cpu_cooler(input_data, chosen_cpu)
-        print(json.dumps(cooler_info, indent=4, ensure_ascii=False))
+        if cooler_info is not None:
+            print(json.dumps(cooler_info, indent=4, ensure_ascii=False))
         return cooler_info
-    except ValueError as e:
-        logging.error("Ошибка подбора кулера: %s", e)
+    except Exception:
+        logging.exception("Ошибка подбора кулера")
         return None
-    except Exception as e:
-        logging.exception("Неожиданная ошибка")
-        return None
-
 
 
 if __name__ == "__main__":

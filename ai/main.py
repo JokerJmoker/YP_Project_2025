@@ -12,6 +12,7 @@ from select_componet_2nd_stage.motherboard import run_motherboard_selection_test
 from select_componet_2nd_stage.power_supply import run_power_supply_selection_test
 from select_componet_2nd_stage.cpu_cooler import run_cpu_cooler_selection_test
 from select_componet_2nd_stage.case_fan import run_case_fan_selection_test
+from select_componet_2nd_stage.pc_case import run_pc_case_selection_test
 def main():
     file_path = select_json_file()
     if not file_path:
@@ -47,6 +48,9 @@ def main():
         chosen_power_supply = run_power_supply_selection_test(result_2nd_stage, chosen_cpu, chosen_gpu, chosen_motherboard )
         # куллер всего пк зависит как от cpu так и от gpu, от них же зависит и psu --> кулер зависит от psu
         chosen_case_fan = run_case_fan_selection_test (result_2nd_stage, chosen_power_supply)
+        # самый треш
+        run_pc_case_selection_test(result_2nd_stage, chosen_gpu, chosen_cpu_cooler, chosen_motherboard,
+                               chosen_power_supply, chosen_case_fan)
         
 if __name__ == "__main__":
     main()
