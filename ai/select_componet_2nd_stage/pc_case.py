@@ -87,7 +87,7 @@ def select_pc_case(
                 print(f"[DEBUG] Размер радиатора: {radiator_size} мм")
                 
                 query = """
-                    SELECT id, name, price, max_gpu_length, liquid_cooling_support,
+                    SELECT id, name, price, image_url, max_gpu_length, liquid_cooling_support,
                     motherboard_form_factors, psu_form_factor, max_psu_length,
                     front_radiator_support, rear_radiator_support, top_radiator_support,
                     bottom_radiator_support, side_radiator_support,
@@ -127,7 +127,7 @@ def select_pc_case(
             print(f"[DEBUG] Высота кулера: {cpu_cooler_height} мм")
             
             query = """
-                SELECT id, name, price, max_gpu_length, max_cpu_cooler_height, liquid_cooling_support,
+                SELECT id, name, price, image_url, max_gpu_length, max_cpu_cooler_height, liquid_cooling_support,
                     motherboard_form_factors, psu_form_factor, max_psu_length,
                     front_fan_support, rear_fan_support, top_fan_support,
                     bottom_fan_support, side_fan_support
@@ -173,6 +173,7 @@ def select_pc_case(
         "id": found_case["id"],
         "name": found_case["name"],
         "price": found_case["price"],
+        "image_url": found_case["image_url"],
         "max_gpu_length": found_case["max_gpu_length"],
         "motherboard_form_factors": found_case["motherboard_form_factors"],
         "psu_form_factor": found_case["psu_form_factor"],
