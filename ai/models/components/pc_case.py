@@ -11,6 +11,7 @@ class PcCaseModel(BaseModel):
     id: int
     name: str
     price: Optional[int] = None
+    image_url: Optional[str] = None  # URL изображения
 
     # Форм-фактор и габариты (мм)
     case_type: Optional[str] = None
@@ -68,6 +69,7 @@ class PcCaseModel(BaseModel):
             id=case_orm['id'],
             name=case_orm['name'],
             price=parse_int(case_orm.get('price')),
+            image_url=str(case_orm['image_url']),
             
             case_type=case_orm.get('case_type'),
             length=parse_int(case_orm.get('length')),

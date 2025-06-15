@@ -7,6 +7,8 @@ class WaterCoolingModel(BaseModel):
     id: int
     name: str
     price: int
+    image_url: Optional[str] = None  # URL изображения
+
     compatible_sockets: str
     fan_airflow: Optional[float] = None
     radiator_size: Optional[str] = None
@@ -22,6 +24,7 @@ class WaterCoolingModel(BaseModel):
             id=wc_orm['id'],
             name=wc_orm['name'],
             price=int(wc_orm['price']),
+            image_url=str(wc_orm['image_url']),
             compatible_sockets=wc_orm['compatible_sockets'],
             fan_airflow=parse_float(wc_orm.get('fan_airflow')),
             radiator_size=wc_orm.get('radiator_size'),

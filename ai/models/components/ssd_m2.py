@@ -6,6 +6,7 @@ class SsdM2Model(BaseModel):
     id: int
     name: str
     price: int  # Было str, теперь int
+    image_url: Optional[str] = None  # URL изображения
 
     capacity: Optional[str]
     form_factor: Optional[str]
@@ -39,6 +40,7 @@ class SsdM2Model(BaseModel):
             id=parse_int(ssd_orm['id']),
             name=ssd_orm['name'],
             price=parse_int(ssd_orm['price']),
+            image_url=str(ssd_orm['image_url']),
             capacity=None if not ssd_orm.get('capacity') else ssd_orm['capacity'].replace('ГБ', '').strip(),
             form_factor=ssd_orm.get('form_factor'),
             interface=ssd_orm.get('interface'),

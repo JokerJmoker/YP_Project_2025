@@ -150,7 +150,7 @@ if __name__ == "__main__":
                         "cpu_percentage": 25,
                         "gpu_percentage": 40,
                         "dimm_percentage": 20,
-                        "ssd_percentage": 8,
+                        "ssd_m2_percentage": 8,
                         "motherboard_percentage": 7,
                         "power_supply_percentage": 5
                     }

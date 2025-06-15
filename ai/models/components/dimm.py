@@ -7,6 +7,7 @@ class DimmModel(BaseModel):
     id: int
     name: str
     price: int  # in rubles
+    image_url: Optional[str] = None  # URL изображения
 
     # Critical compatibility parameters
     memory_type: str                   # DDR4, DDR5, etc.
@@ -38,6 +39,7 @@ class DimmModel(BaseModel):
             id=dimm_orm['id'],
             name=dimm_orm['name'],
             price=int(dimm_orm['price']),
+            image_url=str(dimm_orm['image_url']),
             memory_type=dimm_orm['memory_type'],
             module_type=dimm_orm['module_type'],
             total_memory=parse_int(dimm_orm.get('total_memory', '').replace('ГБ', '').strip()) or None,

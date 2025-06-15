@@ -6,7 +6,7 @@ class CaseFanModel(BaseModel):
     id: int
     name: str
     price: int  # в рублях
-    
+    image_url: Optional[str] = None  # URL изображения
     # Основные параметры вентилятора
     fan_size: Optional[int] = None              # мм
     fan_thickness: Optional[int] = None         # мм
@@ -45,6 +45,7 @@ class CaseFanModel(BaseModel):
             id=fan_orm['id'],
             name=fan_orm['name'],
             price=int(fan_orm['price']),
+            image_url=str(fan_orm['image_url']),
             fan_size=cls.parse_integer_string(fan_orm.get('fan_size')),
             fan_thickness=cls.parse_integer_string(fan_orm.get('fan_thickness')),
             max_rotation_speed=cls.parse_integer_string(fan_orm.get('max_rotation_speed')),

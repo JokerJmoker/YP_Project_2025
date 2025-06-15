@@ -6,6 +6,8 @@ class CpuCoolerModel(BaseModel):
     id: int
     name: str
     price: int  # в рублях
+    image_url: Optional[str] = None  # URL изображения
+
     
     # Основные параметры совместимости
     socket: str                    # Сокет процессора (например, "LGA1700", "AM5")
@@ -31,6 +33,7 @@ class CpuCoolerModel(BaseModel):
             id=cooler_orm['id'],
             name=cooler_orm['name'],
             price=int(cooler_orm['price']),
+            image_url=str(cooler_orm['image_url']),
             socket=cooler_orm['socket'],
             tdp=parse_int(cooler_orm['tdp']),
             type_=cooler_orm['type'],

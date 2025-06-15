@@ -13,6 +13,7 @@ class MotherboardModel(BaseModel):
     id: int
     name: str
     price: int
+    image_url: Optional[str] = None  # URL изображения
 
     socket: str
     chipset: Optional[str] = None
@@ -56,6 +57,7 @@ class MotherboardModel(BaseModel):
             id=mb_orm['id'],
             name=mb_orm['name'],
             price=parse_int(mb_orm['price']),
+            image_url=str(mb_orm['image_url']),
             socket=mb_orm['socket'],
             chipset=mb_orm['chipset'],
             power_phases=parse_int(mb_orm['power_phases']),

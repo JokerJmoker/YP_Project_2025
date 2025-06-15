@@ -109,6 +109,7 @@ def find_compatible_cpu_cooler(
             "name": "Stock CPU Cooler (Included with CPU)",
             "type": "air_cooler",
             "price": 0,
+            "image_url": "https://c.dns-shop.ru/thumb/st1/fit/500/500/0037a3b9f4278404a0fccd74d4e790ad/4444db819930e984aa9e661d33a9c0714109e3da84d606173805182a22b223ac.jpg",
             "socket": chosen_cpu.get("socket", ""),
             "height": 70,  # Примерная высота стандартного кулера
             "tdp": chosen_cpu.get("tdp", 65),  # Примерное значение TDP
@@ -167,7 +168,7 @@ def find_compatible_cpu_cooler(
                     price_filter = "AND price <= %s" if target_price is not None else ""
                     query = """
                         SELECT 
-                            id, name, price, compatible_sockets, fan_airflow, radiator_size, fans_count,
+                            id, name, price, image_url, compatible_sockets, fan_airflow, radiator_size, fans_count,
                             fan_max_noise, pump_speed, fan_max_speed, tube_length
                         FROM pc_components.water_cooling
                         WHERE 

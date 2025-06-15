@@ -11,6 +11,7 @@ class PowerSupplyModel(BaseModel):
     id: int
     name: str
     price: int
+    image_url: Optional[str] = None  # URL изображения
 
     wattage: Optional[int] = None
     form_factor: Optional[str] = None
@@ -43,6 +44,7 @@ class PowerSupplyModel(BaseModel):
             id=ps_orm['id'],
             name=ps_orm['name'],
             price=parse_int(ps_orm['price']),
+            image_url=str(ps_orm['image_url']),
             
             wattage=parse_int(ps_orm.get('wattage')),
             form_factor=ps_orm.get('form_factor'),

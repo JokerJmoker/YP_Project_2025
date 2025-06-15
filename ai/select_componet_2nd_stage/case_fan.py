@@ -52,7 +52,7 @@ def select_case_fan_system(
     # 4. Формируем и выполняем основной запрос
     query = f"""
         SELECT 
-            id, name, price,
+            id, name, price, image_url,
             fan_size, fan_thickness,
             max_rotation_speed, min_rotation_speed,
             max_airflow, max_static_pressure,
@@ -83,7 +83,7 @@ def select_case_fan_system(
                 print("[DEBUG] Не найдено по основному запросу, пробуем fallback")
                 fallback_query = f"""
                     SELECT 
-                        id, name, price,
+                        id, name, price, image_url,
                         fan_size, max_airflow
                     FROM pc_components.case_fan
                     WHERE price <= %s

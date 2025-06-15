@@ -7,6 +7,7 @@ class CpuModel(BaseModel):
     id: int
     name: str
     price: int  # в рублях
+    image_url: Optional[str] = None  # URL изображения
     
     # Основные параметры совместимости
     socket: str                      # Сокет процессора (например, "LGA1700", "AM5")
@@ -48,6 +49,7 @@ class CpuModel(BaseModel):
             id=cpu_orm['id'],
             name=cpu_orm['name'],
             price=int(cpu_orm['price']),
+            image_url=str(cpu_orm['image_url']),
             socket=cpu_orm['socket'],
             tdp=parse_int(cpu_orm['tdp']),
             base_tdp=parse_int(cpu_orm['base_tdp']),
