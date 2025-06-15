@@ -1,0 +1,403 @@
+===== ТЕСТИРОВАНИЕ ПОДБОРА КОНФИГУРАЦИИ ДЛЯ ИГРЫ =====
+05:46:09 | INFO | Начинаем разбор пользовательских данных
+05:46:09 | INFO | Данные успешно разобраны
+05:46:09 | INFO | Используемое качество графики: ultra
+05:46:09 | INFO | Рекомендация получена успешно
+
+Результат рекомендации:
+{
+    "game": "cyberpunk_2077",
+    "quality": "ultra",
+    "cpu": "Процессор Intel Core i7-14700K OEM",
+    "gpu": "Видеокарта GIGABYTE GeForce RTX 4080 SUPER GAMING OC [GV-N408SGAMING OC-16GD]",
+    "ssd_m2": "2000 ГБ M.2 NVMe накопитель WD Black SN770 [WDS200T3X0E]",
+    "dimm": "Оперативная память G.Skill Trident Z5 RGB [F5-7800J3646H16GX2-TZ5RK] 32 ГБ"
+}
+===== ТЕСТИРОВАНИЕ ПОДБОРА КОМПОНЕНТОВ =====
+05:46:09 | INFO | Начинаем разбор пользовательских данных
+05:46:09 | INFO | Пользовательские данные успешно разобраны
+
+Результат разбора запроса:
+{
+  "status": "success",
+  "message": "Данные пользователя успешно разобраны.",
+  "user_request": {
+    "game": {
+      "title": "cyberpunk_2077",
+      "graphics": {
+        "quality": "ultra",
+        "target_fps": 60,
+        "resolution": "2160",
+        "ray_tracing": false,
+        "dlss": "performance",
+        "fsr": "disabled"
+      }
+    },
+    "budget": {
+      "amount": 200000,
+      "allocation_method": "fixed_price_based"
+    },
+    "components": {
+      "mandatory": {
+        "cpu": "any",
+        "gpu": "any",
+        "dimm": "any",
+        "ssd_m2": "any",
+        "motherboard": "any",
+        "power_supply": "any"
+      },
+      "optional": {
+        "case_fan": "any",
+        "pc_case": "any",
+        "cpu_cooler": "included_with_cpu"
+      }
+    },
+    "allocations": {
+      "mandatory": {
+        "method": "fixed_price_based",
+        "fixed_price_based": {
+          "cpu_max_price": 40000,
+          "gpu_max_price": 120000,
+          "dimm_max_price": 15000,
+          "ssd_m2_max_price": 12000,
+          "motherboard_max_price": 20000,
+          "power_supply_max_price": 15000
+        }
+      },
+      "optional": {
+        "method": "fixed_price_based",
+        "fixed_price_based": {
+          "case_fan_max_price": 10000,
+          "pc_case_max_price": 8000,
+          "cpu_cooler_max_price": 0
+        }
+      }
+    }
+  }
+}
+
+===== ТЕСТИРОВАНИЕ ПОДБОРА ВИДЕОКАРТЫ =====
+05:46:09 | INFO | Начат поиск похожей видеокарты
+05:46:09 | INFO | Используемый метод выделения бюджета: fixed_price_based
+05:46:09 | INFO | Максимальная цена для GPU из fixed_price_based: 120000
+05:46:09 | INFO | GPU в 2-ой стадии = 'any', берем из 1-ой стадии: Видеокарта GIGABYTE GeForce RTX 4080 SUPER GAMING OC [GV-N408SGAMING OC-16GD]
+05:46:09 | INFO | Запрос GPU по имени: Видеокарта GIGABYTE GeForce RTX 4080 SUPER GAMING OC [GV-N408SGAMING OC-16GD]
+05:46:09 | INFO | Найден GPU: Видеокарта GIGABYTE GeForce RTX 4080 SUPER GAMING OC [GV-N408SGAMING OC-16GD]
+05:46:09 | INFO | Бенчмарк исходного GPU: 85.36
+05:46:09 | INFO | Найдена похожая видеокарта: Видеокарта KFA2 GeForce RTX 5070Ti ROCK(X) 3FAN RGB WHITE [57IZN6MDBVGK]
+
+Результат подбора видеокарты:
+{
+    "id": 293,
+    "name": "Видеокарта KFA2 GeForce RTX 5070Ti ROCK(X) 3FAN RGB WHITE [57IZN6MDBVGK]",
+    "price": 99999,
+    "image_url": "https://c.dns-shop.ru/thumb/st1/fit/500/500/7fa7ad52580b2a52b848e73a911fd298/9835a29aec16682ee0d9854ef5f01de6805731de3b8b476d982b0dc160441db6.jpg",
+    "interface": "PCIe 5.0",
+    "slot_width": "PCIe x16",
+    "low_profile": false,
+    "slots": "2.5",
+    "length": 322,
+    "width": 130,
+    "thickness": 52,
+    "tdp": 300,
+    "power_connectors": "16 pin (12V-2x6)",
+    "recommended_psu": 750,
+    "gpu_model": "GeForce RTX 5070 Ti",
+    "architecture": "NVIDIA Blackwell",
+    "vram_size": 16,
+    "vram_type": "GDDR7",
+    "bus_width": 256,
+    "base_clock": 2295,
+    "boost_clock": 2512,
+    "cuda_cores": 8960,
+    "ray_tracing": true,
+    "tensor_cores": null,
+    "video_outputs": "3 x DisplayPort, HDMI",
+    "max_resolution": "7680x4320 (8K Ultra HD)",
+    "benchmark_rate": 81.21
+}
+
+===== ТЕСТИРОВАНИЕ ПОДБОРА ПРОЦЕССОРА =====
+05:46:09 | INFO | === Начало поиска похожего CPU ===
+05:46:09 | INFO | Метод распределения бюджета: fixed_price_based
+05:46:09 | INFO | Максимальная цена CPU из fixed_price_based: 40000
+05:46:09 | INFO | Использование коробочного кулера включено: True
+05:46:09 | INFO | CPU выбран из первого этапа: Процессор Intel Core i7-14700K OEM
+05:46:09 | INFO | Исходный CPU: Процессор Intel Core i7-14700K OEM, Benchmark: 32.72
+05:46:09 | INFO | Ищем CPU с суффиксом 'BOX'
+05:46:09 | INFO | Версия PCIe GPU: PCIe 5.0
+05:46:09 | INFO | Выполняется запрос к БД для поиска похожего CPU...
+05:46:09 | INFO | Найден похожий CPU: Процессор Intel Core i7-14700KF BOX, цена: 34999, benchmark: 33.02
+
+Результат подбора процессора:
+{
+    "id": 176,
+    "name": "Процессор Intel Core i7-14700KF BOX",
+    "price": 34999,
+    "image_url": "https://c.dns-shop.ru/thumb/st4/fit/500/500/5beb16602d17f124664bf0ef7b8bc78c/aa4cbaa37438d64fa4b1b69f5c2dca9591d90fa7a1d95ea946b62a81b4d7bde0.jpg",
+    "socket": "LGA 1700",
+    "tdp": 253,
+    "base_tdp": 125,
+    "cooler_included": true,
+    "total_cores": 20,
+    "performance_cores": 8,
+    "efficiency_cores": 12,
+    "max_threads": 28,
+    "base_frequency": 3.4,
+    "turbo_frequency": 5.6,
+    "unlocked_multiplier": true,
+    "memory_type": "DDR4, DDR5",
+    "max_memory": 192,
+    "memory_channels": 2,
+    "memory_frequency": 5600,
+    "integrated_graphics": false,
+    "gpu_model": "",
+    "pci_express": "PCIe 5.0",
+    "pci_lanes": 20,
+    "benchmark_rate": 33.02
+}
+
+===== ТЕСТИРОВАНИЕ ПОДБОРА КУЛЕРА ДЛЯ CPU =====
+05:46:09 | INFO | Выбран тип кулера: included_with_cpu
+05:46:09 | INFO | Проверка стандартного кулера: is_box_cpu=True, has_included_cooler=False
+05:46:09 | INFO | Возврат стандартного коробочного кулера (included_with_cpu или box в названии)
+
+Результат подбора кулера:
+{
+    "name": "Stock CPU Cooler (Included with CPU)",
+    "type": "air_cooler",
+    "price": 0,
+    "image_url": "https://c.dns-shop.ru/thumb/st1/fit/500/500/0037a3b9f4278404a0fccd74d4e790ad/4444db819930e984aa9e661d33a9c0714109e3da84d606173805182a22b223ac.jpg",
+    "socket": "LGA 1700",
+    "height": 70,
+    "tdp": 253,
+    "noise_level": "30-40 dB",
+    "material": "Aluminum + Plastic",
+    "features": "Basic stock cooler included with CPU"
+}
+===== ТЕСТИРОВАНИЕ ПОДБОРА SSD M.2 =====
+05:46:09 | INFO | Запуск поиска похожего SSD M.2
+05:46:09 | INFO | Метод распределения бюджета: fixed_price_based
+05:46:09 | INFO | Максимальная цена SSD M.2: 12000
+05:46:09 | INFO | Исходное имя SSD M.2: 2000 ГБ M.2 NVMe накопитель WD Black SN770 [WDS200T3X0E]
+05:46:09 | INFO | Получена модель оригинального SSD M.2: 2000 ГБ M.2 NVMe накопитель WD Black SN770 [WDS200T3X0E]
+05:46:09 | INFO | Найдено кандидатов по цене: 425
+05:46:09 | INFO | Выбран SSD M.2: 2000 ГБ M.2 NVMe накопитель MSI SPATIUM M470 PRO [S78-440Q990-P83] с ценой 11499
+Результат подбора SSD M.2:
+{
+    "id": 358,
+    "name": "2000 ГБ M.2 NVMe накопитель MSI SPATIUM M470 PRO [S78-440Q990-P83]",
+    "price": 11499,
+    "image_url": "https://c.dns-shop.ru/thumb/st1/fit/500/500/77d408d4da8f77eb298e3584cd5bf4a7/565e885b9e456828e900e473f983657cd787dcbbbb0d347ad9ec3fe55c4e3f25.png",
+    "capacity": "2000",
+    "form_factor": "2280",
+    "interface": "PCIe 4.0 x4",
+    "m2_key": "M",
+    "nvme": true,
+    "controller": "Phison E27T",
+    "cell_type": "",
+    "memory_structure": "3D NAND",
+    "has_dram": false,
+    "dram_size": "",
+    "max_read_speed": 6000,
+    "max_write_speed": 5000,
+    "random_read_iops": 950000,
+    "random_write_iops": 950000,
+    "length": 80,
+    "width": 22,
+    "thickness": 215,
+    "weight": null,
+    "heatsink_included": false
+}
+===== ТЕСТИРОВАНИЕ ПОДБОРА DIMM =====
+05:46:09 | INFO | Начинаем подбор похожего DIMM
+05:46:09 | INFO | Метод выделения бюджета для DIMM: fixed_price_based
+05:46:09 | INFO | Максимальная цена DIMM: 15000
+05:46:09 | INFO | Исходное имя DIMM: Оперативная память G.Skill Trident Z5 RGB [F5-7800J3646H16GX2-TZ5RK] 32 ГБ
+05:46:09 | INFO | Запрос DIMM по имени: Оперативная память G.Skill Trident Z5 RGB [F5-7800J3646H16GX2-TZ5RK] 32 ГБ
+05:46:09 | INFO | Найден DIMM: Оперативная память G.Skill Trident Z5 RGB [F5-7800J3646H16GX2-TZ5RK] 32 ГБ
+05:46:09 | INFO | Поддерживаемые типы памяти CPU (с приоритетом DDR5): ['DDR5', 'DDR4']
+05:46:09 | INFO | Параметры DIMM для поиска - каналы: 2, ECC: False, зарегистрированная память: False, общий объем: 32
+05:46:09 | INFO | Диапазон частоты памяти для поиска: 7020 - 8580
+05:46:09 | INFO | Выполняем запрос с memory_type=DDR5, params=[15000, 'DDR5', 7020, 8580, 2, 32, False, False]
+05:46:09 | INFO | Найден подходящий DIMM: Оперативная память AGI TurboJet RGB [AGI7APD16UD858-DC] 32 ГБ по цене 13999
+
+Результат подбора DIMM
+{
+    "id": 627,
+    "name": "Оперативная память AGI TurboJet RGB [AGI7APD16UD858-DC] 32 ГБ",
+    "price": 13999,
+    "image_url": "https://c.dns-shop.ru/thumb/st1/fit/500/500/a906520aba8a774fbffa850c07ae3eb3/709137b148aeea90f02091eb0e1642f472467235fda14281921243b2f1fdea0a.jpg",
+    "memory_type": "DDR5",
+    "module_type": "UDIMM",
+    "total_memory": 32,
+    "modules_count": 2,
+    "frequency": 7200,
+    "ecc_memory": false,
+    "registered_memory": false,
+    "cas_latency": 34,
+    "ras_to_cas_delay": null,
+    "row_precharge_delay": null,
+    "activate_to_precharge_delay": null,
+    "voltage": null,
+    "intel_xmp": "",
+    "amd_expo": "",
+    "height": 37,
+    "low_profile": true
+}
+===== ТЕСТИРОВАНИЕ ПОДБОРА МАТЕРИНСКОЙ ПЛАТЫ =====
+05:46:09 | INFO | Метод выделения бюджета для материнской платы: fixed_price_based
+05:46:09 | INFO | Максимальная цена платы (фиксированная): 20000
+05:46:09 | INFO | Предпочтения пользователя по материнской плате: any
+05:46:09 | INFO | Параметры CPU: сокет LGA 1700, требуемая версия PCIe: 5.0
+05:46:09 | INFO | Параметры GPU: интерфейс PCIe 5.0, слот PCIe x16
+05:46:09 | INFO | Параметры памяти DIMM: тип DDR5, количество модулей 2, общий объем 32, частота 7200
+05:46:09 | INFO | Поиск материнских плат с параметрами: сокет=LGA 1700, тип памяти=DDR5, модули памяти>=2, объем памяти>=32, цена<=20000
+05:46:09 | INFO | Выбрана материнская плата Материнская плата MSI MAG Z790 TOMAHAWK WIFI стоимостью 19999
+05:46:09 | INFO | Подбор материнской платы завершён успешно
+
+Найдена совместимая материнская плата:
+{
+    "id": 415,
+    "name": "Материнская плата MSI MAG Z790 TOMAHAWK WIFI",
+    "price": 19999,
+    "image_url": "https://c.dns-shop.ru/thumb/st4/fit/500/500/9da7700354de1053bb245cbf03f6e49d/1236dd874c3c7820f259b00db2ef902196ce348adad5bd8896c8f5f3ba2eabb8.jpg",
+    "socket": "LGA 1700",
+    "chipset": "Intel Z790",
+    "power_phases": 1611,
+    "form_factor": "Standard-ATX",
+    "height": 305,
+    "width": 244,
+    "memory_type": "DDR5",
+    "memory_slots": 4,
+    "memory_channels": 2,
+    "max_memory": 256,
+    "base_memory_freq": 5600,
+    "oc_memory_freq": [
+        5800,
+        6000,
+        6200,
+        6400,
+        6600,
+        6800,
+        7000,
+        7200
+    ],
+    "memory_form_factor": "DIMM",
+    "pcie_version": 0.0,
+    "pcie_x16_slots": 1,
+    "sli_crossfire": false,
+    "sli_crossfire_count": 2,
+    "nvme_support": true,
+    "nvme_pcie_version": 0.0,
+    "m2_slots": 4,
+    "sata_ports": 7,
+    "sata_raid": false,
+    "nvme_raid": false,
+    "cpu_fan_headers": 14,
+    "aio_pump_headers": null,
+    "case_fan_4pin": 6,
+    "case_fan_3pin": 0,
+    "main_power": "24 pin",
+    "cpu_power": "2 x 8 pin"
+}
+===== ТЕСТИРОВАНИЕ ПОДБОРА БЛОКА ПИТАНИЯ =====
+05:46:09 | INFO | Метод выделения бюджета для блока питания: fixed_price_based
+05:46:09 | INFO | Максимальная цена блока питания (фиксированная): 15000
+05:46:09 | INFO | Параметры CPU: TDP=253
+05:46:09 | INFO | Параметры GPU: модель='GeForce RTX 5070 Ti', TDP=300
+05:46:09 | INFO | Рекомендуемый сертификат 80 Plus для блока питания: Platinum
+05:46:09 | INFO | Выбран блок питания Блок питания Aerocool KCAS 1000GM [KCAS PLUS 1000GM] черный стоимостью 13499
+
+Найден совместимый блок питания:
+{
+    "id": 818,
+    "name": "Блок питания Aerocool KCAS 1000GM [KCAS PLUS 1000GM] черный",
+    "price": 13499,
+    "image_url": "https://c.dns-shop.ru/thumb/st1/fit/500/500/a05ae9ec6c663e0309cc2916864d1d1f/a973f7f208575516e2e26fcf4604ab1970b992dbcfa24a329db99cef71a6f943.jpg",
+    "wattage": 1000,
+    "form_factor": "ATX",
+    "cable_management": "полумодульный",
+    "cable_sleeving": false,
+    "main_connector": "20+4 pin",
+    "cpu_connectors": "2 x 4+4 pin",
+    "pcie_connectors": "6 x 6+2 pin",
+    "sata_connectors": 9,
+    "molex_connectors": 3,
+    "floppy_connector": false,
+    "cooling_type": "активная",
+    "fan_size": 140140,
+    "hybrid_mode": false,
+    "certification_80plus": "Gold",
+    "pfc_type": "активный",
+    "length": 160,
+    "width": 150,
+    "height": 86,
+    "weight": null
+}
+===== ТЕСТИРОВАНИЕ ПОДБОРА СИСТЕМЫ ОХЛАЖДЕНИЯ =====
+05:46:09 | INFO | НАЧАЛО ПОДБОРА СИСТЕМЫ ОХЛАЖДЕНИЯ
+05:46:09 | INFO | Сертификат блока питания: Gold
+05:46:09 | INFO | Требуемый воздушный поток (CFM): 63.75
+05:46:09 | INFO | Метод выделения бюджета на систему охлаждения: fixed_price_based
+05:46:09 | INFO | Фиксированный бюджет на охлаждение: 10000 руб.
+05:46:09 | INFO | Максимальная цена вентилятора: 10000 руб.
+05:46:09 | INFO | Предпочтения по корпусу: any
+05:46:09 | INFO | ПОДБОР СИСТЕМЫ ОХЛАЖДЕНИЯ ЗАВЕРШЁН УСПЕШНО
+05:46:09 | INFO | Модель вентилятора: Комплект вентиляторов LIAN LI UNI FAN TL 120 [G99.12TL3B.R0]
+05:46:09 | INFO | Воздушный поток: 90.1 CFM
+05:46:09 | INFO | Размер вентилятора: 124 мм
+05:46:09 | INFO | Цена: 9999 руб.
+
+Результат подбора системы охлаждения:
+{
+  "id": 831,
+  "name": "Комплект вентиляторов LIAN LI UNI FAN TL 120 [G99.12TL3B.R0]",
+  "price": 9999,
+  "image_url": "https://c.dns-shop.ru/thumb/st1/fit/500/500/921beedd89207036016a3b6b6309e4bc/0204bc84834aea37c65d74c2792e201fc0cd8ab81e8d04486f971c7268736544.jpg",
+  "fan_size": 124,
+  "fan_thickness": 28,
+  "max_rotation_speed": 2600,
+  "min_rotation_speed": 0,
+  "max_airflow": 90.1,
+  "max_static_pressure": 38.9,
+  "max_noise_level": 33.0,
+  "min_noise_level": 0.0,
+  "power_connector_type": "4 pin, 7 pin (LIAN LI)"
+}
+===== ТЕСТИРОВАНИЕ ПОДБОРА КОРПУСА =====
+05:46:09 | INFO | Метод выделения бюджета для корпуса: fixed_price_based
+05:46:09 | INFO | Максимальная цена корпуса: 8000 руб.
+05:46:09 | INFO | Параметры GPU: длина видеокарты = 322 мм
+05:46:09 | INFO | Параметры материнской платы: форм-фактор = Standard-ATX
+05:46:09 | INFO | Параметры блока питания: форм-фактор = ATX, длина = 160 мм
+05:46:09 | INFO | Параметры вентиляторов корпуса: размер = 120 мм
+05:46:09 | INFO | Тип охлаждения CPU: included_with_cpu
+05:46:09 | INFO | Попытка #1: поиск корпуса с ценой до 8000 руб.
+05:46:09 | INFO | Высота воздушного кулера: 70 мм
+05:46:09 | INFO | Найден корпус: Корпус ARDOR GAMING Crystal CC1 Black черный (цена: 7999 руб.)
+05:46:09 | INFO | Максимальная высота кулера: 180 мм мм
+05:46:09 | INFO | Поддержка вентиляторов 120 мм в позициях: rear, top, bottom, side
+05:46:09 | INFO | ===== ПОДБОР КОРПУСА ЗАВЕРШЕН УСПЕШНО =====
+
+Найден совместимый корпус:
+{
+  "id": 726,
+  "name": "Корпус ARDOR GAMING Crystal CC1 Black черный",
+  "price": 7999,
+  "image_url": "https://c.dns-shop.ru/thumb/st1/fit/500/500/2c7c7034d473b3257e34a14cc09a488a/02d293fe1320f13eeb62acb7191a9e460cd2717491ed5fe53c23be5940bfdea7.jpg",
+  "max_gpu_length": "410 мм",
+  "motherboard_form_factors": "Micro-ATX, Mini-ITX, Standard-ATX",
+  "psu_form_factor": "ATX",
+  "max_psu_length": "250 мм",
+  "fan_support": {
+    "size": 120,
+    "positions": [
+      "rear",
+      "top",
+      "bottom",
+      "side"
+    ]
+  },
+  "max_cpu_cooler_height": "180 мм"
+}
