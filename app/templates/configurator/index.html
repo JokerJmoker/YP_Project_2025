@@ -209,10 +209,15 @@
                     <span>450,000 ₽</span>
                 </div>
                 
-                <div class="budget-presets">
-                    <div class="preset" data-budget="100000">Бюджетная</div>
-                    <div class="preset active" data-budget="250000">Оптимальная</div>
-                    <div class="preset" data-budget="400000">Максимальная</div>
+                <div class="budget-type-selector">
+                    <div class="budget-type-option">
+                        <input type="radio" id="budgetRub" name="budgetType" value="rub" checked>
+                        <label for="budgetRub">В рублях</label>
+                    </div>
+                    <div class="budget-type-option">
+                        <input type="radio" id="budgetPercent" name="budgetType" value="percent">
+                        <label for="budgetPercent">В процентах</label>
+                    </div>
                 </div>
             </div>
         </section>
@@ -225,48 +230,104 @@
                     <p>Укажите обязательные компоненты или пожелания</p>
                 </div>
                 
-                <div class="requirements-form">
-                    <div class="form-group">
-                        <label for="cpuBrand">Процессор:</label>
-                        <select id="cpuBrand" class="form-select">
-                            <option value="any">Любой</option>
-                            <option value="intel">Только Intel</option>
-                            <option value="amd">Только AMD</option>
-                        </select>
+                <div class="requirements-container">
+                    <div class="requirements-row">
+                        <div class="requirements-search">
+                            <label for="cpuSearch">Процессор:</label>
+                            <input type="text" id="cpuSearch" class="search-input" placeholder="Поиск процессора...">
+                        </div>
+                        <div class="requirements-value">
+                            <input type="text" id="cpuValue" class="value-input" placeholder="Значение">
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="gpuBrand">Видеокарта:</label>
-                        <select id="gpuBrand" class="form-select">
-                            <option value="any">Любая</option>
-                            <option value="nvidia">Только NVIDIA</option>
-                            <option value="amd">Только AMD</option>
-                        </select>
+                    <div class="requirements-row">
+                        <div class="requirements-search">
+                            <label for="gpuSearch">Видеокарта:</label>
+                            <input type="text" id="gpuSearch" class="search-input" placeholder="Поиск видеокарты...">
+                        </div>
+                        <div class="requirements-value">
+                            <input type="text" id="gpuValue" class="value-input" placeholder="Значение">
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="ramSize">Оперативная память:</label>
-                        <select id="ramSize" class="form-select">
-                            <option value="16">16 ГБ (минимум)</option>
-                            <option value="32" selected>32 ГБ (рекомендуется)</option>
-                            <option value="64">64 ГБ (профессионально)</option>
-                        </select>
+                    <div class="requirements-row">
+                        <div class="requirements-search">
+                            <label for="ramSearch">Оперативная память:</label>
+                            <input type="text" id="ramSearch" class="search-input" placeholder="Поиск оперативной памяти...">
+                        </div>
+                        <div class="requirements-value">
+                            <input type="text" id="ramValue" class="value-input" placeholder="Значение">
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="storage">Накопитель:</label>
-                        <select id="storage" class="form-select">
-                            <option value="512">512 ГБ HDD</option>
-                            <option value="512">512 ГБ SSD</option>
-                            <option value="1000">1 ТБ HHD</option>
-                            <option value="1000">1 ТБ SSD</option>
-                            <option value="2000">2 ТБ SSD</option>
-                        </select>
+                    <div class="requirements-row">
+                        <div class="requirements-search">
+                            <label for="storageSearch">Накопитель:</label>
+                            <input type="text" id="storageSearch" class="search-input" placeholder="Поиск накопителя...">
+                        </div>
+                        <div class="requirements-value">
+                            <input type="text" id="storageValue" class="value-input" placeholder="Значение">
+                        </div>
                     </div>
                     
-                    <div class="form-group full-width">
-                        <label for="notes">Дополнительные пожелания:</label>
-                        <textarea id="notes" class="form-textarea" placeholder="Например: Корпус с RGB подсветкой, водяное охлаждение..."></textarea>
+                    <div class="requirements-row">
+                        <div class="requirements-search">
+                            <label for="motherboardSearch">Материнская плата:</label>
+                            <input type="text" id="motherboardSearch" class="search-input" placeholder="Поиск материнской платы...">
+                        </div>
+                        <div class="requirements-value">
+                            <input type="text" id="motherboardValue" class="value-input" placeholder="Значение">
+                        </div>
+                    </div>
+                    
+                    <div class="requirements-row">
+                        <div class="requirements-search">
+                            <label for="psuSearch">Блок питания:</label>
+                            <input type="text" id="psuSearch" class="search-input" placeholder="Поиск блока питания...">
+                        </div>
+                        <div class="requirements-value">
+                            <input type="text" id="psuValue" class="value-input" placeholder="Значение">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Шаг 4: Дополнительные компоненты -->
+        <section class="config-step" id="step-additional">
+            <div class="step-card">
+                <div class="step-header">
+                    <h2><span class="step-number">4</span> Дополнительные компоненты</h2>
+                    <p>Укажите параметры для дополнительных компонентов</p>
+                </div>
+                
+                <div class="additional-container">
+                    <div class="additional-row">
+                        <div class="additional-label">
+                            <label>Охлаждение корпуса:</label>
+                        </div>
+                        <div class="additional-value">
+                            <input type="text" id="coolingValue" class="value-input" placeholder="Значение">
+                        </div>
+                    </div>
+                    
+                    <div class="additional-row">
+                        <div class="additional-label">
+                            <label>Корпус:</label>
+                        </div>
+                        <div class="additional-value">
+                            <input type="text" id="caseValue" class="value-input" placeholder="Значение">
+                        </div>
+                    </div>
+                    
+                    <div class="additional-row">
+                        <div class="additional-label">
+                            <label>Куллер процессора:</label>
+                        </div>
+                        <div class="additional-value">
+                            <input type="text" id="cpuCoolerValue" class="value-input" placeholder="Значение">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -293,6 +354,146 @@
 </div>
 
 <style>
+    /* Основной цвет текста */
+    body, 
+    .game-card h3, 
+    .game-card p,
+    .settings-label,
+    .requirements-search label,
+    .additional-label label,
+    .budget-markers span,
+    .budget-type-option label {
+        color: #ff6b00 !important;
+    }
+
+    /* Стили для выбора типа бюджета (квадратики) */
+    .budget-type-selector {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 25px;
+    }
+    
+    .budget-type-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .budget-type-option input[type="radio"] {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border: 2px solid #ff6b00;
+        border-radius: 2px;
+        outline: none;
+        cursor: pointer;
+        position: relative;
+        background-color: transparent;
+    }
+    
+    .budget-type-option input[type="radio"]:checked {
+        background-color: #ff6b00;
+    }
+    
+    .budget-type-option input[type="radio"]:checked::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 5px;
+        width: 4px;
+        height: 8px;
+        border: solid #121212;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+    
+    .budget-type-option label {
+        font-size: 1.1em;
+        cursor: pointer;
+    }
+
+    /* Стили для блока требований */
+    .requirements-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .requirements-row {
+        display: grid;
+        grid-template-columns: 1fr 120px;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .requirements-search {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .requirements-value {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .requirements-search label,
+    .requirements-value label {
+        margin-bottom: 5px;
+        color: #ff6b00;
+    }
+
+    .search-input, 
+    .value-input {
+        width: 100%;
+        padding: 10px 12px;
+        background: #252525;
+        border: 1px solid #333;
+        border-radius: 6px;
+        color: #ff6b00;
+        box-sizing: border-box;
+    }
+
+    .search-input::placeholder, 
+    .value-input::placeholder {
+        color: #666;
+        opacity: 1;
+    }
+
+    /* Гарантируем выравнивание по базовой линии */
+    .requirements-row > div {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        height: 100%;
+    }
+
+    /* Стили для блока дополнительных компонентов */
+    .additional-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .additional-row {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .additional-label {
+        flex: 1;
+    }
+    
+    .additional-value {
+        width: 150px;
+    }
+
     /* Обновленные стили для кнопок-ссылок */
     .btn-prev, 
     .btn-next {
@@ -353,123 +554,162 @@
         transform: translateY(-5px);
     }
     
-    .budget-presets {
+    /* Новые стили для выбора типа бюджета */
+    .budget-type-selector {
         display: flex;
         justify-content: center;
-        gap: 15px;
+        gap: 30px;
         margin-top: 25px;
     }
     
-    .budget-presets .preset {
-        padding: 10px 20px;
-        background: #252525;
-        border-radius: 6px;
+    .budget-type-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .budget-type-option input[type="radio"] {
+        width: 18px;
+        height: 18px;
+        accent-color: #ff6b00;
+    }
+    
+    .budget-type-option label {
+        font-size: 1.1em;
+        color: #e0e0e0;
         cursor: pointer;
-        transition: all 0.3s;
     }
     
-    .budget-presets .preset.active {
-        background: #ff6b00;
-        color: #000;
-        font-weight: 600;
-    }
-    
-    .requirements-form {
+    /* Стили для блока требований */
+    .requirements-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 20px;
         margin-top: 20px;
     }
     
-    .form-group {
+    .requirements-left, .requirements-right {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .requirements-item, .requirements-value {
         margin-bottom: 15px;
     }
     
-    .form-group label {
+    .requirements-item label {
         display: block;
         margin-bottom: 8px;
         color: #ff6b00;
     }
     
-    .form-select, .form-textarea {
+    .search-input, .value-input {
         width: 100%;
-        padding: 12px;
+        padding: 6px;
         background: #252525;
         border: 1px solid #333;
         border-radius: 6px;
-        color: #ff9500;
+        color: #ff6b00;
     }
     
-    .form-textarea {
-        min-height: 100px;
-        resize: vertical;
+    .search-input::placeholder, .value-input::placeholder {
+        color: #666;
     }
     
-    
-    .full-width {
-        grid-column: span 2;
+    /* Стили для блока дополнительных компонентов */
+    .additional-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 20px;
     }
+    
+    .additional-left, .additional-right {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .additional-item label {
+        display: block;
+        margin-bottom: 8px;
+        color: #ff6b00;
+        line-height: 40px; /* Выравнивание с полями ввода */
+    }
+    
+    /* Общие стили для полей ввода */
+    .search-input, .value-input {
+        transition: all 0.3s;
+    }
+    
+    .search-input:focus, .value-input:focus {
+        outline: none;
+        border-color: #ff6b00;
+        box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.2);
+    }
+    
     /* Обновленные стили для ползунка бюджета */
     .range-container {
-    position: relative;
-    padding: 15px 0;
-}
+        position: relative;
+        padding: 15px 0;
+    }
 
-input[type="range"].budget-range {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 6px;
-    margin: 10px 0;
-    background: #333;
-    border-radius: 3px;
-    outline: none;
-}
+    input[type="range"].budget-range {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 6px;
+        margin: 10px 0;
+        background: #333;
+        border-radius: 3px;
+        outline: none;
+    }
 
-/* WebKit (Chrome/Safari) */
-input[type="range"].budget-range::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: #ff6b00;
-    cursor: pointer;
-    border: 3px solid #121212;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    margin-top: -9px; /* Выравнивание по вертикали */
-    position: relative;
-    z-index: 2;
-}
+    /* WebKit (Chrome/Safari) */
+    input[type="range"].budget-range::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #ff6b00;
+        cursor: pointer;
+        border: 3px solid #121212;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        margin-top: -9px; /* Выравнивание по вертикали */
+        position: relative;
+        z-index: 2;
+    }
 
-input[type="range"].budget-range::-webkit-slider-runnable-track {
-    height: 6px;
-    background: linear-gradient(to right, #ff6b00, #ff9500);
-    border-radius: 3px;
-}
+    input[type="range"].budget-range::-webkit-slider-runnable-track {
+        height: 6px;
+        background: linear-gradient(to right, #ff6b00, #ff9500);
+        border-radius: 3px;
+    }
 
-/* Firefox */
-input[type="range"].budget-range::-moz-range-thumb {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: #ff6b00;
-    cursor: pointer;
-    border: 3px solid #121212;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    position: relative;
-    z-index: 2;
-}
+    /* Firefox */
+    input[type="range"].budget-range::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #ff6b00;
+        cursor: pointer;
+        border: 3px solid #121212;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        position: relative;
+        z-index: 2;
+    }
 
-input[type="range"].budget-range::-moz-range-track {
-    height: 6px;
-    background: #333;
-    border-radius: 3px;
-}
+    input[type="range"].budget-range::-moz-range-track {
+        height: 6px;
+        background: #333;
+        border-radius: 3px;
+    }
 
-input[type="range"].budget-range::-moz-range-progress {
-    height: 6px;
-    background: linear-gradient(to right, #ffb600, #ff9500);
-    border-radius: 3px;
-}
+    input[type="range"].budget-range::-moz-range-progress {
+        height: 6px;
+        background: linear-gradient(to right, #ffb600, #ff9500);
+        border-radius: 3px;
+    }
     
     /* Подписи под ползунком */
     .range-labels {
@@ -603,17 +843,6 @@ input[type="range"].budget-range::-moz-range-progress {
         });
     });
     
-    // Обработка пресетов бюджета
-    document.querySelectorAll('.budget-presets .preset').forEach(preset => {
-        preset.addEventListener('click', function() {
-            document.querySelectorAll('.budget-presets .preset').forEach(p => p.classList.remove('active'));
-            this.classList.add('active');
-            const budget = this.dataset.budget;
-            document.getElementById('budgetRange').value = budget;
-            document.getElementById('budgetValue').textContent = new Intl.NumberFormat('ru-RU').format(budget);
-        });
-    });
-    
     // Обновление бюджета при движении ползунка
     document.getElementById('budgetRange').addEventListener('input', function() {
         const value = this.value;
@@ -650,7 +879,7 @@ input[type="range"].budget-range::-moz-range-progress {
             
             console.log(`Выбрано: ${isDLSS ? 'DLSS' : 'FSR'} = ${this.value}`);
         });
-    });
+    });    
 </script>
 
 <script src="configurator.js"></script>
