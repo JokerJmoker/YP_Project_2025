@@ -299,7 +299,7 @@
             <div class="step-card">
                 <div class="step-header">
                     <h2><span class="step-number">4</span> Дополнительные компоненты</h2>
-                    <p>Укажите параметры для дополнительных компонентов</p>
+                    <p>Укажите цену для дополнительных компонентов (Учитывайте вы делаете это в рублях или в процентах!)</p>
                 </div>
                 
                 <div class="additional-container">
@@ -323,10 +323,19 @@
                     
                     <div class="additional-row">
                         <div class="additional-label">
-                            <label>Куллер процессора:</label>
+                            <label>Охлаждение процессора:</label>
                         </div>
                         <div class="additional-value">
                             <input type="text" id="cpuCoolerValue" class="value-input" placeholder="Значение">
+                        </div>
+                    </div>
+                    <div class="additional-value">
+                        <div class="cooler-select-wrapper">
+                            <select id="cpuCoolerType" class="cooler-select">
+                                <option value="any">Любой</option>
+                                <option value="air">Воздушное</option>
+                                <option value="liquid">Водяное</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -419,31 +428,29 @@
     .requirements-container {
         display: flex;
         flex-direction: column;
-        gap: 15px;
-        margin-top: 20px;
-        width: 100%;
+        gap: 20px;
+        margin-top: 2x;
     }
 
     .requirements-row {
-        display: grid;
-        grid-template-columns: 1fr 120px;
+        display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 20px;
     }
 
     .requirements-search {
-        display: flex;
-        flex-direction: column;
+        flex: 1;
+        min-width: 0; /* Важно для правильного сжатия */
     }
 
     .requirements-value {
-        display: flex;
-        flex-direction: column;
+        width: 120px; /* Фиксированная ширина для поля значения */
+        flex-shrink: 0; /* Запрещаем сжатие */
     }
 
-    .requirements-search label,
-    .requirements-value label {
-        margin-bottom: 5px;
+    .requirements-search label {
+        display: block;
+        margin-bottom: 8px;
         color: #ff6b00;
     }
 
@@ -455,21 +462,12 @@
         border: 1px solid #333;
         border-radius: 6px;
         color: #ff6b00;
-        box-sizing: border-box;
+        box-sizing: border-box; /* Учитываем padding в ширине */
     }
 
     .search-input::placeholder, 
     .value-input::placeholder {
         color: #666;
-        opacity: 1;
-    }
-
-    /* Гарантируем выравнивание по базовой линии */
-    .requirements-row > div {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        height: 100%;
     }
 
     /* Стили для блока дополнительных компонентов */
@@ -492,6 +490,29 @@
     
     .additional-value {
         width: 150px;
+    }
+
+    .cooler-select-wrapper {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    }
+
+    .cooler-select {
+        flex: 1;
+        padding: 10px 12px;
+        background: #252525;
+        border: 1px solid #333;
+        border-radius: 6px;
+        color: #ff6b00;
+        box-sizing: border-box;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff6b00'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 15px;
+        padding-right: 30px;
+        cursor: pointer;
     }
 
     /* Обновленные стили для кнопок-ссылок */
