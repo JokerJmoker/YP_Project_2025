@@ -226,71 +226,146 @@
         <section class="config-step" id="step-requirements">
             <div class="step-card">
                 <div class="step-header">
-                    <h2><span class="step-number">3</span> Ваши требования</h2>
-                    <p>Укажите обязательные компоненты или пожелания</p>
+                    <h2><span class="step-number">3</span>Основные компоненты</h2>
+                    <p>Укажите обязательные компоненты и их денежный эквивалент</p>
                 </div>
                 
                 <div class="requirements-container">
+                    <!-- Процессор -->
                     <div class="requirements-row">
                         <div class="requirements-search">
-                            <label for="cpuSearch">Процессор:</label>
-                            <input type="text" id="cpuSearch" class="search-input" placeholder="Введите название процессора...">
+                            <label for="cpuSelect">Процессор:</label>
+                            <select id="cpuSelect" class="component-select">
+                                <option value="any">Любое</option>
+                                <option value="custom">Выбрать свой компонент</option>
+                            </select>
                         </div>
                         <div class="requirements-value">
                             <input type="text" id="cpuValue" class="value-input" placeholder="Значение">
                         </div>
                     </div>
+                    <div class="requirements-row custom-component-row" id="cpuCustomRow" style="display: none;">
+                        <div class="requirements-search">
+                            <input type="text" id="cpuSearch" class="search-input" placeholder="Введите название процессора...">
+                        </div>
+                    </div>
                     
+                    <!-- Видеокарта -->
                     <div class="requirements-row">
                         <div class="requirements-search">
-                            <label for="gpuSearch">Видеокарта:</label>
-                            <input type="text" id="gpuSearch" class="search-input" placeholder="Введите название видеокарты...">
+                            <label for="gpuSelect">Видеокарта:</label>
+                            <select id="gpuSelect" class="component-select">
+                                <option value="any">Любое</option>
+                                <option value="custom">Выбрать свой компонент</option>
+                            </select>
                         </div>
                         <div class="requirements-value">
                             <input type="text" id="gpuValue" class="value-input" placeholder="Значение">
                         </div>
                     </div>
+                    <div class="requirements-row custom-component-row" id="gpuCustomRow" style="display: none;">
+                        <div class="requirements-search">
+                            <input type="text" id="gpuSearch" class="search-input" placeholder="Введите название видеокарты...">
+                        </div>
+                    </div>
                     
+                    <!-- Оперативная память -->
                     <div class="requirements-row">
                         <div class="requirements-search">
-                            <label for="ramSearch">Оперативная память:</label>
-                            <input type="text" id="ramSearch" class="search-input" placeholder="Введите название памяти...">
+                            <label for="ramSelect">Оперативная память:</label>
+                            <select id="ramSelect" class="component-select">
+                                <option value="any">Любое</option>
+                                <option value="custom">Выбрать свой компонент</option>
+                            </select>
                         </div>
                         <div class="requirements-value">
                             <input type="text" id="ramValue" class="value-input" placeholder="Значение">
                         </div>
                     </div>
+                    <div class="requirements-row custom-component-row" id="ramCustomRow" style="display: none;">
+                        <div class="requirements-search">
+                            <input type="text" id="ramSearch" class="search-input" placeholder="Введите название памяти...">
+                        </div>
+                    </div>
                     
+                    <!-- Накопитель -->
                     <div class="requirements-row">
                         <div class="requirements-search">
-                            <label for="storageSearch">Накопитель:</label>
-                            <input type="text" id="storageSearch" class="search-input" placeholder="Введите название накопителя...">
+                            <label for="storageSelect">Накопитель:</label>
+                            <select id="storageSelect" class="component-select">
+                                <option value="any">Любое</option>
+                                <option value="custom">Выбрать свой компонент</option>
+                            </select>
                         </div>
                         <div class="requirements-value">
                             <input type="text" id="storageValue" class="value-input" placeholder="Значение">
                         </div>
                     </div>
+                    <div class="requirements-row custom-component-row" id="storageCustomRow" style="display: none;">
+                        <div class="requirements-search">
+                            <input type="text" id="storageSearch" class="search-input" placeholder="Введите название накопителя...">
+                        </div>
+                    </div>
                     
+                    <!-- Материнская плата -->
                     <div class="requirements-row">
                         <div class="requirements-search">
-                            <label for="motherboardSearch">Материнская плата:</label>
+                            <label for="motherboardSelect">Материнская плата:</label>
+                            <select id="motherboardSelect" class="component-select">
+                                <option value="any">Любое</option>
+                            </select>
                         </div>
                         <div class="requirements-value">
                             <input type="text" id="motherboardValue" class="value-input" placeholder="Значение">
                         </div>
                     </div>
+                    <div class="requirements-row custom-component-row" id="motherboardCustomRow" style="display: none;">
+                        <div class="requirements-search">
+                            <input type="text" id="motherboardSearch" class="search-input" placeholder="Введите название материнской платы...">
+                        </div>
+                    </div>
                     
+                    <!-- Блок питания -->
                     <div class="requirements-row">
                         <div class="requirements-search">
-                            <label for="psuSearch">Блок питания:</label>
+                            <label for="psuSelect">Блок питания:</label>
+                            <select id="psuSelect" class="component-select">
+                                <option value="any">Любое</option>
+                            </select>
                         </div>
                         <div class="requirements-value">
                             <input type="text" id="psuValue" class="value-input" placeholder="Значение">
                         </div>
                     </div>
+                    <div class="requirements-row custom-component-row" id="psuCustomRow" style="display: none;">
+                        <div class="requirements-search">
+                            <input type="text" id="psuSearch" class="search-input" placeholder="Введите название блока питания...">
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Получаем все выпадающие списки
+            const selects = document.querySelectorAll('.component-select');
+            
+            // Для каждого списка добавляем обработчик события change
+            selects.forEach(select => {
+                select.addEventListener('change', function() {
+                    const componentType = this.id.replace('Select', '');
+                    const customRow = document.getElementById(`${componentType}CustomRow`);
+                    
+                    if (this.value === 'custom') {
+                        customRow.style.display = 'flex'; // или 'block', в зависимости от вашего CSS
+                    } else {
+                        customRow.style.display = 'none';
+                    }
+                });
+            });
+        });
+        </script>
 
         <!-- Шаг 4: Дополнительные компоненты -->
         <section class="config-step" id="step-additional">
@@ -849,6 +924,94 @@
             grid-column: span 2;
         }
     }
+
+    /* Стили для выпадающих списков компонентов */
+    .component-select {
+    width: 100%;
+    padding: 10px 12px;
+    background: #252525;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: #ff6b00;
+    font-size: 14px;
+    box-sizing: border-box;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff6b00'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 15px;
+    padding-right: 30px;
+    cursor: pointer;
+    transition: border-color 0.3s;
+    }
+
+    /* Стили при наведении и фокусе */
+    .component-select:hover {
+    border-color: #ff6b00;
+    }
+
+    .component-select:focus {
+    outline: none;
+    border-color: #ff6b00;
+    box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.2);
+    }
+
+    /* Стили для строк с компонентами */
+    .requirements-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    align-items: center;
+    }
+
+    .requirements-search {
+    flex: 1;
+    }
+
+    .requirements-value {
+    width: 120px;
+    }
+
+    /* Стили для текстовых полей */
+    .search-input,
+    .value-input {
+    width: 100%;
+    padding: 10px 12px;
+    background: #252525;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 14px;
+    box-sizing: border-box;
+    }
+
+    .search-input::placeholder,
+    .value-input::placeholder {
+    color: #666;
+    }
+
+    .search-input:focus,
+    .value-input:focus {
+    outline: none;
+    border-color: #ff6b00;
+    box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.2);
+    }
+
+    /* Стили для кастомных строк (появляются при выборе "Выбрать свой компонент") */
+    .custom-component-row {
+    display: none;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    }
+
+    /* Лейблы */
+    .requirements-row label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ccc;
+    font-size: 14px;
+    }
+    
 </style>
 
 <script>
