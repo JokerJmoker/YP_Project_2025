@@ -18,6 +18,8 @@ def log_click():
     ray_tracing = data.get('rayTracingEnabled', False)
     dlss_value = data.get('dlss', 'off')
     fsr_value = data.get('fsr', 'off')
+    budget_amount = data.get('budgetAmount', 150000)
+    budget_allocation_method = data.get('budgetAllocationMethod', 'fixed_price_based')
 
     if game_name:
         game_name = game_name.replace(' ', '_')
@@ -46,6 +48,18 @@ def log_click():
             resolution = 1080
     except (ValueError, TypeError):
         resolution = 1080
+
+    # Валидация бюджета
+    try:
+        budget_amount = int(budget_amount)
+        if budget_amount < 50000 or budget_amount > 450000:
+            budget_amount = 150000
+    except (ValueError, TypeError):
+        budget_amount = 150000
+
+    # Валидация метода бюджета
+    if budget_allocation_method not in ["fixed_price_based", "percentage_based"]:
+        budget_allocation_method = "fixed_price_based"
 
     # Маппинг значений масштабирования
     dlss_mapping = {
@@ -78,6 +92,10 @@ def log_click():
                     "dlss": dlss_setting,
                     "fsr": fsr_setting
                 }
+            },
+            "budget": {
+                "amount": budget_amount,
+                "budget_allocation_method": budget_allocation_method
             }
         }
     }

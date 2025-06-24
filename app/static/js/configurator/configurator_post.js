@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Получаем все настройки
+            // Получаем все настройки графики
             const graphicsSelect = document.getElementById("graphicsSelect");
             const graphicsQuality = graphicsSelect ? graphicsSelect.value : "High";
             
@@ -55,6 +55,24 @@ document.addEventListener("DOMContentLoaded", () => {
             };
             const fsrSetting = fsrMapping[fsrValue] || "Disabled";
 
+            // Получаем данные о бюджете
+            const budgetRange = document.getElementById("budgetRange");
+            const budgetValueElement = document.getElementById("budgetValue");
+            let budgetAmount = 150000; // значение по умолчанию
+            
+            if (budgetRange && budgetValueElement) {
+                // Удаляем пробелы и знак рубля, затем преобразуем в число
+                budgetAmount = parseInt(budgetValueElement.textContent.replace(/\s/g, '').replace('₽', ''));
+            }
+
+            const budgetTypeRub = document.getElementById("budgetRub");
+            const budgetTypePercent = document.getElementById("budgetPercent");
+            let budgetAllocationMethod = "fixed_price_based"; // значение по умолчанию
+            
+            if (budgetTypeRub && budgetTypePercent) {
+                budgetAllocationMethod = budgetTypeRub.checked ? "fixed_price_based" : "percentage_based";
+            }
+
             const logData = {
                 user_selections: {
                     game: {
@@ -67,6 +85,10 @@ document.addEventListener("DOMContentLoaded", () => {
                             dlss: dlssSetting,
                             fsr: fsrSetting
                         }
+                    },
+                    budget: {
+                        amount: budgetAmount,
+                        budget_allocation_method: budgetAllocationMethod
                     }
                 }
             };
@@ -87,6 +109,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     rayTracingPreset: rayTracingValue,
                     dlss: dlssValue,
                     fsr: fsrValue,
+                    budgetAmount: budgetAmount,
+                    budgetAllocationMethod: budgetAllocationMethod,
                     timestamp: new Date().toISOString()
                 })
             }).then(response => {
