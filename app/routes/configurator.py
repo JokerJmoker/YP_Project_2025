@@ -13,7 +13,8 @@ def log_click():
     data = request.get_json()
     game_name = data.get('gameName', '')
     graphics_quality = data.get('graphicsQuality', 'High')
-    target_fps = data.get('targetFps', 60)  # Значение по умолчанию 60
+    target_fps = data.get('targetFps', 60)
+    resolution = data.get('resolution', 1080)  # Новый параметр
 
     if game_name:
         game_name = game_name.replace(' ', '_')
@@ -25,7 +26,7 @@ def log_click():
     if graphics_quality not in valid_qualities:
         graphics_quality = "High"
 
-    # Валидация FPS - преобразуем в int и проверяем допустимые значения
+    # Валидация FPS
     try:
         target_fps = int(target_fps)
         valid_fps = {30, 60, 120, 144, 240}
@@ -34,13 +35,23 @@ def log_click():
     except (ValueError, TypeError):
         target_fps = 60
 
+    # Валидация разрешения
+    try:
+        resolution = int(resolution)
+        valid_resolutions = {720, 1080, 1440, 2160}
+        if resolution not in valid_resolutions:
+            resolution = 1080
+    except (ValueError, TypeError):
+        resolution = 1080
+
     log_data = {
         "user_selections": {
             "game": {
                 "title": game_name,
                 "graphics_settings": {
                     "quality": graphics_quality,
-                    "target_fps": target_fps
+                    "target_fps": target_fps,
+                    "resolution": resolution
                 }
             }
         }

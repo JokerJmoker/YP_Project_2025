@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     let selectedGameName = null;
 
-    // Обработчик клика по игре
     const gameCards = document.querySelectorAll(".game-card");
     gameCards.forEach(card => {
         card.addEventListener("click", () => {
@@ -10,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Обработчик клика по кнопке "Далее"
     const btnNext = document.querySelector(".btn-next");
     if (btnNext) {
         btnNext.addEventListener("click", (event) => {
@@ -20,24 +18,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Получаем текущие настройки графики и FPS
+            // Получаем все настройки
             const graphicsSelect = document.getElementById("graphicsSelect");
             const graphicsQuality = graphicsSelect ? graphicsSelect.value : "High";
             
-            // Исправлено: используем правильный ID для FPS select
             const fpsSelect = document.getElementById("fpsSelect");
             const targetFps = fpsSelect ? parseInt(fpsSelect.value) : 60;
+            
+            const resolutionSelect = document.getElementById("resolutionSelect");
+            const resolution = resolutionSelect ? parseInt(resolutionSelect.value) : 1080;
 
-            console.log(`Выбранный FPS: ${targetFps}`); // Добавьте эту строку для отладки
+            console.log(`Выбранное разрешение: ${resolution}p`);
 
-            // Формируем JSON
             const logData = {
                 user_selections: {
                     game: {
                         title: selectedGameName.replace(/ /g, "_"),
                         graphics_settings: {
                             quality: graphicsQuality,
-                            target_fps: targetFps
+                            target_fps: targetFps,
+                            resolution: resolution
                         }
                     }
                 }
@@ -45,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             console.log("Отправляем лог:", JSON.stringify(logData, null, 2));
 
-            // Отправляем на сервер
             fetch('/configurator/log-click', {
                 method: 'POST',
                 headers: {
@@ -54,13 +53,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({
                     gameName: selectedGameName,
                     graphicsQuality: graphicsQuality,
-                    targetFps: targetFps, // Убедитесь, что это поле совпадает с бэкендом
+                    targetFps: targetFps,
+                    resolution: resolution,
                     timestamp: new Date().toISOString()
                 })
             }).then(response => {
-                if (!response.ok) {
-                    console.error("Ошибка при отправке данных на сервер.");
-                }
+                if (!response.ok) console.error("Ошибка при отправке данных");
             }).catch(error => {
                 console.error("Ошибка запроса:", error);
             });
