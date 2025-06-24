@@ -6,6 +6,68 @@
     <main class="configurator-steps">
         <h1>КОМПЛЕКТУЮЩИЕ ДЛЯ ПК</h1>
         
+        <!-- Блок с игрой и настройками графики -->
+        <div class="game-settings-wrapper">
+            <div class="game-header">
+                <div class="game-section-title">ВЫБРАННАЯ ИГРА</div>
+                <div class="game-title">Cyberpunk 2077</div>
+            </div>
+            
+            <div class="graphics-settings">
+                <h3 class="settings-title">ИГРОВЫЕ НАСТРОЙКИ ГРАФИКИ</h3>
+                
+                <div class="settings-table">
+                    <!-- Графика -->
+                    <div class="settings-row">
+                        <div class="settings-label">Графика</div>
+                        <div class="settings-value">Высокие</div>
+                    </div>
+                    
+                    <!-- Разрешение -->
+                    <div class="settings-row">
+                        <div class="settings-label">Разрешение</div>
+                        <div class="settings-value">1080p (Full HD)</div>
+                    </div>
+                    
+                    <!-- Частота кадров -->
+                    <div class="settings-row">
+                        <div class="settings-label">Частота кадров</div>
+                        <div class="settings-value">60 FPS (Рекомендуемая)</div>
+                    </div>
+                    
+                    <!-- Трассировка лучей -->
+                    <div class="settings-row">
+                        <div class="settings-label">Трассировка лучей</div>
+                        <div class="settings-value">Выключено</div>
+                    </div>
+                    
+                    <!-- NVIDIA DLSS -->
+                    <div class="settings-row">
+                        <div class="settings-label">NVIDIA DLSS</div>
+                        <div class="settings-value">Выключено</div>
+                    </div>
+                    
+                    <!-- AMD FSR -->
+                    <div class="settings-row">
+                        <div class="settings-label">AMD FSR</div>
+                        <div class="settings-value">Выключено</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Блок с бюджетом -->
+            <div class="budget-section">
+                <div class="budget-row">
+                    <div class="budget-label">Запрошенный бюджет:</div>
+                    <div class="budget-value">250 000 ₽</div>
+                </div>
+                <div class="budget-row">
+                    <div class="budget-label">Итоговый бюджет:</div>
+                    <div class="budget-value final">257 992 ₽</div>
+                </div>
+            </div>
+        </div>
+
         <section class="config-step active">
             <div class="step-card">
                 <div class="step-header">
@@ -19,182 +81,369 @@
                             <thead>
                                 <tr>
                                     <th class="component-col">Компонент</th>
-                                    <th class="types-col">Типы/Варианты</th>
-                                    <th class="models-col">Предложенные варианты</th>
-                                    <th class="desc-col">Описание</th>
+                                    <th class="name-col">Название</th>
+                                    <th class="image-col">Изображение</th>
+                                    <th class="price-col">Цена</th>
+                                    <th class="specs-col">Характеристики</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                <!-- Видеокарта -->
+                                <tr>
+                                    <td>Видеокарта</td>
+                                    <td>KFA2 GeForce RTX 5070Ti ROCK(X) 3FAN RGB WHITE</td>
+                                    <td><img src="https://c.dns-shop.ru/thumb/st1/fit/500/500/7fa7ad52580b2a52b848e73a911fd298/9835a29aec16682ee0d9854ef5f01de6805731de3b8b476d982b0dc160441db6.jpg" alt="Видеокарта" class="component-image"></td>
+                                    <td class="price-value">99 999 ₽</td>
+                                    <td>
+                                        <div class="specs-list">
+                                            <span class="spec-badge">PCIe 5.0</span>
+                                            <span class="spec-badge">16 ГБ GDDR7</span>
+                                            <span class="spec-badge">256 бит</span>
+                                            <span class="spec-badge">2295/2512 МГц</span>
+                                            <span class="spec-badge">8960 ядер</span>
+                                            <span class="spec-badge">TDP 300 Вт</span>
+                                            <span class="spec-badge">3x DisplayPort, HDMI</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
                                 <!-- Процессор -->
-                                <tr class="expandable">
+                                <tr>
                                     <td>Процессор</td>
+                                    <td>Intel Core i7-14700K OEM</td>
+                                    <td><img src="https://c.dns-shop.ru/thumb/st1/fit/500/500/138507dfa2e54236fbb50f75435eaf2b/937f670c26d13bfd7a921750caf98fbcf2d38d1365de7b15084f852ce701aab9.jpg" alt="Процессор" class="component-image"></td>
+                                    <td class="price-value">36 799 ₽</td>
                                     <td>
-                                        <div class="sub-items-trigger">Производители</div>
-                                        <ul class="sub-items">
-                                            <li>Intel (LGA1700, LGA1200)</li>
-                                            <li>AMD (AM5, AM4)</li>
-                                        </ul>
+                                        <div class="specs-list">
+                                            <span class="spec-badge">LGA 1700</span>
+                                            <span class="spec-badge">20 ядер (8P+12E)</span>
+                                            <span class="spec-badge">3.4-5.6 ГГц</span>
+                                            <span class="spec-badge">TDP 253 Вт</span>
+                                            <span class="spec-badge">DDR4/DDR5</span>
+                                            <span class="spec-badge">PCIe 5.0</span>
+                                            <span class="spec-badge">UHD Graphics 770</span>
+                                        </div>
                                     </td>
+                                </tr>
+                                
+                                <!-- Оперативная память -->
+                                <tr>
+                                    <td>ОЗУ</td>
+                                    <td>Kingston Fury Renegade White RGB 32 ГБ</td>
+                                    <td><img src="https://c.dns-shop.ru/thumb/st4/fit/500/500/3c5fb02670e4ec5c0e3179f9ed75dd02/4c0f596f886ae0e105b23b3e4da72e07a1b2f2f900d75a2999b80e916e204529.jpg" alt="ОЗУ" class="component-image"></td>
+                                    <td class="price-value">26 599 ₽</td>
                                     <td>
-                                        <span class="model-badge">Intel Core i9-13900K</span>
-                                        <span class="model-badge">AMD Ryzen 9 7950X</span>
-                                        <span class="model-badge">Intel Core i7-13700K</span>
-                                        <span class="model-badge">AMD Ryzen 7 7800X3D</span>
+                                        <div class="specs-list">
+                                            <span class="spec-badge">DDR5</span>
+                                            <span class="spec-badge">32 ГБ (2x16)</span>
+                                            <span class="spec-badge">8000 МГц</span>
+                                            <span class="spec-badge">CL38</span>
+                                            <span class="spec-badge">1.45 В</span>
+                                            <span class="spec-badge">RGB подсветка</span>
+                                        </div>
                                     </td>
-                                    <td>Центральный процессор (CPU) - основной вычислительный компонент. Intel и AMD - два основных производителя.</td>
+                                </tr>
+                                
+                                <!-- SSD -->
+                                <tr>
+                                    <td>SSD</td>
+                                    <td>WD Black SN770 2 ТБ</td>
+                                    <td><img src="https://c.dns-shop.ru/thumb/st1/fit/500/500/dbda2346e331bc5dc0315d9e77a418bf/144f490f9835e4bffcd3c4493f8b3a9c500998fa19ecba810ca0e5e22e032e7e.jpg" alt="SSD" class="component-image"></td>
+                                    <td class="price-value">18 699 ₽</td>
+                                    <td>
+                                        <div class="specs-list">
+                                            <span class="spec-badge">2 ТБ</span>
+                                            <span class="spec-badge">PCIe 4.0 x4</span>
+                                            <span class="spec-badge">5150/4850 МБ/с</span>
+                                            <span class="spec-badge">3D TLC NAND</span>
+                                            <span class="spec-badge">M.2 2280</span>
+                                            <span class="spec-badge">7400K/8000K IOPS</span>
+                                        </div>
+                                    </td>
                                 </tr>
                                 
                                 <!-- Материнская плата -->
-                                <tr class="expandable">
+                                <tr>
                                     <td>Материнская плата</td>
+                                    <td>MAXSUN iCraft Z790 WIFI</td>
+                                    <td><img src="https://c.dns-shop.ru/thumb/st1/fit/500/500/2a4ca2e9e15ba765b88e3d6407e208d1/386ad01c2abefe28b12331b8db6490754a3e912c00cf98244ca2b404266e8dbe.jpg" alt="Материнская плата" class="component-image"></td>
+                                    <td class="price-value">23 599 ₽</td>
                                     <td>
-                                        <div class="sub-items-trigger">Производители</div>
-                                        <ul class="sub-items">
-                                            <li>Intel: LGA1700, LGA1200</li>
-                                            <li>AMD: AM5, AM4</li>
-                                            <li>Серверные: LGA4189, sWRX8</li>
-                                        </ul>
+                                        <div class="specs-list">
+                                            <span class="spec-badge">LGA 1700</span>
+                                            <span class="spec-badge">Z790</span>
+                                            <span class="spec-badge">DDR5 до 7000 МГц</span>
+                                            <span class="spec-badge">4 слота M.2</span>
+                                            <span class="spec-badge">Wi-Fi 6</span>
+                                            <span class="spec-badge">2.5G LAN</span>
+                                        </div>
                                     </td>
-                                    <td>
-                                        <span class="model-badge">ASUS ROG Maximus Z790 (LGA1700)</span>
-                                        <span class="model-badge">MSI MPG B550 Gaming (AM4)</span>
-                                        <span class="model-badge">GIGABYTE X670E AORUS (AM5)</span>
-                                    </td>
-                                    <td>Основная плата, объединяющая все компоненты системы. Выбор зависит от сокета процессора.</td>
                                 </tr>
                                 
                                 <!-- Блок питания -->
-                                <tr class="expandable">
-                                    <td>Блок питания</td>
+                                <tr>
+                                    <td>БП</td>
+                                    <td>Cooler Master XG750 PLATINUM</td>
+                                    <td><img src="https://c.dns-shop.ru/thumb/st4/fit/500/500/6c9d4fe191dce121edf355a383bacee2/d6cd7fa33913c039f193c5978c5868eab658b95ee12fa3e5b22af59934013179.jpg" alt="Блок питания" class="component-image"></td>
+                                    <td class="price-value">20 799 ₽</td>
                                     <td>
-                                        <div class="sub-items-trigger">Производители</div>
-                                        <ul class="sub-items">
-                                            <li>Thermaltake</li>
-                                            <li>Corsair</li>
-                                            <li>KCAS 2000W (Очень крутой)</li>
-                                        </ul>
+                                        <div class="specs-list">
+                                            <span class="spec-badge">750 Вт</span>
+                                            <span class="spec-badge">80+ Platinum</span>
+                                            <span class="spec-badge">Полностью модульный</span>
+                                            <span class="spec-badge">135 мм вентилятор</span>
+                                            <span class="spec-badge">4x PCIe 6+2 pin</span>
+                                            <span class="spec-badge">Гарантия 10 лет</span>
+                                        </div>
                                     </td>
+                                </tr>
+                                
+                                <!-- Вентиляторы корпуса -->
+                                <tr>
+                                    <td>Вентиляторы</td>
+                                    <td>Thermaltake TOUGHFAN EX14 Pro (3 шт.)</td>
+                                    <td><img src="https://c.dns-shop.ru/thumb/st1/fit/500/500/769fbbb5750748cf36cfd21a9a9c8717/ad0429fb542694a00b7e5b96a253277bfc31c7c661e3264b819c9c4e64d2ee7b.jpg" alt="Вентиляторы" class="component-image"></td>
+                                    <td class="price-value">10 399 ₽</td>
                                     <td>
-                                        <span class="model-badge">Thermaltake Toughpower GF3 1000W</span>
-                                        <span class="model-badge">Corsair RM850x</span>
-                                        <span class="model-badge">KCAS 2000W</span>
-                                        <span class="model-badge">Seasonic PRIME TX-1000</span>
+                                        <div class="specs-list">
+                                            <span class="spec-badge">140 мм</span>
+                                            <span class="spec-badge">500-2000 RPM</span>
+                                            <span class="spec-badge">119.6 CFM</span>
+                                            <span class="spec-badge">34.1 дБ</span>
+                                            <span class="spec-badge">4-pin PWM</span>
+                                        </div>
                                     </td>
-                                    <td>Обеспечивает питание всех компонентов компьютера. Серверные БП (как KSA 2000W) требуются для мощных конфигураций.</td>
                                 </tr>
                                 
                                 <!-- Корпус -->
                                 <tr>
                                     <td>Корпус</td>
-                                    <td>-</td>
+                                    <td>Thermaltake The Tower 600</td>
+                                    <td><img src="https://c.dns-shop.ru/thumb/st1/fit/500/500/f882048519417c8af136738a6de5fefa/6180b3e569954d7c7921ee4280c419a0b9d8f3901074069bbe5911d5be7019d0.jpg" alt="Корпус" class="component-image"></td>
+                                    <td class="price-value">16 999 ₽</td>
                                     <td>
-                                        <span class="model-badge">NZXT H7 Elite</span>
-                                        <span class="model-badge">Lian Li PC-O11 Dynamic</span>
-                                        <span class="model-badge">Fractal Design Torrent</span>
+                                        <div class="specs-list">
+                                            <span class="spec-badge">Full-Tower</span>
+                                            <span class="spec-badge">ATX</span>
+                                            <span class="spec-badge">До 400 мм GPU</span>
+                                            <span class="spec-badge">До 210 мм кулер</span>
+                                            <span class="spec-badge">4 места под 120/140 мм вентиляторы</span>
+                                        </div>
                                     </td>
-                                    <td>Внешняя оболочка системного блока. Важен для охлаждения и совместимости компонентов.</td>
                                 </tr>
                                 
-                                <!-- Видеокарта -->
-                                <tr class="expandable">
-                                    <td>Видеокарта</td>
+                                <!-- Кулер процессора -->
+                                <tr>
+                                    <td>Кулер CPU</td>
+                                    <td>XASTRA AR620 DIGITAL BK</td>
+                                    <td><img src="https://c.dns-shop.ru/thumb/st1/fit/300/300/4bd897f827ccafef80d1ca1c7ec96738/60b4c4868fd51a8ef7e7b9a2e3abd664d5f90574b7967414563ceda7b075ed6d.jpg" alt="Кулер" class="component-image"></td>
+                                    <td class="price-value">4 099 ₽</td>
                                     <td>
-                                        <div class="sub-items-trigger">Производители</div>
-                                        <ul class="sub-items">
-                                            <li>NVIDIA (GeForce RTX)</li>
-                                            <li>AMD (Radeon RX)</li>
-                                            <li>Intel Arc</li>
-                                        </ul>
+                                        <div class="specs-list">
+                                            <span class="spec-badge">LGA 1700</span>
+                                            <span class="spec-badge">TDP 260 Вт</span>
+                                            <span class="spec-badge">2x 120 мм вентилятор</span>
+                                            <span class="spec-badge">800-1800 RPM</span>
+                                            <span class="spec-badge">31.6 дБ</span>
+                                            <span class="spec-badge">ARGB подсветка</span>
+                                        </div>
                                     </td>
-                                    <td>
-                                        <span class="model-badge">NVIDIA RTX 4090</span>
-                                        <span class="model-badge">AMD RX 7900 XTX</span>
-                                        <span class="model-badge">RTX 2080 Super</span>
-                                        <span class="model-badge">AMD RX 7800 XT</span>
-                                        <span class="model-badge">Intel Arc A770</span>
-                                    </td>
-                                    <td>Графический процессор (GPU) для обработки изображения. NVIDIA и AMD - лидеры рынка, Intel - новый игрок.</td>
                                 </tr>
-
-                                <!-- Охлаждение процессора -->
-                                <tr class="expandable">
-                                    <td>Охлаждение процессора</td>
-                                    <td>
-                                        <div class="sub-items-trigger">Производители</div>
-                                        <ul class="sub-items">
-                                            <li>Кулеры</li>
-                                            <li>Водяное охлаждение</li>
-                                        </ul>
-                                    </td>
-                                    <td>
-                                        <span class="model-badge">Noctua NH-D15 (кулер)</span>
-                                        <span class="model-badge">Corsair iCUE H150i (СЖО)</span>
-                                    </td>
-                                    <td>Системы отвода тепла от процессора</td>
-                                </tr>
-                                
-                                <!-- Оперативная память -->
-                                <tr class="expandable">
-                                    <td>Оперативная память</td>
-                                    <td>
-                                        <div class="sub-items-trigger">Производители</div>
-                                        <ul class="sub-items">
-                                            <li>DIMM (для десктопов)</li>
-                                            <li>SO-DIMM (для ноутбуков/компактных систем)</li>
-                                        </ul>
-                                    </td>
-                                    <td>
-                                        <span class="model-badge">Corsair Dominator Platinum DDR5</span>
-                                        <span class="model-badge">Kingston Fury Impact DDR4 (SO-DIMM)</span>
-                                    </td>
-                                    <td>Временное хранилище данных для быстрого доступа</td>
-                                </tr>
-                                
-                                <!-- Накопители -->
-                                <tr class="expandable">
-                                    <td>Накопители</td>
-                                    <td>
-                                        <div class="sub-items-trigger">Производители</div>
-                                        <ul class="sub-items">
-                                            <li>Жёсткие диски (HDD)</li>
-                                            <li>SSD накопители</li>
-                                            <li>NVMe диски</li>
-                                            <li>Гибридные накопители (SSHD)</li>
-                                        </ul>
-                                    </td>
-                                    <td>
-                                        <span class="model-badge">Seagate IronWolf HDD</span>
-                                        <span class="model-badge">Samsung 980 Pro SSD</span>
-                                        <span class="model-badge">WD Black SN850X NVMe</span>
-                                    </td>
-                                    <td>Устройства для постоянного хранения данных</td>
-                                </tr>
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 
                 <style>
-                    .model-badge {
+
+                        /* Основные цвета */
+                    :root {
+                        --orange-primary: #ff6b00;
+                        --orange-dark: #e05e00;
+                        --orange-light: #e05e00;
+                        --orange-lighter: #e05e00;
+                        --orange-lightest: #e05e00;
+                    }
+                    
+                    /* Стили для блока с игрой и настройками графики */
+                    .game-settings-wrapper {
+                        background-color: #1e1e1e;
+                        border-radius: 10px;
+                        padding: 20px;
+                        margin-bottom: 30px;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                    }
+                    
+                    .game-header {
+                        margin-bottom: 15px;
+                        padding-bottom: 10px;
+                        border-bottom: 1px solid  #252525;
+                    }
+                    
+                    .game-section-title {
+                        color: var(--orange-light);
+                        font-size: 0.9em;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        margin-bottom: 5px;
+                    }
+                    
+                    .game-title {
+                        color: var(--orange-primary);
+                        font-size: 1.8em;
+                        font-weight: 600;
+                    }
+                    
+                    .graphics-settings {
+                        margin-bottom: 20px;
+                    }
+                    
+                    .settings-title {
+                        color: var(--orange-primary);
+                        font-size: 1.3em;
+                        margin-bottom: 15px;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                    }
+                    
+                    .settings-table {
+                        display: table;
+                        width: 100%;
+                        border-collapse: collapse;
+                    }
+                    
+                    .settings-row {
+                        display: table-row;
+                    }
+                    
+                    .settings-label, 
+                    .settings-value {
+                        display: table-cell;
+                        padding: 12px 15px;
+                        border-bottom: 1px solid #2a2a2a;
+                        vertical-align: middle;
+                    }
+                    
+                    .settings-label {
+                        color: var(--orange-lighter);
+                        font-weight: 500;
+                        width: 40%;
+                        padding-left: 0;
+                    }
+                    
+                    .settings-value {
+                        color: var(--orange-light);
+                        font-weight: 400;
+                    }
+                    
+                    /* Стили для блока с бюджетом */
+                    .budget-section {
+                        background-color: #252525;
+                        border-radius: 8px;
+                        padding: 15px 20px;
+                        margin-top: 20px;
+                    }
+                    
+                    .budget-row {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 8px 0;
+                    }
+                    
+                    .budget-label {
+                        color: var(--orange-lighter);
+                        font-size: 1em;
+                    }
+                    
+                    .budget-value {
+                        color: var(--orange-light);
+                        font-weight: 600;
+                        font-size: 1.1em;
+                    }
+                    
+                    .budget-value.final {
+                        color: var(--orange-primary);
+                        font-size: 1.3em;
+                    }
+                    
+                    @media (max-width: 768px) {
+                        .settings-label, 
+                        .settings-value {
+                            padding: 10px 8px;
+                            font-size: 0.9em;
+                        }
+                        
+                        .game-title {
+                            font-size: 1.5em;
+                        }
+                        
+                        .settings-title {
+                            font-size: 1.1em;
+                        }
+                        
+                        .budget-label {
+                            font-size: 0.9em;
+                        }
+                        
+                        .budget-value {
+                            font-size: 1em;
+                        }
+                        
+                        .budget-value.final {
+                            font-size: 1.1em;
+                        }
+                    }
+                    
+                    .component-image {
+                        max-width: 80px;
+                        max-height: 80px;
+                        border-radius: 4px;
+                        object-fit: cover;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                        transition: transform 0.2s ease;
+                    }
+                    
+                    .component-image:hover {
+                        transform: scale(1.05);
+                    }
+                    
+                    .spec-badge {
                         display: inline-block;
-                        background-color: rgba(255, 182, 0, 0.15);
-                        color: #ffb600;
+                        background-color: rgba(255, 107, 0, 0.15);
+                        color: #ff6b00;
                         padding: 6px 12px;
                         border-radius: 16px;
                         margin: 4px 6px 4px 0;
-                        font-size: 0.9em;
+                        font-size: 0.85em;
+                        font-weight: 500;
+                        white-space: nowrap;
+                        border: 1px solid rgba(255, 107, 0, 0.3);
+                        transition: all 0.2s ease;
+                    }
+                    
+                    .spec-badge:hover {
+                        background-color: rgba(255, 107, 0, 0.25);
+                        transform: translateY(-1px);
+                    }
+                    
+                    .price-value {
+                        font-family: 'Montserrat', sans-serif;
+                        font-weight: 600;
+                        font-size: 1.1em;
+                        color: #ff6b00;
+                        text-align: right;
+                        padding-right: 30px;
+                        letter-spacing: 0.5px;
                         white-space: nowrap;
                     }
                     
-                    /* Новые стили для спецификаций */
-                    .spec-badge {
-                        display: inline-block;
-                        background-color: rgba(100, 149, 237, 0.15);
-                        padding: 4px 8px;
-                        border-radius: 4px;
-                        margin: 2px;
-                        font-size: 0.8em;
-                        font-family: monospace;
+                    .price-col {
+                        width: 120px;
+                        text-align: right;
+                        padding-right: 0;
                     }
+                    
                     .components-table {
                         margin: 30px 0;
                         overflow-x: auto;
@@ -205,7 +454,6 @@
                         border-collapse: separate;
                         border-spacing: 0;
                         background-color: #1e1e1e;
-                        color: #ff6b00;
                         border-radius: 10px;
                         overflow: hidden;
                         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
@@ -213,10 +461,10 @@
                     
                     .components-table th, 
                     .components-table td {
-                        padding: 16px 20px;
+                        padding: 18px 20px;
                         text-align: left;
-                        border-bottom: 1px solid #333;
-                        vertical-align: top;
+                        border-bottom: 1px solid #2a2a2a;
+                        vertical-align: middle;
                     }
                     
                     .components-table th {
@@ -234,77 +482,55 @@
                         background-color: #252525;
                     }
                     
-                    .components-table td:nth-child(3) {
+                    .component-col {
+                        width: 140px;
                         color: #ffb600;
                         font-weight: 500;
-                        line-height: 1.6;
+                        font-size: 0.95em;
                     }
                     
-                    /* Стили для выпадающих подпунктов */
-                    .sub-items-trigger {
-                        color: #ffb600;
-                        cursor: pointer;
+                    .name-col {
+                        width: 220px;
+                        color: #ffffff;
                         font-weight: 500;
-                        transition: all 0.3s ease;
-                        display: inline-block;
-                        padding: 4px 8px;
-                        border-radius: 4px;
-                        margin-bottom: 8px;
+                        line-height: 1.4;
                     }
                     
-                    .sub-items-trigger:hover {
-                        background-color: rgba(255, 182, 0, 0.1);
+                    .image-col {
+                        width: 100px;
+                        text-align: center;
                     }
                     
-                    .sub-items {
-                        list-style-type: none;
-                        padding-left: 0;
-                        margin-top: 0;
-                        max-height: 0;
-                        overflow: hidden;
-                        transition: max-height 0.3s ease;
+                    .specs-col {
+                        min-width: 350px;
                     }
                     
-                    .sub-items li {
-                        padding: 6px 0;
-                        padding-left: 20px;
-                        position: relative;
-                        color: #ffb600;
-                        line-height: 1.5;
+                    .specs-list {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 8px;
                     }
                     
-                    .sub-items li:before {
-                        content: "•";
-                        color: #ffb600;
-                        position: absolute;
-                        left: 8px;
-                    }
-                    
-                    tr.expandable.active .sub-items {
-                        max-height: 300px;
-                    }
-                    
-                    tr.expandable.active .sub-items-trigger:after {
-                        content: " ▲";
-                    }
-                    
-                    tr.expandable .sub-items-trigger:after {
-                        content: " ▼";
+                    @media (max-width: 1200px) {
+                        .components-table th, 
+                        .components-table td {
+                            padding: 14px 16px;
+                        }
+                        
+                        .spec-badge {
+                            padding: 5px 10px;
+                            font-size: 0.8em;
+                        }
+                        
+                        .price-value {
+                            font-size: 1em;
+                            padding-right: 20px;
+                        }
                     }
                 </style>
-                
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const expandableRows = document.querySelectorAll('tr.expandable');
-                        
-                        expandableRows.forEach(row => {
-                            const trigger = row.querySelector('.sub-items-trigger');
-                            
-                            trigger.addEventListener('click', function() {
-                                row.classList.toggle('active');
-                            });
-                        });
-                    });
-                </script>
+            </div>
+        </section>
+    </main>
+</div>
 
 {% endblock %}
