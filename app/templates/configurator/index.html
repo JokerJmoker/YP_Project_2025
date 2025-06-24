@@ -145,11 +145,9 @@
                         <div class="settings-row">
                             <div class="settings-label">Трассировка лучей</div>
                             <div class="settings-options">
-                                <select class="settings-select"  id="graphicsSelect">
+                                <select class="settings-select"  id="rayTracingSelect">
                                     <option value="off">Выключено</option>
                                     <option value="on">Включено</option>
-                                    <option value="ultra">Ультра</option>
-                                    <option value="overdrive">Overdrive (RTX 40 series)</option>
                                 </select>
                             </div>
                         </div>
@@ -159,7 +157,7 @@
                             <div class="scaling-column">
                                 <div class="settings-label">NVIDIA DLSS</div>
                                 <div class="settings-options">
-                                    <select class="settings-select dlss-select" name="scaling_tech">
+                                    <select class="settings-select dlss-select" id="dlssSelect" name="scaling_tech">
                                         <option value="off">Выключено</option>
                                         <option value="dlss-quality">Качество</option>
                                         <option value="dlss-balanced">Сбалансированный</option>
@@ -172,7 +170,7 @@
                             <div class="scaling-column">
                                 <div class="settings-label">AMD FSR</div>
                                 <div class="settings-options">
-                                    <select class="settings-select fsr-select" name="scaling_tech">
+                                    <select class="settings-select fsr-select" id="fsrSelect" name="scaling_tech">
                                         <option value="off">Выключено</option>
                                         <option value="fsr-quality">Качество</option>
                                         <option value="fsr-balanced">Сбалансированный</option>

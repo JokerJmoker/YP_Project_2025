@@ -14,7 +14,8 @@ def log_click():
     game_name = data.get('gameName', '')
     graphics_quality = data.get('graphicsQuality', 'High')
     target_fps = data.get('targetFps', 60)
-    resolution = data.get('resolution', 1080)  # Новый параметр
+    resolution = data.get('resolution', 1080)
+    ray_tracing = data.get('rayTracingEnabled', False)
 
     if game_name:
         game_name = game_name.replace(' ', '_')
@@ -44,6 +45,8 @@ def log_click():
     except (ValueError, TypeError):
         resolution = 1080
 
+
+
     log_data = {
         "user_selections": {
             "game": {
@@ -51,7 +54,8 @@ def log_click():
                 "graphics_settings": {
                     "quality": graphics_quality,
                     "target_fps": target_fps,
-                    "resolution": resolution
+                    "resolution": resolution,
+                    "ray_tracing": bool(ray_tracing)
                 }
             }
         }

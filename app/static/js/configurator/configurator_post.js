@@ -27,8 +27,12 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const resolutionSelect = document.getElementById("resolutionSelect");
             const resolution = resolutionSelect ? parseInt(resolutionSelect.value) : 1080;
+            
+            const rayTracingSelect = document.getElementById("rayTracingSelect");
+            const rayTracingValue = rayTracingSelect ? rayTracingSelect.value : "off";
+            const rayTracingEnabled = rayTracingValue !== "off";
 
-            console.log(`Выбранное разрешение: ${resolution}p`);
+  
 
             const logData = {
                 user_selections: {
@@ -37,7 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         graphics_settings: {
                             quality: graphicsQuality,
                             target_fps: targetFps,
-                            resolution: resolution
+                            resolution: resolution,
+                            ray_tracing: rayTracingEnabled,
                         }
                     }
                 }
@@ -55,6 +60,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     graphicsQuality: graphicsQuality,
                     targetFps: targetFps,
                     resolution: resolution,
+                    rayTracingEnabled: rayTracingEnabled,
+                    rayTracingPreset: rayTracingValue,
                     timestamp: new Date().toISOString()
                 })
             }).then(response => {
