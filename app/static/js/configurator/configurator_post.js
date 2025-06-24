@@ -3,18 +3,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     gameCards.forEach(card => {
         card.addEventListener("click", () => {
-            const gameId = card.dataset.gameId;
             const gameName = card.querySelector("h3")?.textContent || "Unknown";
 
-            console.log(`Clicked on: ${gameName} (ID: ${gameId})`);
+            // Формируем объект с нужной структурой
+            const logData = {
+                user_selections: {
+                    game: {
+                        title: gameName
+                    }
+                }
+            };
 
+            // Выводим в консоль в виде JSON-строки с отступами
+            console.log(JSON.stringify(logData, null, 2));
+
+            // Отправляем на сервер, если нужно
             fetch('/configurator/log-click', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    gameId: gameId,
+                    gameId: card.dataset.gameId,
                     gameName: gameName,
                     timestamp: new Date().toISOString()
                 })
