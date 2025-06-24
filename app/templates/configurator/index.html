@@ -1,7 +1,6 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-<link rel="stylesheet" href="configurator.css">
 
 <div class="configurator-container">
     <main class="configurator-steps">
@@ -345,7 +344,7 @@
                 </div>
             </div>
         </section>
-
+        
         <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Получаем все выпадающие списки
@@ -1066,5 +1065,6 @@
     });    
 </script>
 
-<script src="configurator.js"></script>
+<script src="{{ url_for('static', filename='js/configurator/configurator_post.js') }}"></script>
+
 {% endblock %}
