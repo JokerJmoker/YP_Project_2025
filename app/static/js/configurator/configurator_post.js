@@ -61,7 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
             let budgetAmount = 150000; // значение по умолчанию
             
             if (budgetRange && budgetValueElement) {
-                // Удаляем пробелы и знак рубля, затем преобразуем в число
                 budgetAmount = parseInt(budgetValueElement.textContent.replace(/\s/g, '').replace('₽', ''));
             }
 
@@ -71,6 +70,62 @@ document.addEventListener("DOMContentLoaded", () => {
             
             if (budgetTypeRub && budgetTypePercent) {
                 budgetAllocationMethod = budgetTypeRub.checked ? "fixed_price_based" : "percentage_based";
+            }
+
+            // Получаем данные о комплектующих
+            const components = {
+                mandatory: {
+                    cpu: getComponentSelection("cpuSelect", "cpuValue"),
+                    gpu: getComponentSelection("gpuSelect", "gpuValue"),
+                    dimm: getComponentSelection("ramSelect", "ramValue"),
+                    ssd_m2: getComponentSelection("storageSelect", "storageValue"),
+                    motherboard: getComponentSelection("motherboardSelect", "motherboardValue"),
+                    power_supply: getComponentSelection("psuSelect", "psuValue")
+                },
+                mandatory_allocation: {
+                    method: budgetAllocationMethod
+                },
+                optional: {
+                    case_fan: getComponentValue("coolingValue"),
+                    pc_case: getComponentValue("caseValue"),
+                    cpu_cooler: getCpuCoolerType()
+                },
+                optional_allocation: {
+                    method: budgetAllocationMethod
+                }
+            };
+
+            // Добавляем данные о распределении бюджета для обязательных компонентов
+            if (budgetAllocationMethod === "percentage_based") {
+                components.mandatory_allocation.percentage_based = {
+                    cpu_percentage: getPercentageValue("cpuValue"),
+                    gpu_percentage: getPercentageValue("gpuValue"),
+                    dimm_percentage: getPercentageValue("ramValue"),
+                    ssd_m2_percentage: getPercentageValue("storageValue"),
+                    motherboard_percentage: getPercentageValue("motherboardValue"),
+                    power_supply_percentage: getPercentageValue("psuValue")
+                };
+                
+                components.optional_allocation.percentage_based = {
+                    case_fan_percentage: getPercentageValue("coolingValue", 0, 10),
+                    pc_case_percentage: getPercentageValue("caseValue", 0, 10),
+                    cpu_cooler_percentage: getPercentageValue("cpuCoolerValue", 0, 8)
+                };
+            } else {
+                components.mandatory_allocation.fixed_price_based = {
+                    cpu_max_price: getPriceValue("cpuValue"),
+                    gpu_max_price: getPriceValue("gpuValue"),
+                    dimm_max_price: getPriceValue("ramValue"),
+                    ssd_m2_max_price: getPriceValue("storageValue"),
+                    motherboard_max_price: getPriceValue("motherboardValue"),
+                    power_supply_max_price: getPriceValue("psuValue")
+                };
+                
+                components.optional_allocation.fixed_price_based = {
+                    case_fan_max_price: getPriceValue("coolingValue", 2000, 15000),
+                    pc_case_max_price: getPriceValue("caseValue", 3000, 20000),
+                    cpu_cooler_max_price: getPriceValue("cpuCoolerValue", 2000, 10000)
+                };
             }
 
             const logData = {
@@ -89,7 +144,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     budget: {
                         amount: budgetAmount,
                         budget_allocation_method: budgetAllocationMethod
-                    }
+                    },
+                    components: components
                 }
             };
 
@@ -111,6 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     fsr: fsrValue,
                     budgetAmount: budgetAmount,
                     budgetAllocationMethod: budgetAllocationMethod,
+                    components: components,
                     timestamp: new Date().toISOString()
                 })
             }).then(response => {
@@ -119,5 +176,54 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("Ошибка запроса:", error);
             });
         });
+    }
+
+    // Вспомогательные функции
+    function getComponentSelection(selectId, valueId) {
+        const select = document.getElementById(selectId);
+        const valueInput = document.getElementById(valueId);
+        
+        if (!select || !valueInput) return "any";
+        
+        if (select.value === "custom" && valueInput.value) {
+            return valueInput.value;
+        }
+        return select.value;
+    }
+
+    function getComponentValue(inputId) {
+        const input = document.getElementById(inputId);
+        return input && input.value ? input.value : "any";
+    }
+
+    function getCpuCoolerType() {
+        const select = document.getElementById("cpuCoolerType");
+        if (!select) return "any";
+        
+        const mapping = {
+            "liquid": "water_cooling",
+            "air": "air_cooler",
+            "any": "any",
+            "included": "included_with_cpu"
+        };
+        return mapping[select.value] || "any";
+    }
+
+    function getPercentageValue(inputId, min = 0, max = 100) {
+        const input = document.getElementById(inputId);
+        if (!input || !input.value) return min;
+        
+        const value = input.value.replace(/[^\d%]/g, '');
+        const percentage = parseInt(value) || min;
+        return Math.min(Math.max(percentage, min), max);
+    }
+
+    function getPriceValue(inputId, min = 0, max = 300000) {
+        const input = document.getElementById(inputId);
+        if (!input || !input.value) return min;
+        
+        const value = input.value.replace(/\D/g, '');
+        const price = parseInt(value) || min;
+        return Math.min(Math.max(price, min), max);
     }
 });

@@ -20,6 +20,7 @@ def log_click():
     fsr_value = data.get('fsr', 'off')
     budget_amount = data.get('budgetAmount', 150000)
     budget_allocation_method = data.get('budgetAllocationMethod', 'fixed_price_based')
+    components = data.get('components', {})
 
     if game_name:
         game_name = game_name.replace(' ', '_')
@@ -80,6 +81,97 @@ def log_click():
     }
     fsr_setting = fsr_mapping.get(fsr_value, "Disabled")
 
+    # Валидация данных о комплектующих
+    def validate_component(value, default="any"):
+        if not value or value == "any":
+            return default
+        return str(value)[:100]  # Ограничиваем длину строки
+
+    def validate_percentage(value, default=0, min_val=0, max_val=100):
+        try:
+            value = int(value)
+            return max(min_val, min(value, max_val))
+        except (ValueError, TypeError):
+            return default
+
+    def validate_price(value, default=0, min_val=0, max_val=300000):
+        try:
+            value = int(value)
+            return max(min_val, min(value, max_val))
+        except (ValueError, TypeError):
+            return default
+
+    def validate_cooler_type(value):
+        valid_types = {"included_with_cpu", "water_cooling", "air_cooler", "any"}
+        return value if value in valid_types else "any"
+
+    # Обрабатываем данные о комплектующих
+    mandatory = components.get('mandatory', {})
+    mandatory_allocation = components.get('mandatory_allocation', {})
+    optional = components.get('optional', {})
+    optional_allocation = components.get('optional_allocation', {})
+
+    validated_components = {
+        "mandatory": {
+            "cpu": validate_component(mandatory.get('cpu')),
+            "gpu": validate_component(mandatory.get('gpu')),
+            "dimm": validate_component(mandatory.get('dimm')),
+            "ssd_m2": validate_component(mandatory.get('ssd_m2')),
+            "motherboard": validate_component(mandatory.get('motherboard')),
+            "power_supply": validate_component(mandatory.get('power_supply'))
+        },
+        "mandatory_allocation": {
+            "method": budget_allocation_method
+        },
+        "optional": {
+            "case_fan": validate_component(optional.get('case_fan')),
+            "pc_case": validate_component(optional.get('pc_case')),
+            "cpu_cooler": validate_cooler_type(optional.get('cpu_cooler', 'any'))
+        },
+        "optional_allocation": {
+            "method": budget_allocation_method
+        }
+    }
+
+    if budget_allocation_method == "percentage_based":
+        # Валидация обязательных компонентов
+        mandatory_percentage = mandatory_allocation.get('percentage_based', {})
+        validated_components["mandatory_allocation"]["percentage_based"] = {
+            "cpu_percentage": validate_percentage(mandatory_percentage.get('cpu_percentage', 0), 0, 50),
+            "gpu_percentage": validate_percentage(mandatory_percentage.get('gpu_percentage', 0), 0, 60),
+            "dimm_percentage": validate_percentage(mandatory_percentage.get('dimm_percentage', 0), 0, 15),
+            "ssd_m2_percentage": validate_percentage(mandatory_percentage.get('ssd_m2_percentage', 0), 0, 15),
+            "motherboard_percentage": validate_percentage(mandatory_percentage.get('motherboard_percentage', 0), 0, 15),
+            "power_supply_percentage": validate_percentage(mandatory_percentage.get('power_supply_percentage', 0), 0, 10)
+        }
+        
+        # Валидация дополнительных компонентов
+        optional_percentage = optional_allocation.get('percentage_based', {})
+        validated_components["optional_allocation"]["percentage_based"] = {
+            "case_fan_percentage": validate_percentage(optional_percentage.get('case_fan_percentage', 0), 0, 10),
+            "pc_case_percentage": validate_percentage(optional_percentage.get('pc_case_percentage', 0), 0, 10),
+            "cpu_cooler_percentage": validate_percentage(optional_percentage.get('cpu_cooler_percentage', 0), 0, 8)
+        }
+    else:
+        # Валидация обязательных компонентов
+        mandatory_fixed = mandatory_allocation.get('fixed_price_based', {})
+        validated_components["mandatory_allocation"]["fixed_price_based"] = {
+            "cpu_max_price": validate_price(mandatory_fixed.get('cpu_max_price', 0), 0, 10000, 75000),
+            "gpu_max_price": validate_price(mandatory_fixed.get('gpu_max_price', 0), 0, 20000, 100000),
+            "dimm_max_price": validate_price(mandatory_fixed.get('dimm_max_price', 0), 0, 3000, 20000),
+            "ssd_m2_max_price": validate_price(mandatory_fixed.get('ssd_m2_max_price', 0), 0, 3000, 20000),
+            "motherboard_max_price": validate_price(mandatory_fixed.get('motherboard_max_price', 0), 0, 5000, 30000),
+            "power_supply_max_price": validate_price(mandatory_fixed.get('power_supply_max_price', 0), 0, 5000, 15000)
+        }
+        
+        # Валидация дополнительных компонентов
+        optional_fixed = optional_allocation.get('fixed_price_based', {})
+        validated_components["optional_allocation"]["fixed_price_based"] = {
+            "case_fan_max_price": validate_price(optional_fixed.get('case_fan_max_price', 0), 0, 2000, 15000),
+            "pc_case_max_price": validate_price(optional_fixed.get('pc_case_max_price', 0), 0, 3000, 20000),
+            "cpu_cooler_max_price": validate_price(optional_fixed.get('cpu_cooler_max_price', 0), 0, 2000, 10000)
+        }
+
     log_data = {
         "user_selections": {
             "game": {
@@ -96,7 +188,8 @@ def log_click():
             "budget": {
                 "amount": budget_amount,
                 "budget_allocation_method": budget_allocation_method
-            }
+            },
+            "components": validated_components
         }
     }
     print(json.dumps(log_data, ensure_ascii=False, indent=2))
