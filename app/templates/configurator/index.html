@@ -240,7 +240,7 @@
                             </select>
                         </div>
                         <div class="requirements-value">
-                            <input type="text" id="cpuValue" class="value-input" placeholder="Значение">
+                            <input type="text" id="cpuValue" class="value-input" placeholder="25% (или 30000 ₽)">
                         </div>
                     </div>
                     <div class="requirements-row custom-component-row" id="cpuCustomRow" style="display: none;">
@@ -259,7 +259,7 @@
                             </select>
                         </div>
                         <div class="requirements-value">
-                            <input type="text" id="gpuValue" class="value-input" placeholder="Значение">
+                            <input type="text" id="gpuValue" class="value-input" placeholder="35% (или 60000 ₽)">
                         </div>
                     </div>
                     <div class="requirements-row custom-component-row" id="gpuCustomRow" style="display: none;">
@@ -278,7 +278,7 @@
                             </select>
                         </div>
                         <div class="requirements-value">
-                            <input type="text" id="ramValue" class="value-input" placeholder="Значение">
+                            <input type="text" id="ramValue" class="value-input" placeholder="8% (или 10000 ₽)">
                         </div>
                     </div>
                     <div class="requirements-row custom-component-row" id="ramCustomRow" style="display: none;">
@@ -297,7 +297,7 @@
                             </select>
                         </div>
                         <div class="requirements-value">
-                            <input type="text" id="storageValue" class="value-input" placeholder="Значение">
+                            <input type="text" id="storageValue" class="value-input" placeholder="7% (или 8000 ₽)">
                         </div>
                     </div>
                     <div class="requirements-row custom-component-row" id="storageCustomRow" style="display: none;">
@@ -315,7 +315,7 @@
                             </select>
                         </div>
                         <div class="requirements-value">
-                            <input type="text" id="motherboardValue" class="value-input" placeholder="Значение">
+                            <input type="text" id="motherboardValue" class="value-input" placeholder="8% (или 12000 ₽)">
                         </div>
                     </div>
                     <div class="requirements-row custom-component-row" id="motherboardCustomRow" style="display: none;">
@@ -333,7 +333,7 @@
                             </select>
                         </div>
                         <div class="requirements-value">
-                            <input type="text" id="psuValue" class="value-input" placeholder="Значение">
+                            <input type="text" id="psuValue" class="value-input" placeholder="7% (или 8000 ₽)">
                         </div>
                     </div>
                     <div class="requirements-row custom-component-row" id="psuCustomRow" style="display: none;">
@@ -380,7 +380,7 @@
                             <label>Охлаждение корпуса:</label>
                         </div>
                         <div class="additional-value">
-                            <input type="text" id="coolingValue" class="value-input" placeholder="Значение">
+                            <input type="text" id="coolingValue" class="value-input" placeholder="3% (или 3000 ₽)">
                         </div>
                     </div>
                     
@@ -389,7 +389,7 @@
                             <label>Корпус:</label>
                         </div>
                         <div class="additional-value">
-                            <input type="text" id="caseValue" class="value-input" placeholder="Значение">
+                            <input type="text" id="caseValue" class="value-input" placeholder="5% (или 7000 ₽)">
                         </div>
                     </div>
                     
@@ -398,7 +398,7 @@
                             <label>Охлаждение процессора:</label>
                         </div>
                         <div class="additional-value">
-                            <input type="text" id="cpuCoolerValue" class="value-input" placeholder="Значение">
+                            <input type="text" id="cpuCoolerValue" class="value-input" placeholder="2% (или 5000 ₽)">
                         </div>
                     </div>
                     <div class="additional-value">
@@ -414,6 +414,60 @@
                 </div>
             </div>
         </section>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Получаем радио-кнопки выбора метода расчета
+            const budgetRub = document.getElementById('budgetRub');
+            const budgetPercent = document.getElementById('budgetPercent');
+            
+            // Все поля ввода значений
+            const valueInputs = document.querySelectorAll('.value-input');
+            
+            // Исходные значения placeholder'ов
+            const originalPlaceholders = {};
+            valueInputs.forEach(input => {
+                originalPlaceholders[input.id] = input.placeholder;
+            });
+
+            // Функция обновления placeholder
+            function updatePlaceholders() {
+                const isPercentage = budgetPercent.checked;
+                
+                valueInputs.forEach(input => {
+                    const parts = originalPlaceholders[input.id].split(' (или ');
+                    if (parts.length === 2) {
+                        input.placeholder = isPercentage 
+                            ? parts[0] // процентная часть
+                            : parts[1].replace(')', ''); // ценовая часть
+                    }
+                });
+            }
+            
+            // Инициализация при загрузке
+            if (budgetRub && budgetPercent) {
+                // Устанавливаем обработчики событий
+                budgetRub.addEventListener('change', updatePlaceholders);
+                budgetPercent.addEventListener('change', updatePlaceholders);
+                
+                // Вызываем сразу при загрузке
+                updatePlaceholders();
+            }
+            
+            // Обработка кастомных компонентов
+            const selects = document.querySelectorAll('.component-select');
+            selects.forEach(select => {
+                select.addEventListener('change', function() {
+                    const componentType = this.id.replace('Select', '');
+                    const customRow = document.getElementById(`${componentType}CustomRow`);
+                    if (customRow) {
+                        customRow.style.display = this.value === 'custom' ? 'flex' : 'none';
+                    }
+                });
+            });
+        });
+        </script>
+
     </main>
 
     <footer class="configurator-footer">
