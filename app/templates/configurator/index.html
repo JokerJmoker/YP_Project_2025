@@ -112,24 +112,12 @@
                             </div>
                         </div>
                         
-                        <!-- Разрешение -->
-                        <div class="settings-row">
-                            <div class="settings-label">Разрешение</div>
-                            <div class="settings-options">
-                                <select class="settings-select">
-                                    <option value="720p">720p (HD)</option>
-                                    <option value="1080p" selected>1080p (Full HD)</option>
-                                    <option value="1440p">1440p (2K)</option>
-                                    <option value="2160p">2160p (4K)</option>
-                                </select>
-                            </div>
-                        </div>
-                        
+
                         <!-- Частота кадров -->
                         <div class="settings-row">
                             <div class="settings-label">Частота кадров</div>
                             <div class="settings-options">
-                                <select class="settings-select">
+                                <select class="settings-select"  id="fpsSelect">
                                     <option value="30">30 FPS (Минимальная)</option>
                                     <option value="60" selected>60 FPS (Рекомендуемая)</option>
                                     <option value="120">120 FPS (Высокая)</option>
@@ -138,12 +126,26 @@
                                 </select>
                             </div>
                         </div>
-                        
+
+
+                        <!-- Разрешение -->
+                        <div class="settings-row">
+                            <div class="settings-label">Разрешение</div>
+                            <div class="settings-options">
+                                <select class="settings-select"  id="graphicsSelect">
+                                    <option value="720p">720p (HD)</option>
+                                    <option value="1080p" selected>1080p (Full HD)</option>
+                                    <option value="1440p">1440p (2K)</option>
+                                    <option value="2160p">2160p (4K)</option>
+                                </select>
+                            </div>
+                        </div>    
+                    
                         <!-- Трассировка лучей -->
                         <div class="settings-row">
                             <div class="settings-label">Трассировка лучей</div>
                             <div class="settings-options">
-                                <select class="settings-select">
+                                <select class="settings-select"  id="graphicsSelect">
                                     <option value="off">Выключено</option>
                                     <option value="on">Включено</option>
                                     <option value="ultra">Ультра</option>
