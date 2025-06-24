@@ -137,39 +137,39 @@ def log_click():
         # Валидация обязательных компонентов
         mandatory_percentage = mandatory_allocation.get('percentage_based', {})
         validated_components["mandatory_allocation"]["percentage_based"] = {
-            "cpu_percentage": validate_percentage(mandatory_percentage.get('cpu_percentage', 0), 0, 50),
-            "gpu_percentage": validate_percentage(mandatory_percentage.get('gpu_percentage', 0), 0, 60),
-            "dimm_percentage": validate_percentage(mandatory_percentage.get('dimm_percentage', 0), 0, 15),
-            "ssd_m2_percentage": validate_percentage(mandatory_percentage.get('ssd_m2_percentage', 0), 0, 15),
-            "motherboard_percentage": validate_percentage(mandatory_percentage.get('motherboard_percentage', 0), 0, 15),
-            "power_supply_percentage": validate_percentage(mandatory_percentage.get('power_supply_percentage', 0), 0, 10)
+            "cpu_percentage": validate_percentage(mandatory_percentage.get('cpu_percentage', 25)),  # 25% по умолчанию
+            "gpu_percentage": validate_percentage(mandatory_percentage.get('gpu_percentage', 35)),  # 35%
+            "dimm_percentage": validate_percentage(mandatory_percentage.get('dimm_percentage', 8)),  # 8%
+            "ssd_m2_percentage": validate_percentage(mandatory_percentage.get('ssd_m2_percentage', 7)),  # 7%
+            "motherboard_percentage": validate_percentage(mandatory_percentage.get('motherboard_percentage', 8)),  # 8%
+            "power_supply_percentage": validate_percentage(mandatory_percentage.get('power_supply_percentage', 7))  # 7%
         }
         
         # Валидация дополнительных компонентов
         optional_percentage = optional_allocation.get('percentage_based', {})
         validated_components["optional_allocation"]["percentage_based"] = {
-            "case_fan_percentage": validate_percentage(optional_percentage.get('case_fan_percentage', 0), 0, 10),
-            "pc_case_percentage": validate_percentage(optional_percentage.get('pc_case_percentage', 0), 0, 10),
-            "cpu_cooler_percentage": validate_percentage(optional_percentage.get('cpu_cooler_percentage', 0), 0, 8)
+            "case_fan_percentage": validate_percentage(optional_percentage.get('case_fan_percentage', 3)),  # 3%
+            "pc_case_percentage": validate_percentage(optional_percentage.get('pc_case_percentage', 5)),  # 5%
+            "cpu_cooler_percentage": validate_percentage(optional_percentage.get('cpu_cooler_percentage', 2))  # 2%
         }
     else:
         # Валидация обязательных компонентов
         mandatory_fixed = mandatory_allocation.get('fixed_price_based', {})
         validated_components["mandatory_allocation"]["fixed_price_based"] = {
-            "cpu_max_price": validate_price(mandatory_fixed.get('cpu_max_price', 0), 0, 10000, 75000),
-            "gpu_max_price": validate_price(mandatory_fixed.get('gpu_max_price', 0), 0, 20000, 100000),
-            "dimm_max_price": validate_price(mandatory_fixed.get('dimm_max_price', 0), 0, 3000, 20000),
-            "ssd_m2_max_price": validate_price(mandatory_fixed.get('ssd_m2_max_price', 0), 0, 3000, 20000),
-            "motherboard_max_price": validate_price(mandatory_fixed.get('motherboard_max_price', 0), 0, 5000, 30000),
-            "power_supply_max_price": validate_price(mandatory_fixed.get('power_supply_max_price', 0), 0, 5000, 15000)
+            "cpu_max_price": validate_price(mandatory_fixed.get('cpu_max_price', 30000)),  # 30k ₽
+            "gpu_max_price": validate_price(mandatory_fixed.get('gpu_max_price', 60000)),  # 60k ₽
+            "dimm_max_price": validate_price(mandatory_fixed.get('dimm_max_price', 10000)),  # 10k ₽
+            "ssd_m2_max_price": validate_price(mandatory_fixed.get('ssd_m2_max_price', 8000)),  # 8k ₽
+            "motherboard_max_price": validate_price(mandatory_fixed.get('motherboard_max_price', 12000)),  # 12k ₽
+            "power_supply_max_price": validate_price(mandatory_fixed.get('power_supply_max_price', 8000))  # 8k ₽
         }
         
         # Валидация дополнительных компонентов
         optional_fixed = optional_allocation.get('fixed_price_based', {})
         validated_components["optional_allocation"]["fixed_price_based"] = {
-            "case_fan_max_price": validate_price(optional_fixed.get('case_fan_max_price', 0), 0, 2000, 15000),
-            "pc_case_max_price": validate_price(optional_fixed.get('pc_case_max_price', 0), 0, 3000, 20000),
-            "cpu_cooler_max_price": validate_price(optional_fixed.get('cpu_cooler_max_price', 0), 0, 2000, 10000)
+            "case_fan_max_price": validate_price(optional_fixed.get('case_fan_max_price', 3000)),  # 3k ₽
+            "pc_case_max_price": validate_price(optional_fixed.get('pc_case_max_price', 7000)),  # 7k ₽
+            "cpu_cooler_max_price": validate_price(optional_fixed.get('cpu_cooler_max_price', 5000))  # 5k ₽
         }
 
     log_data = {
