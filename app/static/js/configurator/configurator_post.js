@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     let selectedGameName = null;
 
+    // Обработка выбора игры
     const gameCards = document.querySelectorAll(".game-card");
     gameCards.forEach(card => {
         card.addEventListener("click", () => {
@@ -9,6 +10,80 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // Стандартные значения для распределения бюджета
+    const defaultValues = {
+        percentage: {
+            cpu: 25,
+            gpu: 35,
+            ram: 8,
+            storage: 7,
+            motherboard: 8,
+            psu: 7,
+            cooling: 3,
+            case: 5,
+            cpuCooler: 2
+        },
+        fixed: {
+            cpu: 30000,
+            gpu: 60000,
+            ram: 10000,
+            storage: 8000,
+            motherboard: 12000,
+            psu: 8000,
+            cooling: 3000,
+            case: 7000,
+            cpuCooler: 5000
+        }
+    };
+
+    // Получаем значение компонента (для allocation)
+    function getComponentBudgetValue(inputId, componentType, isPercentage) {
+        const input = document.getElementById(inputId);
+        if (!input || !input.value.trim()) {
+            return isPercentage 
+                ? defaultValues.percentage[componentType]
+                : defaultValues.fixed[componentType];
+        }
+        return isPercentage ? input.value : input.value.replace(/[^\d]/g, '');
+    }
+
+    // Получаем выбор компонента (для названий)
+    function getComponentSelection(selectId, valueId) {
+        const select = document.getElementById(selectId);
+        const valueInput = document.getElementById(valueId);
+        
+        if (!select || !valueInput) return "any";
+        if (select.value === "custom" && valueInput.value.trim()) {
+            return valueInput.value;
+        }
+        return select.value;
+    }
+
+    // Получаем тип кулера процессора
+    function getCpuCoolerType() {
+        const select = document.getElementById("cpuCoolerType");
+        if (!select) return "air_cooler"; // безопасное значение по умолчанию
+        
+        const selectedValue = select.value;
+        
+        // Для явных выборов возвращаем как есть
+        if (selectedValue === "included_with_cpu" || 
+            selectedValue === "water_cooling" || 
+            selectedValue === "air_cooler") {
+            return selectedValue;
+        }
+        
+        // Для "Любое" - случайный выбор из трех вариантов
+        if (selectedValue === "any") {
+            const options = ["included_with_cpu", "air_cooler", "water_cooling"];
+            const randomIndex = Math.floor(Math.random() * options.length);
+            return options[randomIndex];
+        }
+        
+        return "air_cooler"; // fallback
+    }
+
+    // Обработка кнопки "Далее"
     const btnNext = document.querySelector(".btn-next");
     if (btnNext) {
         btnNext.addEventListener("click", (event) => {
@@ -18,158 +93,85 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Получаем все настройки графики
-            const graphicsSelect = document.getElementById("graphicsSelect");
-            const graphicsQuality = graphicsSelect ? graphicsSelect.value : "High";
-            
-            const fpsSelect = document.getElementById("fpsSelect");
-            const targetFps = fpsSelect ? parseInt(fpsSelect.value) : 60;
-            
-            const resolutionSelect = document.getElementById("resolutionSelect");
-            const resolution = resolutionSelect ? parseInt(resolutionSelect.value) : 1080;
-            
-            const rayTracingSelect = document.getElementById("rayTracingSelect");
-            const rayTracingValue = rayTracingSelect ? rayTracingSelect.value : "off";
-            const rayTracingEnabled = rayTracingValue !== "off";
+            const isPercentageBased = document.getElementById("budgetPercent").checked;
 
-            // Получаем настройки масштабирования
-            const dlssSelect = document.getElementById("dlssSelect");
-            const dlssValue = dlssSelect ? dlssSelect.value : "off";
-            const dlssMapping = {
-                "off": "Disabled",
-                "dlss-quality": "Quality",
-                "dlss-balanced": "Balanced",
-                "dlss-performance": "Performance",
-                "dlss-ultra-performance": "Ultra Performance"
-            };
-            const dlssSetting = dlssMapping[dlssValue] || "Disabled";
-
-            const fsrSelect = document.getElementById("fsrSelect");
-            const fsrValue = fsrSelect ? fsrSelect.value : "off";
-            const fsrMapping = {
-                "off": "Disabled",
-                "fsr-quality": "Quality",
-                "fsr-balanced": "Balanced",
-                "fsr-performance": "Performance",
-                "fsr-ultra-performance": "Ultra Performance"
-            };
-            const fsrSetting = fsrMapping[fsrValue] || "Disabled";
-
-            // Получаем данные о бюджете
-            const budgetRange = document.getElementById("budgetRange");
-            const budgetValueElement = document.getElementById("budgetValue");
-            let budgetAmount = 150000; // значение по умолчанию
-            
-            if (budgetRange && budgetValueElement) {
-                budgetAmount = parseInt(budgetValueElement.textContent.replace(/\s/g, '').replace('₽', ''));
-            }
-
-            const budgetTypeRub = document.getElementById("budgetRub");
-            const budgetTypePercent = document.getElementById("budgetPercent");
-            let budgetAllocationMethod = "fixed_price_based"; // значение по умолчанию
-            
-            if (budgetTypeRub && budgetTypePercent) {
-                budgetAllocationMethod = budgetTypeRub.checked ? "fixed_price_based" : "percentage_based";
-            }
-
-            // Получаем данные о комплектующих
-            const components = {
-                mandatory: {
-                    cpu: getComponentSelection("cpuSelect", "cpuValue"),
-                    gpu: getComponentSelection("gpuSelect", "gpuValue"),
-                    dimm: getComponentSelection("ramSelect", "ramValue"),
-                    ssd_m2: getComponentSelection("storageSelect", "storageValue"),
-                    motherboard: getComponentSelection("motherboardSelect", "motherboardValue"),
-                    power_supply: getComponentSelection("psuSelect", "psuValue")
+            // Формируем данные для отправки
+            const formData = {
+                gameName: selectedGameName,
+                graphicsQuality: document.getElementById("graphicsSelect")?.value || "High",
+                targetFps: parseInt(document.getElementById("fpsSelect")?.value) || 60,
+                resolution: parseInt(document.getElementById("resolutionSelect")?.value) || 1080,
+                rayTracingEnabled: document.getElementById("rayTracingSelect")?.value !== "off",
+                dlss: document.getElementById("dlssSelect")?.value || "off",
+                fsr: document.getElementById("fsrSelect")?.value || "off",
+                budgetAmount: parseInt(document.getElementById("budgetValue").textContent.replace(/\D/g, '')),
+                budgetAllocationMethod: isPercentageBased ? "percentage_based" : "fixed_price_based",
+                components: {
+                    mandatory: {
+                        cpu: getComponentSelection("cpuSelect", "cpuValue"),
+                        gpu: getComponentSelection("gpuSelect", "gpuValue"),
+                        dimm: getComponentSelection("ramSelect", "ramValue"),
+                        ssd_m2: getComponentSelection("storageSelect", "storageValue"),
+                        motherboard: getComponentSelection("motherboardSelect", "motherboardValue"),
+                        power_supply: getComponentSelection("psuSelect", "psuValue")
+                    },
+                    mandatory_allocation: {
+                        method: isPercentageBased ? "percentage_based" : "fixed_price_based"
+                    },
+                    optional: {
+                        case_fan: "any", // Всегда "any" для дополнительных компонентов
+                        pc_case: "any",    // если не выбран конкретный вариант
+                        cpu_cooler: getCpuCoolerType()
+                    },
+                    optional_allocation: {
+                        method: isPercentageBased ? "percentage_based" : "fixed_price_based"
+                    }
                 },
-                mandatory_allocation: {
-                    method: budgetAllocationMethod
-                },
-                optional: {
-                    case_fan: getComponentValue("coolingValue"),
-                    pc_case: getComponentValue("caseValue"),
-                    cpu_cooler: getCpuCoolerType()
-                },
-                optional_allocation: {
-                    method: budgetAllocationMethod
-                }
+                timestamp: new Date().toISOString()
             };
 
-            // Добавляем данные о распределении бюджета для обязательных компонентов
-            if (budgetAllocationMethod === "percentage_based") {
-                components.mandatory_allocation.percentage_based = {
-                    cpu_percentage: getPercentageValue("cpuValue"),
-                    gpu_percentage: getPercentageValue("gpuValue"),
-                    dimm_percentage: getPercentageValue("ramValue"),
-                    ssd_m2_percentage: getPercentageValue("storageValue"),
-                    motherboard_percentage: getPercentageValue("motherboardValue"),
-                    power_supply_percentage: getPercentageValue("psuValue")
+            // Добавляем значения распределения бюджета
+            if (isPercentageBased) {
+                formData.components.mandatory_allocation.percentage_based = {
+                    cpu_percentage: parseInt(getComponentBudgetValue("cpuValue", "cpu", true)),
+                    gpu_percentage: parseInt(getComponentBudgetValue("gpuValue", "gpu", true)),
+                    dimm_percentage: parseInt(getComponentBudgetValue("ramValue", "ram", true)),
+                    ssd_m2_percentage: parseInt(getComponentBudgetValue("storageValue", "storage", true)),
+                    motherboard_percentage: parseInt(getComponentBudgetValue("motherboardValue", "motherboard", true)),
+                    power_supply_percentage: parseInt(getComponentBudgetValue("psuValue", "psu", true))
                 };
                 
-                components.optional_allocation.percentage_based = {
-                    case_fan_percentage: getPercentageValue("coolingValue", 0, 10),
-                    pc_case_percentage: getPercentageValue("caseValue", 0, 10),
-                    cpu_cooler_percentage: getPercentageValue("cpuCoolerValue", 0, 8)
+                formData.components.optional_allocation.percentage_based = {
+                    case_fan_percentage: parseInt(getComponentBudgetValue("coolingValue", "cooling", true)),
+                    pc_case_percentage: parseInt(getComponentBudgetValue("caseValue", "case", true)),
+                    cpu_cooler_percentage: parseInt(getComponentBudgetValue("cpuCoolerValue", "cpuCooler", true))
                 };
             } else {
-                components.mandatory_allocation.fixed_price_based = {
-                    cpu_max_price: getPriceValue("cpuValue"),
-                    gpu_max_price: getPriceValue("gpuValue"),
-                    dimm_max_price: getPriceValue("ramValue"),
-                    ssd_m2_max_price: getPriceValue("storageValue"),
-                    motherboard_max_price: getPriceValue("motherboardValue"),
-                    power_supply_max_price: getPriceValue("psuValue")
+                formData.components.mandatory_allocation.fixed_price_based = {
+                    cpu_max_price: parseInt(getComponentBudgetValue("cpuValue", "cpu", false)),
+                    gpu_max_price: parseInt(getComponentBudgetValue("gpuValue", "gpu", false)),
+                    dimm_max_price: parseInt(getComponentBudgetValue("ramValue", "ram", false)),
+                    ssd_m2_max_price: parseInt(getComponentBudgetValue("storageValue", "storage", false)),
+                    motherboard_max_price: parseInt(getComponentBudgetValue("motherboardValue", "motherboard", false)),
+                    power_supply_max_price: parseInt(getComponentBudgetValue("psuValue", "psu", false))
                 };
                 
-                components.optional_allocation.fixed_price_based = {
-                    case_fan_max_price: getPriceValue("coolingValue", 2000, 15000),
-                    pc_case_max_price: getPriceValue("caseValue", 3000, 20000),
-                    cpu_cooler_max_price: getPriceValue("cpuCoolerValue", 2000, 10000)
+                formData.components.optional_allocation.fixed_price_based = {
+                    case_fan_max_price: parseInt(getComponentBudgetValue("coolingValue", "cooling", false)),
+                    pc_case_max_price: parseInt(getComponentBudgetValue("caseValue", "case", false)),
+                    cpu_cooler_max_price: parseInt(getComponentBudgetValue("cpuCoolerValue", "cpuCooler", false))
                 };
             }
 
-            const logData = {
-                user_selections: {
-                    game: {
-                        title: selectedGameName.replace(/ /g, "_"),
-                        graphics_settings: {
-                            quality: graphicsQuality,
-                            target_fps: targetFps,
-                            resolution: resolution,
-                            ray_tracing: rayTracingEnabled,
-                            dlss: dlssSetting,
-                            fsr: fsrSetting
-                        }
-                    },
-                    budget: {
-                        amount: budgetAmount,
-                        budget_allocation_method: budgetAllocationMethod
-                    },
-                    components: components
-                }
-            };
+            console.log("Отправка данных:", JSON.stringify(formData, null, 2));
 
-            console.log("Отправляем лог:", JSON.stringify(logData, null, 2));
-
+            // Отправка на сервер
             fetch('/configurator/log-click', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    gameName: selectedGameName,
-                    graphicsQuality: graphicsQuality,
-                    targetFps: targetFps,
-                    resolution: resolution,
-                    rayTracingEnabled: rayTracingEnabled,
-                    rayTracingPreset: rayTracingValue,
-                    dlss: dlssValue,
-                    fsr: fsrValue,
-                    budgetAmount: budgetAmount,
-                    budgetAllocationMethod: budgetAllocationMethod,
-                    components: components,
-                    timestamp: new Date().toISOString()
-                })
+                body: JSON.stringify(formData)
             }).then(response => {
                 if (!response.ok) console.error("Ошибка при отправке данных");
             }).catch(error => {
@@ -178,52 +180,29 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Вспомогательные функции
-    function getComponentSelection(selectId, valueId) {
-        const select = document.getElementById(selectId);
-        const valueInput = document.getElementById(valueId);
-        
-        if (!select || !valueInput) return "any";
-        
-        if (select.value === "custom" && valueInput.value) {
-            return valueInput.value;
-        }
-        return select.value;
-    }
+    // Обработка переключения между "Любое" и "Выбрать свой компонент"
+    document.querySelectorAll('.component-select').forEach(select => {
+        select.addEventListener('change', function() {
+            const componentType = this.id.replace('Select', '');
+            const customRow = document.getElementById(`${componentType}CustomRow`);
+            if (customRow) {
+                customRow.style.display = this.value === 'custom' ? 'flex' : 'none';
+            }
+        });
+    });
 
-    function getComponentValue(inputId) {
-        const input = document.getElementById(inputId);
-        return input && input.value ? input.value : "any";
-    }
+    // Обновление placeholder'ов при смене метода расчета
+    const updatePlaceholders = () => {
+        const isPercentage = document.getElementById("budgetPercent").checked;
+        document.querySelectorAll('.value-input').forEach(input => {
+            const parts = input.placeholder.split(' (или ');
+            if (parts.length === 2) {
+                input.placeholder = isPercentage ? parts[0] : parts[1].replace(')', '');
+            }
+        });
+    };
 
-    function getCpuCoolerType() {
-        const select = document.getElementById("cpuCoolerType");
-        if (!select) return "any";
-        
-        const mapping = {
-            "liquid": "water_cooling",
-            "air": "air_cooler",
-            "any": "any",
-            "included": "included_with_cpu"
-        };
-        return mapping[select.value] || "any";
-    }
-
-    function getPercentageValue(inputId, min = 0, max = 100) {
-        const input = document.getElementById(inputId);
-        if (!input || !input.value) return min;
-        
-        const value = input.value.replace(/[^\d%]/g, '');
-        const percentage = parseInt(value) || min;
-        return Math.min(Math.max(percentage, min), max);
-    }
-
-    function getPriceValue(inputId, min = 0, max = 300000) {
-        const input = document.getElementById(inputId);
-        if (!input || !input.value) return min;
-        
-        const value = input.value.replace(/\D/g, '');
-        const price = parseInt(value) || min;
-        return Math.min(Math.max(price, min), max);
-    }
+    document.getElementById("budgetRub")?.addEventListener('change', updatePlaceholders);
+    document.getElementById("budgetPercent")?.addEventListener('change', updatePlaceholders);
+    updatePlaceholders(); // Инициализация при загрузке
 });
