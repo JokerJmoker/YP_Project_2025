@@ -12,17 +12,25 @@ def index():
 def log_click():
     data = request.get_json()
     game_name = data.get('gameName', '')
+    graphics_quality = data.get('graphicsQuality', 'High')
 
-    # Валидация и замена пробелов на _
     if game_name:
         game_name = game_name.replace(' ', '_')
     else:
         game_name = "Unknown"
 
+    # Валидация качества графики — ограничим список допустимых значений
+    valid_qualities = {"Low", "Medium", "High", "Ultra"}
+    if graphics_quality not in valid_qualities:
+        graphics_quality = "High"
+
     log_data = {
         "user_selections": {
             "game": {
-                "title": game_name
+                "title": game_name,
+                "graphics_settings": {
+                    "quality": graphics_quality
+                }
             }
         }
     }
