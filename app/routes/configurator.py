@@ -1,6 +1,7 @@
 # app/routes/configurator.py
 from flask import render_template, Blueprint, request, jsonify
 import json
+from app.ai.main import main as ai_main
 
 configurator = Blueprint('configurator', __name__)
 
@@ -193,5 +194,9 @@ def log_click():
         }
     }
     print(json.dumps(log_data, ensure_ascii=False, indent=2))
-
-    return jsonify({"status": "ok"}), 200
+    
+    result = ai_main(log_data)
+    return jsonify({
+        "status": "ok",
+        "result": result  # если тебе нужно вернуть результат клиенту
+    }), 200
