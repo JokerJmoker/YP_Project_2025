@@ -32,7 +32,28 @@ document.addEventListener("DOMContentLoaded", () => {
             const rayTracingValue = rayTracingSelect ? rayTracingSelect.value : "off";
             const rayTracingEnabled = rayTracingValue !== "off";
 
-  
+            // Получаем настройки масштабирования
+            const dlssSelect = document.getElementById("dlssSelect");
+            const dlssValue = dlssSelect ? dlssSelect.value : "off";
+            const dlssMapping = {
+                "off": "Disabled",
+                "dlss-quality": "Quality",
+                "dlss-balanced": "Balanced",
+                "dlss-performance": "Performance",
+                "dlss-ultra-performance": "Ultra Performance"
+            };
+            const dlssSetting = dlssMapping[dlssValue] || "Disabled";
+
+            const fsrSelect = document.getElementById("fsrSelect");
+            const fsrValue = fsrSelect ? fsrSelect.value : "off";
+            const fsrMapping = {
+                "off": "Disabled",
+                "fsr-quality": "Quality",
+                "fsr-balanced": "Balanced",
+                "fsr-performance": "Performance",
+                "fsr-ultra-performance": "Ultra Performance"
+            };
+            const fsrSetting = fsrMapping[fsrValue] || "Disabled";
 
             const logData = {
                 user_selections: {
@@ -43,6 +64,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             target_fps: targetFps,
                             resolution: resolution,
                             ray_tracing: rayTracingEnabled,
+                            dlss: dlssSetting,
+                            fsr: fsrSetting
                         }
                     }
                 }
@@ -62,6 +85,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     resolution: resolution,
                     rayTracingEnabled: rayTracingEnabled,
                     rayTracingPreset: rayTracingValue,
+                    dlss: dlssValue,
+                    fsr: fsrValue,
                     timestamp: new Date().toISOString()
                 })
             }).then(response => {

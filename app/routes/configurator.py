@@ -16,6 +16,8 @@ def log_click():
     target_fps = data.get('targetFps', 60)
     resolution = data.get('resolution', 1080)
     ray_tracing = data.get('rayTracingEnabled', False)
+    dlss_value = data.get('dlss', 'off')
+    fsr_value = data.get('fsr', 'off')
 
     if game_name:
         game_name = game_name.replace(' ', '_')
@@ -45,7 +47,24 @@ def log_click():
     except (ValueError, TypeError):
         resolution = 1080
 
+    # Маппинг значений масштабирования
+    dlss_mapping = {
+        "off": "Disabled",
+        "dlss-quality": "Quality",
+        "dlss-balanced": "Balanced",
+        "dlss-performance": "Performance",
+        "dlss-ultra-performance": "Ultra Performance"
+    }
+    dlss_setting = dlss_mapping.get(dlss_value, "Disabled")
 
+    fsr_mapping = {
+        "off": "Disabled",
+        "fsr-quality": "Quality",
+        "fsr-balanced": "Balanced",
+        "fsr-performance": "Performance",
+        "fsr-ultra-performance": "Ultra Performance"
+    }
+    fsr_setting = fsr_mapping.get(fsr_value, "Disabled")
 
     log_data = {
         "user_selections": {
@@ -55,7 +74,9 @@ def log_click():
                     "quality": graphics_quality,
                     "target_fps": target_fps,
                     "resolution": resolution,
-                    "ray_tracing": bool(ray_tracing)
+                    "ray_tracing": bool(ray_tracing),
+                    "dlss": dlss_setting,
+                    "fsr": fsr_setting
                 }
             }
         }
