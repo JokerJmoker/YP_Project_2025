@@ -135,7 +135,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             console.log(`[DEBUG] Устанавливаем запрошенный бюджет: ${budget.amount}`);
-            document.querySelector('.budget-amount').textContent = formatPrice(budget.amount);
+            // Изменено с .budget-amount на .budget-value:first-child
+            document.querySelector('.budget-section .budget-row:first-child .budget-value').textContent = formatPrice(budget.amount);
 
             let total = 0;
             const components = data.components || {};
@@ -156,22 +157,24 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             console.log(`[DEBUG] Итоговая сумма: ${total}`);
-            document.querySelector('.final-price').textContent = formatPrice(total);
+            // Изменено с .final-price на .budget-value.final
+            document.querySelector('.budget-section .budget-row:last-child .budget-value').textContent = formatPrice(total);
 
             const diff = total - budget.amount;
             console.log(`[DEBUG] Разница с бюджетом: ${diff}`);
 
             const diffElem = document.querySelector('.budget-difference');
-            diffElem.textContent = formatPrice(Math.abs(diff));
-            diffElem.classList.toggle('over-budget', diff > 0);
-            diffElem.classList.toggle('under-budget', diff <= 0);
+            if (diffElem) {
+                diffElem.textContent = formatPrice(Math.abs(diff));
+                diffElem.classList.toggle('over-budget', diff > 0);
+                diffElem.classList.toggle('under-budget', diff <= 0);
+            }
             
             console.log('[DEBUG] Бюджет успешно обновлен');
         } catch (error) {
             console.error('[ERROR] Ошибка в updateBudget:', error);
         }
     }
-
     // Получение спецификаций компонента
     function getComponentSpecs(key, comp) {
         console.log(`[DEBUG] getComponentSpecs вызван для ${key} с данными:`, comp);
