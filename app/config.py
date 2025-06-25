@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 class Config(object):
     APPNAME = 'app'
@@ -16,6 +17,16 @@ class Config(object):
     SECRET_KEY = 'hihihihihahahahah'
     SQLALCHEMY_TRACK_MODIFICATIONS = 'True'
     
+    # Настройки сессии
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'hihihihihahahahah')  
+    SESSION_TYPE = 'filesystem'  # Хранить сессии на файловой системе (временное решение)
+    SESSION_PERMANENT = True
+    PERMANENT_SESSION_LIFETIME = timedelta(hours=24)
+    SESSION_USE_SIGNER = True  # Подписывать cookie для безопасности
+    SESSION_COOKIE_NAME = 'pc_configurator_session'
+    SESSION_COOKIE_SECURE = False  # True только для HTTPS в продакшене
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
 class DevelopmentConfig(Config):
     USE_MIGRATIONS = False  # Использует create_all()
 

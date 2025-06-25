@@ -208,7 +208,7 @@ def run_pc_case_selection_test(
     chosen_motherboard: Dict[str, Any],
     chosen_power_supply: Dict[str, Any],
     chosen_case_fan: Dict[str, Any]
-) -> None:
+) -> Dict[str, Any]:
     print("===== ТЕСТИРОВАНИЕ ПОДБОРА КОРПУСА =====")
     try:
         pc_case_info = select_pc_case(
@@ -222,8 +222,10 @@ def run_pc_case_selection_test(
         print("\nНайден совместимый корпус:")
         import json
         print(json.dumps(pc_case_info, indent=2, ensure_ascii=False))
+        return pc_case_info  # <-- Добавьте эту строку
     except ValueError as e:
         logging.error(f"Ошибка: {e}")
+        raise  # Переподнимаем исключение, чтобы обработать его в main()
 
 
 if __name__ == "__main__":

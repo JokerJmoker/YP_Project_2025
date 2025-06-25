@@ -51,9 +51,8 @@ def get_components_result():
         
         print(f"[DEBUG] Найдена конфигурация с timestamp: {config_data['timestamp']}")
         print("[DEBUG] Пример данных компонентов:")
-        print(json.dumps({k: v for k, v in config_data['result'].items() if k in ['cpu', 'gpu']}, 
-                        indent=2, ensure_ascii=False))
-        
+        print(json.dumps(config_data['result'], indent=2, ensure_ascii=False))
+                
         # Формируем успешный ответ
         response_data = {
             "status": "ok",

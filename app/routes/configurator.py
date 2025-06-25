@@ -199,7 +199,10 @@ def log_click():
     }
     print(json.dumps(log_data, ensure_ascii=False, indent=2))
     
+    
     result = ai_main(log_data)
+    print("[DEBUG] Передаваемые данные:")
+    print(json.dumps(result, indent=2, ensure_ascii=False))
     
     # Генерируем уникальный ID для этой конфигурации
     config_id = str(uuid.uuid4())
@@ -217,6 +220,7 @@ def log_click():
         # Сохраняем новую конфигурацию
         session['pc_configurations'][config_id] = {
             'result': result,
+            'user_selections': log_data['user_selections'],
             'timestamp': datetime.now().isoformat()
         }
         session.modified = True
