@@ -201,8 +201,6 @@ def log_click():
     
     
     result = ai_main(log_data)
-    print("[DEBUG] Передаваемые данные:")
-    print(json.dumps(result, indent=2, ensure_ascii=False))
     
     # Генерируем уникальный ID для этой конфигурации
     config_id = str(uuid.uuid4())
