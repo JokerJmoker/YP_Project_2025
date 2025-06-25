@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Получаем initial data из шаблона
+    const initialData = JSON.parse(document.getElementById('initial-data').textContent);
+    
     // Функция для форматирования цены с пробелами
     function formatPrice(price) {
         return new Intl.NumberFormat('ru-RU').format(price) + ' ₽';
@@ -49,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Функция для обновления блока с игрой и настройками
     function updateGameSettings(data) {
-        const game = data.user_request.game;
+        const game = data.user_selections.game;
         
         // Обновляем название игры
         document.querySelector('.game-title').textContent = game.title.replace(/_/g, ' ');
@@ -67,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Обновляем каждую настройку
         Object.keys(settingsMap).forEach(key => {
             const label = settingsMap[key];
-            let value = game.graphics[key];
+            let value = game.graphics_settings[key];
             value = translateGraphicsSettings(key, value);
             
             // Находим соответствующую строку в таблице и обновляем значение
@@ -82,22 +85,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Функция для обновления блока с бюджетом
     function updateBudget(data) {
-        const budget = data.user_request.budget;
+        const budget = data.user_selections.budget;
         
         document.querySelector('.budget-row:nth-child(1) .budget-value').textContent = 
             formatPrice(budget.amount);
         
         // Рассчитываем итоговую сумму из всех компонентов
         let totalPrice = 0;
-        if (data.gpu) totalPrice += data.gpu.price;
-        if (data.cpu) totalPrice += data.cpu.price;
-        if (data.dimm) totalPrice += data.dimm.price;
-        if (data.ssd_m2) totalPrice += data.ssd_m2.price;
-        if (data.motherboard) totalPrice += data.motherboard.price;
-        if (data.power_supply) totalPrice += data.power_supply.price;
-        if (data.case_fan) totalPrice += data.case_fan.price;
-        if (data.pc_case) totalPrice += data.pc_case.price;
-        if (data.cpu_cooler) totalPrice += data.cpu_cooler.price;
+        if (data.result.gpu) totalPrice += data.result.gpu.price;
+        if (data.result.cpu) totalPrice += data.result.cpu.price;
+        if (data.result.dimm) totalPrice += data.result.dimm.price;
+        if (data.result.ssd_m2) totalPrice += data.result.ssd_m2.price;
+        if (data.result.motherboard) totalPrice += data.result.motherboard.price;
+        if (data.result.power_supply) totalPrice += data.result.power_supply.price;
+        if (data.result.case_fan) totalPrice += data.result.case_fan.price;
+        if (data.result.pc_case) totalPrice += data.result.pc_case.price;
+        if (data.result.cpu_cooler) totalPrice += data.result.cpu_cooler.price;
         
         document.querySelector('.budget-row:nth-child(2) .budget-value.final').textContent = 
             formatPrice(totalPrice);
@@ -129,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Добавляем строки для каждого компонента
         displayOrder.forEach(componentKey => {
-            const component = data[componentKey];
+            const component = data.result[componentKey];
             if (!component) return;
             
             const row = document.createElement('tr');
@@ -265,59 +268,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Функция для обработки ответа сервера
     function processServerResponse(data) {
-        // Собираем все компоненты в один объект для удобства
-        const components = {
-            gpu: data.gpu,
-            cpu: data.cpu,
-            dimm: data.dimm,
-            ssd_m2: data.ssd_m2,
-            motherboard: data.motherboard,
-            power_supply: data.power_supply,
-            case_fan: data.case_fan,
-            pc_case: data.pc_case,
-            cpu_cooler: data.cpu_cooler
-        };
+        if (data.status !== 'ok') {
+            console.error('Server error:', data.message);
+            return;
+        }
         
-        // Добавляем компоненты к основным данным
-        const fullData = {
-            ...data,
-            ...components
-        };
-        
-        updateGameSettings(fullData);
-        updateBudget(fullData);
-        updateComponentsTable(fullData);
+        updateGameSettings(data);
+        updateBudget(data);
+        updateComponentsTable(data);
     }
 
-    // Функция для отправки данных и обработки ответа
-    function fetchAndDisplayConfig() {
-        // Здесь должен быть код для получения данных конфигурации
-        // Например, если данные передаются через переменную в шаблоне:
-        if (typeof serverResponse !== 'undefined') {
-            processServerResponse(serverResponse);
-        } 
-        // Или если нужно сделать AJAX-запрос:
-        else {
-            fetch('/configurator/log-click', {
+    // Функция для загрузки данных с сервера
+    async function loadComponents() {
+        try {
+            const response = await fetch('/components/get-components', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: JSON.stringify({
-                    // Здесь должны быть данные из формы
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                processServerResponse(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
+                body: JSON.stringify(initialData.user_selections)
             });
+            
+            const data = await response.json();
+            processServerResponse(data);
+        } catch (error) {
+            console.error('Error loading components:', error);
         }
     }
 
-    // Вызываем функцию при загрузке страницы
-    fetchAndDisplayConfig();
+    // Инициализация
+    if (initialData.status === 'ok') {
+        if (initialData.user_selections) {
+            processServerResponse(initialData);
+        } else {
+            loadComponents();
+        }
+    }
 });
