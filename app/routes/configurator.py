@@ -3,6 +3,10 @@ from flask import render_template, Blueprint, request, jsonify
 import json
 from app.ai.main import main as ai_main
 
+from flask import session  # Добавляем импорт
+import uuid  # Для генерации уникального ID
+from datetime import datetime
+
 configurator = Blueprint('configurator', __name__)
 
 @configurator.route('/configurator')
@@ -196,7 +200,44 @@ def log_click():
     print(json.dumps(log_data, ensure_ascii=False, indent=2))
     
     result = ai_main(log_data)
-    return jsonify({
+    
+    # Генерируем уникальный ID для этой конфигурации
+    config_id = str(uuid.uuid4())
+    print(f"\n[DEBUG] Сгенерирован config_id: {config_id}")
+    
+    # Сохраняем результат в сессии Flask
+    try:
+        # Инициализируем хранилище конфигураций, если его нет
+        if 'pc_configurations' not in session:
+            print("[DEBUG] Инициализация pc_configurations в сессии")
+            session['pc_configurations'] = {}
+        
+        print(f"[DEBUG] Текущее количество конфигураций в сессии: {len(session['pc_configurations'])}")
+        
+        # Сохраняем новую конфигурацию
+        session['pc_configurations'][config_id] = {
+            'result': result,
+            'timestamp': datetime.now().isoformat()
+        }
+        session.modified = True
+        
+        print("[DEBUG] Конфигурация успешно сохранена в сессии")
+        
+    except Exception as e:
+        print(f"\n[ERROR] Ошибка при сохранении в сессию: {str(e)}")
+        return jsonify({
+            "status": "error",
+            "message": "Session save failed"
+        }), 500
+    
+    # Формируем ответ
+    response_data = {
         "status": "ok",
-        "result": result  # если тебе нужно вернуть результат клиенту
-    }), 200
+        "config_id": config_id,
+        "redirect_url": f"/components?config_id={config_id}"
+    }
+    
+    print("\n[DEBUG] Отправляемый ответ клиенту:")
+    print(json.dumps(response_data, indent=2, ensure_ascii=False))
+    
+    return jsonify(response_data), 200

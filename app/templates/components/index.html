@@ -100,10 +100,6 @@
                     </div>
                 </div>
                 
-                <!-- Передаем initial_data из Flask в JavaScript -->
-                <script id="initial-data" type="application/json">
-                    {{ initial_data | tojson | safe }}
-                </script>
                 
                 <style>
                     /* Основные цвета */
@@ -400,6 +396,6 @@
 </div>
 
 <!-- Подключаем JavaScript файл -->
-<script src="{{ url_for('static', filename='js/components.js') }}"></script>
+<script src="{{ url_for('static', filename='js/components/components_get.js') }}"></script>
 
 {% endblock %}

@@ -1,45 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Получаем initial data из шаблона
-    const initialData = JSON.parse(document.getElementById('initial-data').textContent);
-    
-    // Функция для форматирования цены с пробелами
     function formatPrice(price) {
         return new Intl.NumberFormat('ru-RU').format(price) + ' ₽';
     }
 
-    // Функция для перевода настроек графики на русский
     function translateGraphicsSettings(setting, value) {
         const translations = {
-            'quality': {
-                'low': 'Низкие',
-                'medium': 'Средние',
-                'high': 'Высокие',
-                'ultra': 'Ультра'
-            },
-            'resolution': {
-                '720': '720p (HD)',
-                '1080': '1080p (Full HD)',
-                '1440': '1440p (QHD)',
-                '2160': '2160p (4K UHD)'
-            },
-            'dlss': {
-                'disabled': 'Выключено',
-                'performance': 'Производительность',
-                'balanced': 'Сбалансированный',
-                'quality': 'Качество',
-                'ultra_performance': 'Ультра производительность'
-            },
-            'fsr': {
-                'disabled': 'Выключено',
-                'performance': 'Производительность',
-                'balanced': 'Сбалансированный',
-                'quality': 'Качество',
-                'ultra_performance': 'Ультра производительность'
-            },
+            'quality': { 'low': 'Низкие', 'medium': 'Средние', 'high': 'Высокие', 'ultra': 'Ультра' },
+            'resolution': { '720': '720p (HD)', '1080': '1080p (Full HD)', '1440': '1440p (QHD)', '2160': '2160p (4K UHD)' },
+            'dlss': { 'disabled': 'Выключено', 'performance': 'Производительность', 'balanced': 'Сбалансированный', 'quality': 'Качество', 'ultra_performance': 'Ультра производительность' },
+            'fsr': { 'disabled': 'Выключено', 'performance': 'Производительность', 'balanced': 'Сбалансированный', 'quality': 'Качество', 'ultra_performance': 'Ультра производительность' },
             'ray_tracing': value => value ? 'Включено' : 'Выключено',
             'target_fps': value => `${value} FPS`
         };
-
         if (translations[setting]) {
             if (typeof translations[setting] === 'object') {
                 return translations[setting][value.toLowerCase()] || value;
@@ -50,14 +22,15 @@ document.addEventListener('DOMContentLoaded', function() {
         return value;
     }
 
-    // Функция для обновления блока с игрой и настройками
     function updateGameSettings(data) {
+        console.log('updateGameSettings called', data);
+        if (!data.user_selections || !data.user_selections.game) {
+            console.warn('Game settings missing in data', data);
+            return;
+        }
         const game = data.user_selections.game;
-        
-        // Обновляем название игры
         document.querySelector('.game-title').textContent = game.title.replace(/_/g, ' ');
         
-        // Обновляем настройки графики
         const settingsMap = {
             'quality': 'Графика',
             'resolution': 'Разрешение',
@@ -67,51 +40,68 @@ document.addEventListener('DOMContentLoaded', function() {
             'fsr': 'AMD FSR'
         };
         
-        // Обновляем каждую настройку
         Object.keys(settingsMap).forEach(key => {
             const label = settingsMap[key];
-            let value = game.graphics_settings[key];
-            value = translateGraphicsSettings(key, value);
-            
-            // Находим соответствующую строку в таблице и обновляем значение
+            let value = game.graphics_settings ? game.graphics_settings[key] : undefined;
+            if (value === undefined) {
+                console.warn(`Graphics setting "${key}" missing`);
+                value = '-';
+            } else {
+                value = translateGraphicsSettings(key, value);
+            }
             const rows = document.querySelectorAll('.settings-row');
+            let updated = false;
             rows.forEach(row => {
                 if (row.querySelector('.settings-label').textContent === label) {
                     row.querySelector('.settings-value').textContent = value;
+                    updated = true;
                 }
             });
+            if (!updated) {
+                console.warn(`Row for setting "${label}" not found`);
+            }
         });
     }
 
-    // Функция для обновления блока с бюджетом
     function updateBudget(data) {
+        console.log('updateBudget called', data);
+        if (!data.user_selections || !data.user_selections.budget) {
+            console.warn('Budget info missing in data', data);
+            return;
+        }
         const budget = data.user_selections.budget;
+        const budgetAmountEl = document.querySelector('.budget-row:nth-child(1) .budget-value');
+        if (budgetAmountEl) {
+            budgetAmountEl.textContent = formatPrice(budget.amount);
+        } else {
+            console.warn('Budget amount element not found');
+        }
         
-        document.querySelector('.budget-row:nth-child(1) .budget-value').textContent = 
-            formatPrice(budget.amount);
-        
-        // Рассчитываем итоговую сумму из всех компонентов
         let totalPrice = 0;
-        if (data.result.gpu) totalPrice += data.result.gpu.price;
-        if (data.result.cpu) totalPrice += data.result.cpu.price;
-        if (data.result.dimm) totalPrice += data.result.dimm.price;
-        if (data.result.ssd_m2) totalPrice += data.result.ssd_m2.price;
-        if (data.result.motherboard) totalPrice += data.result.motherboard.price;
-        if (data.result.power_supply) totalPrice += data.result.power_supply.price;
-        if (data.result.case_fan) totalPrice += data.result.case_fan.price;
-        if (data.result.pc_case) totalPrice += data.result.pc_case.price;
-        if (data.result.cpu_cooler) totalPrice += data.result.cpu_cooler.price;
-        
-        document.querySelector('.budget-row:nth-child(2) .budget-value.final').textContent = 
-            formatPrice(totalPrice);
+        const comps = data.components || {};
+        ['gpu', 'cpu', 'dimm', 'ssd_m2', 'motherboard', 'power_supply', 'case_fan', 'pc_case', 'cpu_cooler'].forEach(key => {
+            if (comps[key] && typeof comps[key].price === 'number') {
+                totalPrice += comps[key].price;
+            }
+        });
+
+        const finalPriceEl = document.querySelector('.budget-row:nth-child(2) .budget-value.final');
+        if (finalPriceEl) {
+            finalPriceEl.textContent = formatPrice(totalPrice);
+        } else {
+            console.warn('Final budget element not found');
+        }
     }
 
-    // Функция для обновления таблицы комплектующих
     function updateComponentsTable(data) {
+        console.log('updateComponentsTable called', data);
         const tbody = document.querySelector('.components-table tbody');
-        tbody.innerHTML = ''; // Очищаем таблицу
+        if (!tbody) {
+            console.warn('Components table tbody element not found');
+            return;
+        }
+        tbody.innerHTML = '';
         
-        // Маппинг компонентов на русский язык
         const componentNames = {
             'gpu': 'Видеокарта',
             'cpu': 'Процессор',
@@ -123,31 +113,25 @@ document.addEventListener('DOMContentLoaded', function() {
             'pc_case': 'Корпус',
             'cpu_cooler': 'Кулер CPU'
         };
-        
-        // Порядок отображения компонентов
-        const displayOrder = [
-            'gpu', 'cpu', 'dimm', 'ssd_m2', 'motherboard', 
-            'power_supply', 'case_fan', 'pc_case', 'cpu_cooler'
-        ];
-        
-        // Добавляем строки для каждого компонента
+
+        const displayOrder = ['gpu', 'cpu', 'dimm', 'ssd_m2', 'motherboard', 'power_supply', 'case_fan', 'pc_case', 'cpu_cooler'];
+        const comps = data.components || {};
+
         displayOrder.forEach(componentKey => {
-            const component = data.result[componentKey];
-            if (!component) return;
-            
+            const component = comps[componentKey];
+            if (!component) {
+                console.log(`Component "${componentKey}" not found or empty`);
+                return;
+            }
             const row = document.createElement('tr');
-            
-            // Название компонента
             const typeCell = document.createElement('td');
             typeCell.textContent = componentNames[componentKey] || componentKey;
             row.appendChild(typeCell);
-            
-            // Название модели
+
             const nameCell = document.createElement('td');
             nameCell.textContent = component.name || 'Не указано';
             row.appendChild(nameCell);
-            
-            // Изображение
+
             const imgCell = document.createElement('td');
             const img = document.createElement('img');
             img.src = component.image_url || 'https://via.placeholder.com/80';
@@ -155,19 +139,16 @@ document.addEventListener('DOMContentLoaded', function() {
             img.className = 'component-image';
             imgCell.appendChild(img);
             row.appendChild(imgCell);
-            
-            // Цена
+
             const priceCell = document.createElement('td');
             priceCell.className = 'price-value';
             priceCell.textContent = component.price ? formatPrice(component.price) : '—';
             row.appendChild(priceCell);
-            
-            // Характеристики
+
             const specsCell = document.createElement('td');
             const specsList = document.createElement('div');
             specsList.className = 'specs-list';
-            
-            // Специфичные характеристики для каждого типа компонента
+
             let specs = [];
             switch(componentKey) {
                 case 'gpu':
@@ -211,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     specs = [
                         `Сокет: ${component.socket}`,
                         `Чипсет: ${component.chipset}`,
-                        `Память: ${component.memory_type} до ${component.oc_memory_freq.slice(-1)[0]} МГц`,
+                        `Память: ${component.memory_type} до ${component.oc_memory_freq ? component.oc_memory_freq.slice(-1)[0] : '-'} МГц`,
                         `Слоты: ${component.memory_slots}`,
                         `M.2: ${component.m2_slots}`,
                         `PCIe: ${component.pcie_x16_slots} x16`
@@ -238,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         `Форм-фактор: ${component.motherboard_form_factors}`,
                         `Длина GPU: до ${component.max_gpu_length}`,
                         `Высота кулера: до ${component.max_cpu_cooler_height}`,
-                        `Вентиляторы: ${component.fan_support.size} мм`
+                        `Вентиляторы: ${component.fan_support ? component.fan_support.size : '-'} мм`
                     ];
                     break;
                 case 'cpu_cooler':
@@ -250,58 +231,52 @@ document.addEventListener('DOMContentLoaded', function() {
                     ];
                     break;
             }
-            
-            // Добавляем характеристики в виде бейджей
+
             specs.forEach(spec => {
                 const badge = document.createElement('span');
                 badge.className = 'spec-badge';
                 badge.textContent = spec;
                 specsList.appendChild(badge);
             });
-            
+
             specsCell.appendChild(specsList);
             row.appendChild(specsCell);
-            
             tbody.appendChild(row);
         });
     }
 
-    // Функция для обработки ответа сервера
     function processServerResponse(data) {
+        console.log('processServerResponse called', data);
         if (data.status !== 'ok') {
             console.error('Server error:', data.message);
             return;
         }
-        
         updateGameSettings(data);
         updateBudget(data);
         updateComponentsTable(data);
     }
 
-    // Функция для загрузки данных с сервера
-    async function loadComponents() {
+    async function loadConfiguration() {
         try {
-            const response = await fetch('/components/get-components', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(initialData.user_selections)
-            });
-            
+            const urlParams = new URLSearchParams(window.location.search);
+            const configId = urlParams.get('config_id');
+            if (!configId) {
+                console.error('Configuration ID not found in URL');
+                return;
+            }
+            console.log('Fetching configuration for config_id:', configId);
+            const response = await fetch(`/api/components/result?config_id=${configId}`);
+            if (!response.ok) {
+                console.error('HTTP error', response.status);
+                return;
+            }
             const data = await response.json();
+            console.log('Data received from server:', data);
             processServerResponse(data);
         } catch (error) {
-            console.error('Error loading components:', error);
+            console.error('Error loading configuration:', error);
         }
     }
 
-    // Инициализация
-    if (initialData.status === 'ok') {
-        if (initialData.user_selections) {
-            processServerResponse(initialData);
-        } else {
-            loadComponents();
-        }
-    }
+    loadConfiguration();
 });

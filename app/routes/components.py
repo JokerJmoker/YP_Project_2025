@@ -2,56 +2,80 @@
 from flask import render_template, Blueprint, jsonify, request
 from app.ai.main import main as ai_main
 
+from datetime import datetime
+from flask import session
+import json 
+
 components = Blueprint('components', __name__)
 
 @components.route('/components')
 def index():
-    initial_data = {}  # Или наполни нужными начальными данными, если есть
-    return render_template(
-        'components/index.html',
-        title='Компоненты',
-        initial_data=initial_data
-    )
+    return render_template('components/index.html',title='Компоненты')
 
 @components.route('/api/components/result', methods=['GET'])
 def get_components_result():
-    """
-    GET endpoint для получения результатов подбора компонентов.
-    Можно использовать:
-    1. Передачу ID конфигурации через параметры URL
-    2. Хранение данных в сессии
-    3. Получение последнего результата из БД/кеша
-    """
     try:
-        # Вариант 1: Получение через query параметры
+        print("\n=== НАЧАЛО ОБРАБОТКИ GET ЗАПРОСА НА КОМПОНЕНТЫ ===")
+        
+        # Логируем полученные параметры
         config_id = request.args.get('config_id')
-        
-        # Вариант 2: Из сессии (если вы сохранили результат после POST /configurator/log-click)
-        # server_data = session.get('pc_configuration')
-        
+        print(f"[DEBUG] Полученный config_id: {config_id}")
+        print(f"[DEBUG] Все параметры запроса: {request.args}")
+
         if not config_id:
+            print("[ERROR] Отсутствует config_id в запросе")
             return jsonify({
                 "status": "error",
                 "message": "Configuration ID not provided"
             }), 400
 
-        # Здесь должна быть логика получения данных по ID
-        # Например, из базы данных или кеша
-        # В демонстрационных целях просто возвращаем тестовые данные
-        example_data = {
+        # Получаем сохраненные конфигурации из сессии
+        pc_configurations = session.get('pc_configurations', {})
+        print(f"[DEBUG] Всего конфигураций в сессии: {len(pc_configurations)}")
+        
+        # Логируем доступные ID конфигураций для отладки
+        if pc_configurations:
+            print("[DEBUG] Доступные config_ids в сессии:")
+            for cid in pc_configurations.keys():
+                print(f" - {cid}")
+        
+        # Получаем запрошенную конфигурацию
+        config_data = pc_configurations.get(config_id)
+        
+        if not config_data:
+            print(f"[ERROR] Конфигурация с ID {config_id} не найдена")
+            return jsonify({
+                "status": "error",
+                "message": "Configuration not found"
+            }), 404
+        
+        print(f"[DEBUG] Найдена конфигурация с timestamp: {config_data['timestamp']}")
+        print("[DEBUG] Пример данных компонентов:")
+        print(json.dumps({k: v for k, v in config_data['result'].items() if k in ['cpu', 'gpu']}, 
+                        indent=2, ensure_ascii=False))
+        
+        # Формируем успешный ответ
+        response_data = {
             "status": "ok",
             "config_id": config_id,
-            "components": {
-                "cpu": "Intel Core i7-13700K",
-                "gpu": "NVIDIA RTX 4070 Ti",
-                # ... другие компоненты
-            }
+            "user_selections": config_data['user_selections'],
+            "components": config_data['result'],
+            "timestamp": config_data['timestamp']
         }
         
-        return jsonify(example_data), 200
+        print("\n[DEBUG] Отправляемый ответ:")
+        print(json.dumps({**response_data, 'components': '...truncated...'}, indent=2))
+        print("=== УСПЕШНОЕ ЗАВЕРШЕНИЕ ОБРАБОТКИ ===")
+        
+        return jsonify(response_data), 200
 
     except Exception as e:
+        print(f"\n[ERROR] Критическая ошибка: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        
         return jsonify({
             "status": "error",
-            "message": "Internal server error"
+            "message": "Internal server error",
+            "details": str(e)
         }), 500
