@@ -32,7 +32,7 @@ def main(data):
         return {
             "gpu": chosen_gpu,
             "cpu": chosen_cpu,
-            "cooler": chosen_cpu_cooler,
+            "cpu_cooler": chosen_cpu_cooler,
             "ssd": chosen_ssd_m2,
             "dimm": chosen_dimm,
             "motherboard": chosen_motherboard,
