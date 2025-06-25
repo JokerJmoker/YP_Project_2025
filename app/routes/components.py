@@ -63,7 +63,7 @@ def get_components_result():
         }
         
         print("\n[DEBUG] Отправляемый ответ:")
-        print(json.dumps({**response_data, 'components': '...truncated...'}, indent=2))
+        print(json.dumps(response_data, indent=2))
         print("=== УСПЕШНОЕ ЗАВЕРШЕНИЕ ОБРАБОТКИ ===")
         
         return jsonify(response_data), 200
