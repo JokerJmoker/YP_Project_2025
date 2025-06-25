@@ -7,66 +7,60 @@
         <h1>КОМПЛЕКТУЮЩИЕ ДЛЯ ПК</h1>
         
         <!-- Блок с игрой и настройками графики -->
-        <div class="game-settings-wrapper">
-            <div class="game-header">
-                <div class="game-section-title">ВЫБРАННАЯ ИГРА</div>
-                <div class="game-title">Загрузка...</div>
-            </div>
-            
-            <div class="graphics-settings">
-                <h3 class="settings-title">ИГРОВЫЕ НАСТРОЙКИ ГРАФИКИ</h3>
-                
-                <div class="settings-table">
-                    <!-- Графика -->
-                    <div class="settings-row">
-                        <div class="settings-label">Графика</div>
-                        <div class="settings-value">Загрузка...</div>
+        <section class="config-step active">
+            <div class="step-card">
+                <div class="step-header">
+                    <h2>Выбранная игра</h2>
+                </div>
+
+                <div class="game-title-wrapper mb-4">
+                    <div class="game-section-title">ВЫБРАННАЯ ИГРА</div>
+                    <div class="game-title">Загрузка...</div>
+                </div>
+
+                <div class="graphics-settings mb-4">
+                    <h3 class="settings-title">ИГРОВЫЕ НАСТРОЙКИ ГРАФИКИ</h3>
+
+                    <div class="settings-table">
+                        <div class="settings-row">
+                            <div class="settings-label">Графика</div>
+                            <div class="settings-value">Загрузка...</div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-label">Разрешение</div>
+                            <div class="settings-value">Загрузка...</div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-label">Частота кадров</div>
+                            <div class="settings-value">Загрузка...</div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-label">Трассировка лучей</div>
+                            <div class="settings-value">Загрузка...</div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-label">NVIDIA DLSS</div>
+                            <div class="settings-value">Загрузка...</div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-label">AMD FSR</div>
+                            <div class="settings-value">Загрузка...</div>
+                        </div>
                     </div>
-                    
-                    <!-- Разрешение -->
-                    <div class="settings-row">
-                        <div class="settings-label">Разрешение</div>
-                        <div class="settings-value">Загрузка...</div>
+                </div>
+
+                <div class="budget-section">
+                    <div class="budget-row">
+                        <div class="budget-label">Запрошенный бюджет:</div>
+                        <div class="budget-value">Загрузка...</div>
                     </div>
-                    
-                    <!-- Частота кадров -->
-                    <div class="settings-row">
-                        <div class="settings-label">Частота кадров</div>
-                        <div class="settings-value">Загрузка...</div>
-                    </div>
-                    
-                    <!-- Трассировка лучей -->
-                    <div class="settings-row">
-                        <div class="settings-label">Трассировка лучей</div>
-                        <div class="settings-value">Загрузка...</div>
-                    </div>
-                    
-                    <!-- NVIDIA DLSS -->
-                    <div class="settings-row">
-                        <div class="settings-label">NVIDIA DLSS</div>
-                        <div class="settings-value">Загрузка...</div>
-                    </div>
-                    
-                    <!-- AMD FSR -->
-                    <div class="settings-row">
-                        <div class="settings-label">AMD FSR</div>
-                        <div class="settings-value">Загрузка...</div>
+                    <div class="budget-row">
+                        <div class="budget-label">Итоговый бюджет:</div>
+                        <div class="budget-value final">Загрузка...</div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Блок с бюджетом -->
-            <div class="budget-section">
-                <div class="budget-row">
-                    <div class="budget-label">Запрошенный бюджет:</div>
-                    <div class="budget-value">Загрузка...</div>
-                </div>
-                <div class="budget-row">
-                    <div class="budget-label">Итоговый бюджет:</div>
-                    <div class="budget-value final">Загрузка...</div>
-                </div>
-            </div>
-        </div>
+        </section>
 
         <section class="config-step active">
             <div class="step-card">
@@ -84,13 +78,12 @@
                                     <th class="name-col">Название</th>
                                     <th class="image-col">Изображение</th>
                                     <th class="price-col">Цена</th>
-                                    <th class="specs-col">Характеристики</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <!-- Данные будут загружены через JavaScript -->
                                 <tr>
-                                    <td colspan="5" style="text-align: center; padding: 30px;">
+                                    <td colspan="4" style="text-align: center; padding: 30px;">
                                         <div class="loading-spinner"></div>
                                         <p>Загрузка данных о комплектующих...</p>
                                     </td>
@@ -99,6 +92,8 @@
                         </table>
                     </div>
                 </div>
+            </div>
+        </section>
                 
                 
                 <style>
@@ -389,6 +384,7 @@
                             padding-right: 20px;
                         }
                     }
+                    
                 </style>
             </div>
         </section>

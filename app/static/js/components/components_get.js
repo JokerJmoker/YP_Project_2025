@@ -424,7 +424,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const names = {
                 'gpu': 'Видеокарта',
                 'cpu': 'Процессор',
-                'cpu_cooler': 'Кулер CPU',
+                'cooler': 'Кулер CPU',
                 'ssd': 'SSD',
                 'dimm': 'ОЗУ',
                 'motherboard': 'Материнская плата',
@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 'pc_case': 'Корпус'
             };
 
-            const order = ['gpu', 'cpu', 'dimm', 'ssd', 'motherboard', 'psu', 'case_fan', 'pc_case', 'cpu_cooler'];
+            const order = ['gpu', 'cpu', 'dimm', 'ssd', 'motherboard', 'psu', 'case_fan', 'pc_case', 'cooler'];
             const components = data.components || {};
             
             console.log('[DEBUG] Начинаем обработку компонентов в порядке:', order);
@@ -447,17 +447,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 console.log(`[DEBUG] Обрабатываем компонент ${key}:`, comp);
                 
-                const row = document.createElement('tr');
+                // Основная строка с компонентом
+                const mainRow = document.createElement('tr');
+                mainRow.className = 'component-main-row';
 
                 // Тип компонента
                 const typeCell = document.createElement('td');
                 typeCell.textContent = names[key] || key;
-                row.appendChild(typeCell);
+                mainRow.appendChild(typeCell);
 
                 // Название компонента
                 const nameCell = document.createElement('td');
                 nameCell.textContent = comp.name || comp.data?.name || '—';
-                row.appendChild(nameCell);
+                mainRow.appendChild(nameCell);
 
                 // Изображение компонента
                 const imgCell = document.createElement('td');
@@ -466,33 +468,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 img.alt = names[key] || key;
                 img.className = 'component-image';
                 imgCell.appendChild(img);
-                row.appendChild(imgCell);
+                mainRow.appendChild(imgCell);
 
                 // Цена компонента
                 const priceCell = document.createElement('td');
                 priceCell.className = 'price-value';
                 const price = comp.price ?? comp.data?.price;
                 priceCell.textContent = formatPrice(price);
-                row.appendChild(priceCell);
+                mainRow.appendChild(priceCell);
 
-                // Характеристики компонента
+                tbody.appendChild(mainRow);
+                
+                // Строка с характеристиками
+                const specsRow = document.createElement('tr');
+                specsRow.className = 'component-specs-row';
+                
                 const specsCell = document.createElement('td');
-                const specsList = document.createElement('div');
-                specsList.className = 'specs-list';
+                specsCell.colSpan = 4;
+                
+                const specsContainer = document.createElement('div');
+                specsContainer.className = 'specs-container';
                 
                 const specs = getComponentSpecs(key, comp);
                 specs.forEach(spec => {
                     const badge = document.createElement('span');
                     badge.className = 'spec-badge';
                     badge.textContent = spec;
-                    specsList.appendChild(badge);
+                    specsContainer.appendChild(badge);
                 });
                 
-                specsCell.appendChild(specsList);
-                row.appendChild(specsCell);
-
-                tbody.appendChild(row);
-                console.log(`[DEBUG] Добавлена строка для компонента ${key}`);
+                specsCell.appendChild(specsContainer);
+                specsRow.appendChild(specsCell);
+                
+                tbody.appendChild(specsRow);
+                
+                console.log(`[DEBUG] Добавлены строки для компонента ${key}`);
             });
 
             console.log('[DEBUG] Таблица компонентов успешно обновлена');
