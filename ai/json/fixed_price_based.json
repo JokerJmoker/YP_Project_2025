@@ -38,7 +38,7 @@
       "optional": {
         "case_fan": "any",
         "pc_case": "any",
-        "cpu_cooler": "included_with_cpu"
+        "cpu_cooler": "air_cooler"
       },
       "optional_allocation": {
         "method": "fixed_price_based",

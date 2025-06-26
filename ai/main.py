@@ -48,6 +48,6 @@ def main():
         chosen_case_fan = run_case_fan_selection_test(result_2nd_stage, chosen_power_supply)
         # самый треш
         chosen_pc_case = run_pc_case_selection_test(result_2nd_stage, chosen_gpu, chosen_cpu_cooler, chosen_motherboard,chosen_power_supply, chosen_case_fan)
-        
+
 if __name__ == "__main__":
     main()
