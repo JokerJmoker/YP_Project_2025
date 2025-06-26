@@ -86,8 +86,6 @@ def get_required_fan_airflow(tdp: int) -> float:
         return 76.5
     else:
         return 89.25
-
-
 def find_compatible_cpu_cooler(
     input_data: Dict[str, Any],
     chosen_cpu: Dict[str, Any]
@@ -99,7 +97,7 @@ def find_compatible_cpu_cooler(
         logging.info("Кулер явно не требуется (false). Возврат None.")
         return None
 
-    # Проверяем, нужно ли возвращать стандартный кулер (включен в комплект или box в названии)
+    # Проверка, включен ли кулер в комплект CPU
     is_box_cpu = "box" in chosen_cpu.get("name", "").lower()
     has_included_cooler = chosen_cpu.get("included_with_cpu", False)
     logging.info(f"Проверка стандартного кулера: is_box_cpu={is_box_cpu}, has_included_cooler={has_included_cooler}")
@@ -112,9 +110,9 @@ def find_compatible_cpu_cooler(
             "price": 0,
             "image_url": "https://c.dns-shop.ru/thumb/st1/fit/500/500/0037a3b9f4278404a0fccd74d4e790ad/4444db819930e984aa9e661d33a9c0714109e3da84d606173805182a22b223ac.jpg",
             "socket": chosen_cpu.get("socket", ""),
-            "height": 70,  # Примерная высота стандартного кулера
-            "tdp": chosen_cpu.get("tdp", 65),  # Примерное значение TDP
-            "noise_level": "30-40 dB",  # Примерный уровень шума
+            "height": 70,
+            "tdp": chosen_cpu.get("tdp", 65),
+            "noise_level": "30-40 dB",
             "material": "Aluminum + Plastic",
             "features": "Basic stock cooler included with CPU"
         }
@@ -126,16 +124,22 @@ def find_compatible_cpu_cooler(
         logging.error("Не указаны сокет или TDP процессора")
         raise ValueError("Не указаны сокет или TDP процессора")
 
-    try:
-        budget_data = input_data["user_request"]["allocations"]["optional"]["fixed_price_based"]
-        target_price = budget_data.get("cpu_cooler_target_price")
-        max_price = budget_data.get("cpu_cooler_max_price")
-        target_price = target_price if target_price is not None else max_price
-        logging.info(f"Целевая цена кулера: {target_price}, Максимальная цена: {max_price}")
-    except Exception as e:
-        target_price = None
-        max_price = None
-        logging.warning(f"Не удалось получить бюджет на кулер, цены не заданы. Ошибка: {e}")
+    # Получаем бюджет для кулера
+    user_request = input_data["user_request"]
+    method = user_request["allocations"]["optional"]["method"]
+    logging.info(f"Метод распределения бюджета для кулера: {method}")
+
+    if method == "fixed_price_based":
+        target_price = user_request["allocations"]["optional"][method].get("cpu_cooler_max_price")
+        logging.info(f"Максимальная цена кулера из fixed_price_based: {target_price}")
+    elif method == "percentage_based":
+        total_budget = user_request["budget"]["amount"]
+        cooler_percentage = user_request["allocations"]["optional"][method].get("cpu_cooler_percentage")
+        target_price = round((cooler_percentage / 100) * total_budget)
+        logging.info(f"Максимальная цена кулера из percentage_based: {target_price} (от бюджета {total_budget} и процента {cooler_percentage}%)")
+    else:
+        logging.error(f"Неподдерживаемый метод распределения: {method}")
+        raise ValueError(f"Unsupported allocation method: {method}")
 
     with Database() as conn:
         with conn.cursor(cursor_factory=DictCursor) as cursor:
@@ -229,62 +233,62 @@ def run_cpu_cooler_selection_test(
 
 if __name__ == "__main__":
     input_data_2nd_stage = {
-        "status": "success",
-        "message": "Данные пользователя успешно разобраны.",
-        "user_request": {
-            "game": {
-                "title": "cyberpunk_2077",
-                "graphics": {
-                    "quality": "ultra",
-                    "target_fps": 60,
-                    "resolution": "2160",
-                    "ray_tracing": False,
-                    "dlss": "performance",
-                    "fsr": "disabled"
-                }
-            },
-            "budget": {
-                "amount": 200000,
-                "allocation_method": "fixed_price_based"
-            },
-            "components": {
-                "mandatory": {
-                    "cpu": "any",
-                    "gpu": "any",
-                    "dimm": "any",
-                    "ssd_m2": "any",
-                    "motherboard": "any",
-                    "power_supply": "any"
-                },
-                "optional": {
-                    "cooling": "any",
-                    "pc_case": "normal_size",
-                    "cpu_cooler": "water_cooling"
-                }
-            },
-            "allocations": {
-                "mandatory": {
-                    "method": "fixed_price_based",
-                    "fixed_price_based": {
-                        "cpu_max_price": 40000,
-                        "gpu_max_price": 120000,
-                        "dimm_max_price": 15000,
-                        "ssd_m2_max_price": 12000,
-                        "motherboard_max_price": 33000,
-                        "power_supply_max_price": 15000
-                    }
-                },
-                "optional": {
-                    "method": "fixed_price_based",
-                    "fixed_price_based": {
-                        "cooling_max_price": 10000,
-                        "pc_case_max_price": 8000,
-                        "cpu_cooler_max_price": 12000
-                    }
-                }
-            }
+  "status": "success",
+  "message": "Данные пользователя успешно разобраны.",
+  "user_request": {
+    "game": {
+      "title": "cyberpunk_2077",
+      "graphics": {
+        "quality": "high",
+        "target_fps": 240,
+        "resolution": "1080",
+        "ray_tracing": False,
+        "dlss": "disabled",
+        "fsr": "disabled"
+      }
+    },
+    "budget": {
+      "amount": 120000,
+      "allocation_method": "percentage_based"
+    },
+    "components": {
+      "mandatory": {
+        "cpu": "any",
+        "gpu": "any",
+        "dimm": "any",
+        "ssd_m2": "any",
+        "motherboard": "any",
+        "power_supply": "any"
+      },
+      "optional": {
+        "case_fan": "any",
+        "pc_case": "any",
+        "cpu_cooler": "air_cooler"
+      }
+    },
+    "allocations": {
+      "mandatory": {
+        "method": "percentage_based",
+        "percentage_based": {
+          "cpu_percentage": 25,
+          "gpu_percentage": 40,
+          "dimm_percentage": 40,
+          "ssd_m2_percentage": 15,
+          "motherboard_percentage": 20,
+          "power_supply_percentage": 15
         }
+      },
+      "optional": {
+        "method": "percentage_based",
+        "percentage_based": {
+          "case_fan_percentage": 10,
+          "pc_case_percentage": 10,
+          "cpu_cooler_percentage": 10
+        }
+      }
     }
+  }
+}
 
     chosen_cpu = {
         "id": 176,

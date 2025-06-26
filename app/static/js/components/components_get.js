@@ -249,36 +249,60 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (d.benchmark_rate) s.push(`Производительность: ${d.benchmark_rate}`);
                     break;
                 case 'cpu_cooler':
-                    // Исправлено: проверяем d.type_ вместо d.type
+                    // Общая информация для всех типов кулеров
                     if (d.type_) s.push(`Тип: ${d.type_.includes('водяной') ? 'Жидкостный' : 'Воздушный'}`);
-
-                    // Предполагаем, что если не water_cooling, то air_cooler
-                    if (!d.type_ || !d.type_.includes('водяной')) {
-                        if (d.socket) s.push(`Сокеты: ${d.socket}`);
-                        if (d.tdp) s.push(`TDP: ${d.tdp} Вт`);
-                        if (d.fan_size) s.push(`Размер вентилятора: ${d.fan_size.toString().replace(/^(\d{3})(\d{3})$/, '$1×$2')} мм`);
-                        if (d.fan_count) s.push(`Кол-во вентиляторов: ${d.fan_count}`);
-                        if (d.min_rpm && d.max_rpm) {
-                            s.push(`Скорость вращения: ${d.min_rpm}–${d.max_rpm} об/мин`);
-                        } else if (d.max_rpm) {
-                            s.push(`Макс. скорость: ${d.max_rpm} об/мин`);
-                        }
-                        if (d.max_noise_level) s.push(`Уровень шума: до ${d.max_noise_level.toFixed(1)} дБ`);
-                        if (d.max_airflow) s.push(`Поток воздуха: до ${d.max_airflow} CFM`);
-                        if (d.height) s.push(`Высота: ${d.height} мм`);
-                        if (d.width) s.push(`Ширина: ${d.width} мм`);
-                        if (d.depth) s.push(`Глубина: ${d.depth} мм`);
-                    } else if (d.type_.includes('водяной')) {
-                        if (d.compatible_sockets) s.push(`Сокеты: ${d.compatible_sockets}`);
-                        if (d.radiator_size) s.push(`Радиатор: ${d.radiator_size}`);
-                        if (d.fans_count) s.push(`Кол-во вентиляторов: ${d.fans_count}`);
-                        if (d.fan_max_speed) s.push(`Скорость вентиляторов: до ${d.fan_max_speed} об/мин`);
-                        if (d.fan_max_noise) s.push(`Шум вентилятора: до ${d.fan_max_noise} дБ`);
-                        if (d.fan_airflow) s.push(`Поток воздуха: до ${d.fan_airflow} CFM`);
-                        if (d.pump_speed) s.push(`Скорость помпы: до ${d.pump_speed} об/мин`);
-                        if (d.tube_length) s.push(`Длина шлангов: ${d.tube_length} мм`);
+                    if (d.name) s.push(`Модель: ${d.name}`);
+                    if (d.price) s.push(`Цена: ${d.price.toLocaleString()} ₽`);
+                    if (d.socket || d.compatible_sockets) {
+                        s.push(`Совместимые сокеты: ${d.socket || d.compatible_sockets}`);
                     }
-                    break;
+
+                    // Характеристики охлаждения
+                    if (d.tdp) s.push(`Рекомендуемый TDP: ${d.tdp} Вт`);
+                    if (d.fan_airflow || d.max_airflow) {
+                        s.push(`Воздушный поток: ${d.fan_airflow || d.max_airflow} CFM`);
+                    }
+
+                    // Характеристики вентилятора(ов)
+                    if (d.fans_count || d.fan_count) {
+                        s.push(`Количество вентиляторов: ${d.fans_count || d.fan_count}`);
+                    }
+                    if (d.fan_size) {
+                        const fanSize = d.fan_size.toString();
+                        s.push(`Размер вентилятора: ${fanSize.length === 6 ? fanSize.replace(/(\d{3})(\d{3})/, '$1×$2') : fanSize} мм`);
+                    }
+                    if (d.min_rpm && d.max_rpm) {
+                        s.push(`Скорость вращения: ${d.min_rpm}–${d.max_rpm} об/мин`);
+                    } else if (d.max_rpm || d.fan_max_speed) {
+                        s.push(`Макс. скорость: ${d.max_rpm || d.fan_max_speed} об/мин`);
+                    }
+
+                    // Уровень шума
+                    if (d.max_noise_level || d.fan_max_noise) {
+                        const noise = (d.max_noise_level || d.fan_max_noise).toFixed(1);
+                        s.push(`Уровень шума: до ${noise} дБ`);
+                    }
+
+                    // Габариты
+                    if (d.height) s.push(`Высота: ${d.height} мм`);
+                    if (d.width) s.push(`Ширина: ${d.width} мм`);
+                    if (d.depth) s.push(`Глубина: ${d.depth} мм`);
+                    if (d.radiator_size) s.push(`Размер радиатора: ${d.radiator_size}`);
+                    if (d.tube_length) s.push(`Длина трубок: ${d.tube_length} мм`);
+
+                    // Специфические параметры водяного охлаждения
+                    if (d.pump_speed) s.push(`Скорость помпы: ${d.pump_speed} об/мин`);
+                    if (d.coolant_type) s.push(`Тип охлаждающей жидкости: ${d.coolant_type}`);
+
+                    // Материалы и конструкция
+                    if (d.material) s.push(`Материалы: ${d.material}`);
+                    if (d.bearing_type) s.push(`Тип подшипника: ${d.bearing_type}`);
+                    if (d.heat_pipes) s.push(`Тепловые трубки: ${d.heat_pipes} шт`);
+
+                    // Дополнительная информация
+                    if (d.features) s.push(`Особенности: ${d.features}`);
+                    if (d.warranty) s.push(`Гарантия: ${d.warranty} лет`);
+                    if (d.weight) s.push(`Вес: ${d.weight} г`);
                     break;
                 case 'ssd':
                     if (d.capacity) s.push(`Объем: ${d.capacity} ГБ`);

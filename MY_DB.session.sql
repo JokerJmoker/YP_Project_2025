@@ -1,0 +1,1 @@
+DROP TABLE pc_components.cpu_cooler;
