@@ -135,29 +135,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             console.log(`[DEBUG] Устанавливаем запрошенный бюджет: ${budget.amount}`);
-            // Изменено с .budget-amount на .budget-value:first-child
             document.querySelector('.budget-section .budget-row:first-child .budget-value').textContent = formatPrice(budget.amount);
 
             let total = 0;
             const components = data.components || {};
-            console.log('[DEBUG] Компоненты для расчета суммы:', components);
+            console.log('[DEBUG] Полный объект components:', components);
 
             const keys = ['gpu', 'cpu', 'dimm', 'ssd', 'motherboard', 'psu', 'case_fan', 'pc_case', 'cpu_cooler'];
             
             keys.forEach(key => {
                 const comp = components[key];
-                const price = comp?.price ?? comp?.data?.price;
+                console.log(`[DEBUG] Обрабатываем компонент ${key}:`, comp);
                 
+                if (!comp) {
+                    console.log(`[DEBUG] Компонент ${key} отсутствует`);
+                    return;
+                }
+
+                // Проверяем все возможные места, где может быть цена
+                const price = comp.price ?? comp.data?.price ?? comp.selected?.price;
+                console.log(`[DEBUG] Найденная цена для ${key}:`, price);
+
                 if (typeof price === 'number') {
-                    console.log(`[DEBUG] Добавляем цену компонента ${key}: ${price}`);
+                    console.log(`[DEBUG] Добавляем цену ${price} для ${key}`);
                     total += price;
                 } else {
-                    console.log(`[DEBUG] Компонент ${key} не имеет цены или отсутствует`);
+                    console.warn(`[WARN] Не удалось найти цену для ${key}`);
                 }
             });
 
-            console.log(`[DEBUG] Итоговая сумма: ${total}`);
-            // Изменено с .final-price на .budget-value.final
+            console.log(`[DEBUG] Итоговая сумма всех компонентов: ${total}`);
             document.querySelector('.budget-section .budget-row:last-child .budget-value').textContent = formatPrice(total);
 
             const diff = total - budget.amount;
@@ -242,9 +249,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (d.benchmark_rate) s.push(`Производительность: ${d.benchmark_rate}`);
                     break;
                 case 'cpu_cooler':
-                    if (d.type) s.push(`Тип: ${d.type === 'air_cpu_cooler' ? 'Воздушный' : 'Жидкостный'}`);
+                    if (d.type) s.push(`Тип: ${d.type === 'air_cooler' ? 'Воздушный' : 'Жидкостный'}`);
 
-                    if (d.type === 'air_cpu_cooler') {
+                    if (d.type === 'air_cooler') {
                         if (d.socket) s.push(`Сокеты: ${d.socket}`);
                         if (d.tdp) s.push(`TDP: ${d.tdp} Вт`);
                         if (d.fan_size) s.push(`Размер вентилятора: ${d.fan_size.toString().replace(/^(\d{3})(\d{3})$/, '$1×$2')} мм`);
@@ -259,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (d.height) s.push(`Высота: ${d.height} мм`);
                         if (d.width) s.push(`Ширина: ${d.width} мм`);
                         if (d.depth) s.push(`Глубина: ${d.depth} мм`);
-                    } else if (d.type === 'water_cpu_cooler') {
+                    } else if (d.type === 'water_cooling') {
                         if (d.compatible_sockets) s.push(`Сокеты: ${d.compatible_sockets}`);
                         if (d.radiator_size) s.push(`Радиатор: ${d.radiator_size}`);
                         if (d.fans_count) s.push(`Кол-во вентиляторов: ${d.fans_count}`);
@@ -424,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const names = {
                 'gpu': 'Видеокарта',
                 'cpu': 'Процессор',
-                'cooler': 'Кулер CPU',
+                'cpu_cooler': 'Кулер CPU',
                 'ssd': 'SSD',
                 'dimm': 'ОЗУ',
                 'motherboard': 'Материнская плата',
@@ -433,7 +440,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 'pc_case': 'Корпус'
             };
 
-            const order = ['gpu', 'cpu', 'dimm', 'ssd', 'motherboard', 'psu', 'case_fan', 'pc_case', 'cooler'];
+            const order = ['gpu', 'cpu', 'cpu_cooler','dimm', 'ssd', 'motherboard', 'psu', 'case_fan', 'pc_case'];
             const components = data.components || {};
             
             console.log('[DEBUG] Начинаем обработку компонентов в порядке:', order);

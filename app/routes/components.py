@@ -31,13 +31,6 @@ def get_components_result():
 
         # Получаем сохраненные конфигурации из сессии
         pc_configurations = session.get('pc_configurations', {})
-        print(f"[DEBUG] Всего конфигураций в сессии: {len(pc_configurations)}")
-        
-        # Логируем доступные ID конфигураций для отладки
-        if pc_configurations:
-            print("[DEBUG] Доступные config_ids в сессии:")
-            for cid in pc_configurations.keys():
-                print(f" - {cid}")
         
         # Получаем запрошенную конфигурацию
         config_data = pc_configurations.get(config_id)

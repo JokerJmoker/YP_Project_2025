@@ -12,10 +12,10 @@ DB_PORT = "5532"
 PC_CONFIGS = [
     {
         "quality": "low",
-        "cpu": "Процессор Intel Core i3-9100F OEM",
-        "gpu": "Видеокарта GIGABYTE GeForce GT 1030 Low Profile D4 2G [GV-N1030D4-2GL]",
-        "dimm": "Оперативная память Patriot Signature Line [PSD48G320081] 8 ГБ",
-        "ssd_m2": "500 ГБ M.2 NVMe накопитель Kingston NV2 [SNV2S/500G]",
+        "cpu": "Процессор AMD Ryzen 5 2400G OEM",
+        "gpu": "Видеокарта ASRock AMD Radeon RX 550 Phantom Gaming [PHANTOM G R RX550 4G]",
+        "dimm": "Оперативная память Apacer [EL.08G2V.GNH] 8 ГБ",
+        "ssd_m2": "500 ГБ M.2 NVMe накопитель Kingston NV2 [SNV2S/500G]"
     },
     {
         "quality": "medium",
