@@ -249,9 +249,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (d.benchmark_rate) s.push(`Производительность: ${d.benchmark_rate}`);
                     break;
                 case 'cpu_cooler':
-                    if (d.type) s.push(`Тип: ${d.type === 'air_cooler' ? 'Воздушный' : 'Жидкостный'}`);
+                    // Исправлено: проверяем d.type_ вместо d.type
+                    if (d.type_) s.push(`Тип: ${d.type_.includes('водяной') ? 'Жидкостный' : 'Воздушный'}`);
 
-                    if (d.type === 'air_cooler') {
+                    // Предполагаем, что если не water_cooling, то air_cooler
+                    if (!d.type_ || !d.type_.includes('водяной')) {
                         if (d.socket) s.push(`Сокеты: ${d.socket}`);
                         if (d.tdp) s.push(`TDP: ${d.tdp} Вт`);
                         if (d.fan_size) s.push(`Размер вентилятора: ${d.fan_size.toString().replace(/^(\d{3})(\d{3})$/, '$1×$2')} мм`);
@@ -261,12 +263,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         } else if (d.max_rpm) {
                             s.push(`Макс. скорость: ${d.max_rpm} об/мин`);
                         }
-                        if (d.max_noise_level) s.push(`Уровень шума: до ${d.max_noise_level} дБ`);
+                        if (d.max_noise_level) s.push(`Уровень шума: до ${d.max_noise_level.toFixed(1)} дБ`);
                         if (d.max_airflow) s.push(`Поток воздуха: до ${d.max_airflow} CFM`);
                         if (d.height) s.push(`Высота: ${d.height} мм`);
                         if (d.width) s.push(`Ширина: ${d.width} мм`);
                         if (d.depth) s.push(`Глубина: ${d.depth} мм`);
-                    } else if (d.type === 'water_cooling') {
+                    } else if (d.type_.includes('водяной')) {
                         if (d.compatible_sockets) s.push(`Сокеты: ${d.compatible_sockets}`);
                         if (d.radiator_size) s.push(`Радиатор: ${d.radiator_size}`);
                         if (d.fans_count) s.push(`Кол-во вентиляторов: ${d.fans_count}`);
@@ -276,6 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (d.pump_speed) s.push(`Скорость помпы: до ${d.pump_speed} об/мин`);
                         if (d.tube_length) s.push(`Длина шлангов: ${d.tube_length} мм`);
                     }
+                    break;
                     break;
                 case 'ssd':
                     if (d.capacity) s.push(`Объем: ${d.capacity} ГБ`);
