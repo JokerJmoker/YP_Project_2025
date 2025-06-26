@@ -13,15 +13,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // Стандартные значения для распределения бюджета
     const defaultValues = {
         percentage: {
-            cpu: 25,
-            gpu: 35,
-            ram: 8,
+            cpu: 18,
+            gpu: 22,
+            ram: 12,
             storage: 7,
-            motherboard: 8,
-            psu: 7,
+            motherboard:15 ,
+            psu: 9,
             cooling: 3,
             case: 5,
-            cpuCooler: 2
+            cpuCooler: 9
         },
         fixed: {
             cpu: 30000,
