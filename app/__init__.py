@@ -46,9 +46,9 @@ def create_app(config_class=Config):
     register_bundles(assets, bundles)
     
     # Импорт моделей для создания таблиц
-    from .models import (CaseFan, CpuCooler, Cpu, Post, SoDimm, User, 
-                         Dimm, Gpu, Hdd_2_5, hdd_3_5, Motherboard, PcCase,
-                         PowerSupply, SsdM2, Ssd, WaterCooling)
+    from .models import (CaseFan, CpuCooler, Cpu, Post,  User, 
+                         Dimm, Gpu, Motherboard, PcCase,
+                         PowerSupply, SsdM2, WaterCooling)
     
     # Инициализация хранилища конфигураций
     if not hasattr(app, 'pc_configurations'):

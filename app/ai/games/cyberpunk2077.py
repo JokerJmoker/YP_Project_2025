@@ -13,7 +13,7 @@ PC_CONFIGS = [
     {
         "quality": "low",
         "cpu": "Процессор AMD Ryzen 5 5600 BOX",
-        "gpu": "ASUS GeForce GT 1030 LP [GT1030-2G-BRK]",
+        "gpu": "Видеокарта ASUS GeForce GT 1030 LP [GT1030-2G-BRK]",
         "dimm": "Оперативная память Kingston FURY Beast Black [KF432C16BBK2/16-SP] 16 ГБ",
         "ssd_m2": "500 ГБ M.2 NVMe накопитель Kingston NV2 [SNV2S/500G]",
     },
