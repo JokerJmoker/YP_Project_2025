@@ -14,7 +14,7 @@ PC_CONFIGS = [
         "quality": "low",
         "cpu": "Процессор AMD Ryzen 3 4100 OEM",
         "gpu": "Видеокарта Palit GeForce GT 1030 [NEC103000646-1082F]",
-        "dimm": "Оперативная память DEXP [DEXP8GD3UD16] 8 ГБ",
+        "dimm": "Оперативная память Kingston FURY Beast Black [KF432C16BBK2/16-SP] 16 ГБ",
         "ssd_m2": "500 ГБ M.2 NVMe накопитель Kingston NV2 [SNV2S/500G]",
     },
     {

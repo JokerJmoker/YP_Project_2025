@@ -14,7 +14,7 @@ PC_CONFIGS = [
         "quality": "low",
         "cpu": "Процессор AMD Ryzen 5 5600 OEM",
         "gpu": "Видеокарта ASRock AMD Radeon RX 6500 XT Challenger ITX [RX6500XT CLI 4G]",
-        "dimm": "Оперативная память ADATA Gold [GD4U320038G-SMI] 8 ГБ",
+        "dimm": "Оперативная память ExeGate HiPower [EX288049RUS] 8 ГБ",
         "ssd_m2": "500 ГБ M.2 NVMe накопитель Kingston NV2 [SNV2S/500G]",
     },
     {

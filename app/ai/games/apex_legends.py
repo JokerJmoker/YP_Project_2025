@@ -35,7 +35,7 @@ PC_CONFIGS = [
         "quality": "ultra",
         "cpu": "Процессор Intel Core i9-13900K BOX",
         "gpu": "Видеокарта GIGABYTE GeForce RTX 4080 SUPER GAMING OC [GV-N408SGAMING OC-16GD]",
-        "dimm": "Оперативная память Kingston FURY Beast Black RGB [KF436C18BB2AK4/128] 128 ГБ",
+        "dimm": "Оперативная память G.Skill Ripjaws S5 [F5-5200J3636D32GX2-RS5W] 64 ГБ",
         "ssd_m2": "2000 ГБ M.2 NVMe накопитель WD Black SN770 [WDS200T3X0E]",
     }
 ]

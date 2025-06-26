@@ -12,7 +12,7 @@ DB_PORT = "5532"
 PC_CONFIGS = [
     {
         "quality": "low",
-        "cpu": "Процессор Intel Core i5-8400 OEM",
+        "cpu": "Процессор Intel Core i3-10100F OEM",
         "gpu": "Видеокарта GIGABYTE GeForce GT 1030 Low Profile D4 2G [GV-N1030D4-2GL]",
         "dimm": "Оперативная память Neo Forza [NMUD416F82-3200EA10] 16 ГБ",
         "ssd_m2": "500 ГБ M.2 NVMe накопитель Kingston NV2 [SNV2S/500G]",

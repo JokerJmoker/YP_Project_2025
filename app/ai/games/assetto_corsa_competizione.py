@@ -12,7 +12,7 @@ DB_PORT = "5532"
 PC_CONFIGS = [
     {
         "quality": "low",
-        "cpu": "Процессор Intel Core i5-8400 OEM",
+        "cpu": "Процессор AMD Ryzen 5 5600GT OEM",
         "gpu": "Видеокарта MSI GeForce GTX 1650 D6 VENTUS XS OCV3 [GeForce GTX 1650 D6 VENTUS XS OCV3]",
         "dimm": "Оперативная память ExeGate HiPower [EX288049RUS] 8 ГБ",
         "ssd_m2": "500 ГБ M.2 NVMe накопитель Kingston NV2 [SNV2S/500G]",

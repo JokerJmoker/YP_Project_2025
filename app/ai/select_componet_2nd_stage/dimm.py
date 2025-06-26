@@ -100,8 +100,8 @@ def find_similar_dimm(
     logger.info(f"Параметры DIMM для поиска - каналы: {target_channels}, ECC: {target_ecc}, зарегистрированная память: {target_registered}, общий объем: {target_total_memory}")
 
     target_freq = original_dimm.frequency
-    min_freq = int(target_freq * 0.9)
-    max_freq = int(target_freq * 1.1)
+    min_freq = int(target_freq * 0.5)
+    max_freq = int(target_freq * 1.5)
     logger.info(f"Диапазон частоты памяти для поиска: {min_freq} - {max_freq}")
 
     query = """
