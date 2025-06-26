@@ -55,9 +55,9 @@ def create_game_table():
         # Создаем схему games, если она не существует
         cursor.execute("CREATE SCHEMA IF NOT EXISTS games")
         
-        # Создаем таблицу games.cod_wf_3
+        # Создаем таблицу games.call_of_duty_modern_warfare_3
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS games.cod_wf_3 (
+            CREATE TABLE IF NOT EXISTS games.call_of_duty_modern_warfare_3 (
                 quality VARCHAR(50) PRIMARY KEY,
                 cpu VARCHAR(100) NOT NULL,
                 gpu VARCHAR(100) NOT NULL,
@@ -70,7 +70,7 @@ def create_game_table():
         for config in PC_CONFIGS:
             cursor.execute(
                 sql.SQL("""
-                    INSERT INTO games.cod_wf_3 (quality, cpu, gpu, ssd_m2, dimm)
+                    INSERT INTO games.call_of_duty_modern_warfare_3 (quality, cpu, gpu, ssd_m2, dimm)
                     VALUES (%s, %s, %s, %s, %s)
                     ON CONFLICT (quality) DO NOTHING
                 """),
@@ -79,7 +79,7 @@ def create_game_table():
 
         # Сохраняем изменения
         conn.commit()
-        print("Таблица 'games.cod_wf_3' успешно создана и заполнена!")
+        print("Таблица 'games.call_of_duty_modern_warfare_3' успешно создана и заполнена!")
 
     except Exception as e:
         print(f"Ошибка: {e}")

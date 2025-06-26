@@ -13,29 +13,29 @@ PC_CONFIGS = [
     {
         "quality": "low",
         "cpu": "Процессор Intel Core i5-8400 OEM",
-        "gpu": "Видеокарта MSI GeForce GTX 1650 D6 VENTUS XS OCV3 [GeForce GTX 1650 D6 VENTUS XS OCV3]",
-        "dimm": "Оперативная память ExeGate HiPower [EX288049RUS] 8 ГБ",
+        "gpu": "Видеокарта GIGABYTE GeForce GT 1030 Low Profile D4 2G [GV-N1030D4-2GL]",
+        "dimm": "Оперативная память Neo Forza [NMUD416F82-3200EA10] 16 ГБ",
         "ssd_m2": "500 ГБ M.2 NVMe накопитель Kingston NV2 [SNV2S/500G]",
     },
     {
         "quality": "medium",
-        "cpu": "Процессор Intel Core i7-10700KF OEM",
-        "gpu": "Видеокарта INNO3D GeForce RTX 3060 TWIN X2 (LHR) [N30602-12D6-119032AH]",
-        "dimm": "Оперативная память Kingston FURY Renegade RGB [KF436C16RB12A/16] 16 ГБ",
+        "cpu": "Процессор AMD Ryzen 5 3600X OEM",
+        "gpu": "Видеокарта MSI GeForce GTX 1650 D6 VENTUS XS OCV3 [GeForce GTX 1650 D6 VENTUS XS OCV3]",
+        "dimm": "Оперативная память Netac Shadow [NTSDD4P26SP-16B] 16 ГБ",
         "ssd_m2": "1000 ГБ M.2 NVMe накопитель WD Blue SN580 [WDS100T3B0E]",
     },
     {
         "quality": "high",
-        "cpu": "Процессор Intel Core i9-12900KF BOX",
-        "gpu": "Видеокарта GIGABYTE GeForce RTX 4070 WINDFORCE 2X OC V2 [GV-N4070WF2OCV2-12GD]",
-        "dimm": "Оперативная память Kingston FURY Beast Black [KF556C36BBEK2-32] 32 ГБ",
+        "cpu": "Процессор AMD Ryzen 7 5800X OEM",
+        "gpu": "Видеокарта INNO3D GeForce RTX 3060 TWIN X2 (LHR) [N30602-12D6-119032AH]",
+        "dimm": "Оперативная память Kingston ValueRAM [KVR32N22D8/32] 32 ГБ",
         "ssd_m2": "1000 ГБ M.2 NVMe накопитель Samsung 980 PRO [MZ-V8P1T0BW]",
     },
     {
         "quality": "ultra",
-        "cpu": "Процессор AMD Ryzen 9 7950X3D BOX",
-        "gpu": "Видеокарта MSI GeForce RTX 5080 VENTUS 3X OC [RTX 5080 16G VENTUS 3X OC]",
-        "dimm": "Оперативная память Corsair Vengeance RGB PRO [CMW32GX4M4C3600C18] 32 ГБ",
+        "cpu": "Процессор Intel Core i9-14900KF BOX",
+        "gpu": "Видеокарта Sapphire AMD Radeon RX 7900 XT PULSE OC [11323-02-20G]",
+        "dimm": "Оперативная память Kingston ValueRAM [KVR32N22D8/32] 32 ГБ",
         "ssd_m2": "2000 ГБ M.2 NVMe накопитель WD Black SN770 [WDS200T3X0E]",
     }
 ]
@@ -55,9 +55,9 @@ def create_game_table():
         # Создаем схему games, если она не существует
         cursor.execute("CREATE SCHEMA IF NOT EXISTS games")
         
-        # Создаем таблицу games.asseto_corsa_competizione
+        # Создаем таблицу games.elden_ring
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS games.asseto_corsa_competizione (
+            CREATE TABLE IF NOT EXISTS games.elden_ring (
                 quality VARCHAR(50) PRIMARY KEY,
                 cpu VARCHAR(100) NOT NULL,
                 gpu VARCHAR(100) NOT NULL,
@@ -70,7 +70,7 @@ def create_game_table():
         for config in PC_CONFIGS:
             cursor.execute(
                 sql.SQL("""
-                    INSERT INTO games.asseto_corsa_competizione (quality, cpu, gpu, ssd_m2, dimm)
+                    INSERT INTO games.elden_ring (quality, cpu, gpu, ssd_m2, dimm)
                     VALUES (%s, %s, %s, %s, %s)
                     ON CONFLICT (quality) DO NOTHING
                 """),
@@ -79,7 +79,7 @@ def create_game_table():
 
         # Сохраняем изменения
         conn.commit()
-        print("Таблица 'games.asseto_corsa_competizione' успешно создана и заполнена!")
+        print("Таблица 'games.elden_ring' успешно создана и заполнена!")
 
     except Exception as e:
         print(f"Ошибка: {e}")

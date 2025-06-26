@@ -55,9 +55,9 @@ def create_game_table():
         # Создаем схему games, если она не существует
         cursor.execute("CREATE SCHEMA IF NOT EXISTS games")
         
-        # Создаем таблицу games.cs_2
+        # Создаем таблицу games.counter_strike_2
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS games.cs_2 (
+            CREATE TABLE IF NOT EXISTS games.counter_strike_2 (
                 quality VARCHAR(50) PRIMARY KEY,
                 cpu VARCHAR(150) NOT NULL,
                 gpu VARCHAR(150) NOT NULL,
@@ -70,7 +70,7 @@ def create_game_table():
         for config in PC_CONFIGS:
             cursor.execute(
                 sql.SQL("""
-                    INSERT INTO games.cs_2 (quality, cpu, gpu, ssd_m2, dimm)
+                    INSERT INTO games.counter_strike_2 (quality, cpu, gpu, ssd_m2, dimm)
                     VALUES (%s, %s, %s, %s, %s)
                     ON CONFLICT (quality) DO NOTHING
                 """),
@@ -79,7 +79,7 @@ def create_game_table():
 
         # Сохраняем изменения
         conn.commit()
-        print("Таблица 'games.cs_2' успешно создана и заполнена!")
+        print("Таблица 'games.counter_strike_2' успешно создана и заполнена!")
 
     except Exception as e:
         print(f"Ошибка: {e}")
